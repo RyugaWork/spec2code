@@ -36,3 +36,7 @@ Revert isolated PLAN-080.1 commits through a reviewed PR. Never delete `s2c/`, `
 
 ## Merge policy
 PR #7 stays Draft while CI, host installation validation, independent review and security acceptance are unresolved. Only report complete after verifying exact head SHA, CI job counts, and reviewer decisions. Do not authorize Git mutations, arbitrary shell, MCP transport or release by inference.
+
+## CI verification addendum — 2026-11-13
+
+Implementation+handoff commit `a546c386c392535ff324272dc9c08501b4dca7f9` has two successful complete GitHub Actions workflows: push `43271884094` and PR `43271901337` (4/4 matrix jobs PASS each). Ubuntu Python 3.10/3.11/3.13: 124 tests per job, OK with 3 Windows-only skips each; Windows Python 3.14: 124 tests, OK, 0 skipped. Earlier historical FAILs remain documented. This does not certify Windows TOCTOU, OneDrive, legacy migration or independent security review. A subsequent documentation-only commit still requires CI on its exact head.

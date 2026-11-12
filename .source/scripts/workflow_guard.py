@@ -374,6 +374,8 @@ def transition(req: WorkflowRequest, *,
         if current and (current["session_id"] != session["id"] or
                         current["binding_fingerprint"] != binding):
             raise RuntimeError("WORKFLOW_SESSION_MISMATCH")
+        if current and current.get("scope_sha256") != _scope_digest(req):
+            raise RuntimeError("WF_TASK_SCOPE_MISMATCH")
         if req.operation == "reconcile":
             if not stale:
                 return {"operation": "reconcile", "status": "READY", "reconciled": False}

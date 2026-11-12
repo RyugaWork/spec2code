@@ -14,7 +14,7 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 
 CONFIG_NAMES = frozenset({'scanner', 'architecture', 'routing', 'session', 'speckit',
-                          'handoff', 'mcp', 'security'})
+                          'handoff', 'mcp', 'security', 'governance', 'workflow'})
 MAX_CONFIG_BYTES = 64 * 1024  # loader resource ceiling; not configurable
 
 
@@ -53,6 +53,10 @@ def _bounded_limits(limits: object, label: str) -> None:
 def _validate(name: str, data: dict) -> None:
     if data.get('schema_version') != 1:
         raise RuntimeError(f'CONFIG_INVALID: unsupported {name} schema_version')
+    if name in ('governance', 'workflow'):
+        import governance_schema
+        governance_schema.validate_config(name, data)
+        return
     required = {
         'scanner': {'root_files', 'code_extensions', 'excluded_directories', 'excluded_suffixes',
                     'metadata_only_files', 'source_roots', 'extra_scan_roots', 'limits', 'paths'},

@@ -21,6 +21,7 @@ import scan_infrastructure as infra
 import speckit_bridge
 import path_guard as guard
 import config_loader
+import policy_resolver
 
 ROUTING_CONFIG = config_loader.load('routing')
 POLICY = Path(ROUTING_CONFIG['paths']['policy'])
@@ -278,6 +279,21 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
     }
     # Spec Kit artifacts are referenced by path/hash only; no duplicated spec body.
     pack['spec_kit'] = speckit_bridge.discover(root, speckit_stage)
+    governance_operation = ('implement' if speckit_stage == 'implement' else
+                            'verify' if speckit_stage == 'converge' else
+                            'plan' if speckit_stage in ('plan', 'tasks', 'analyze') else 'read')
+    policy_result = policy_resolver.resolve(policy_resolver.PolicyRequest(
+        root, task_id, task, tuple(paths), governance_operation))
+    mandatory = sorted({item['path'] for item in policy_result['root_agents']} |
+                       {doc['path'] for doc in policy_result['selected_documents'] if doc['required']})
+    pack['governance'] = {
+        'schema_version': 1,
+        'status': policy_result['policy_status'],
+        'required_policy_paths': mandatory,
+        'candidate_policy_paths': sorted({doc['path'] for doc in policy_result['candidate_documents']}),
+        'blocking_reasons': policy_result['blocking_reasons'],
+        'review_reasons': policy_result['review_reasons'],
+    }
     # Do not include task free text in machine file; it could contain PII/secrets.
     infra.atomic_text(root / PACK, json.dumps(pack, ensure_ascii=False, indent=2) + '\n', root=root)
     return pack

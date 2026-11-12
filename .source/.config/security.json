@@ -32,7 +32,10 @@
     ".handoffs/.merge.lock",
     ".summerize.md",
     "s2c",
-    "s2c/.summerize.md"
+    "s2c/.summerize.md",
+    ".agents/state/workflow-events.jsonl",
+    ".agents/state/workflow-state.json",
+    ".agents/state/workflow.lock"
   ],
   "additional_sensitive_names": [],
   "additional_excluded_suffixes": []

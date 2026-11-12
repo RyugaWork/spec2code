@@ -26,7 +26,7 @@ def _verified_local_root(root: Path) -> Path:
     still reject root symlinks, traversal and directory substitution using handles.
     """
     raw = Path(os.path.abspath(os.fspath(root)))
-    if not raw.is_dir() or raw.is_symlink() or raw.resolve() != raw:
+    if not raw.is_dir() or guard._has_reparse_ancestor(raw):
         raise RuntimeError('SCOPE_VIOLATION: invalid local filesystem root')
     return raw
 

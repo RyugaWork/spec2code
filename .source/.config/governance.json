@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "host_policy_map": ".agents/policy-map.json",
+  "categories": [
+    {
+      "id": "business",
+      "keywords": [
+        "membership",
+        "entitlement",
+        "business rule",
+        "business policy"
+      ]
+    },
+    {
+      "id": "api",
+      "keywords": [
+        "api",
+        "endpoint",
+        "contract",
+        "dto"
+      ]
+    },
+    {
+      "id": "security",
+      "keywords": [
+        "authentication",
+        "authorization",
+        "password",
+        "encryption",
+        "secret",
+        "csrf",
+        "cookie",
+        "jwt"
+      ]
+    },
+    {
+      "id": "data",
+      "keywords": [
+        "database",
+        "migration",
+        "transaction",
+        "schema"
+      ]
+    },
+    {
+      "id": "architecture",
+      "keywords": [
+        "architecture",
+        "service",
+        "dependency",
+        "frontend",
+        "backend"
+      ]
+    },
+    {
+      "id": "testing",
+      "keywords": [
+        "test",
+        "verify",
+        "ci",
+        "regression"
+      ]
+    },
+    {
+      "id": "delivery",
+      "keywords": [
+        "deploy",
+        "git",
+        "branch",
+        "commit",
+        "release"
+      ]
+    },
+    {
+      "id": "governance",
+      "keywords": [
+        "agents",
+        "handoff",
+        "requirements",
+        "approval"
+      ]
+    }
+  ],
+  "candidate_name_hints": {
+    "business": [
+      "businessrequirements.md",
+      "business-rules.md"
+    ],
+    "api": [
+      "apirequirements.md",
+      "api-contract.md"
+    ],
+    "security": [
+      "securityrequirements.md",
+      "security-policy.md"
+    ],
+    "data": [
+      "databaserequirements.md",
+      "data-dictionary.md"
+    ],
+    "testing": [
+      "testinganddelivery.md",
+      "testing-policy.md"
+    ]
+  },
+  "mandatory_global_files": [],
+  "limits": {
+    "max_selected_paths": 48,
+    "max_host_map_documents": 64,
+    "max_candidate_files": 128,
+    "max_agents_files": 32,
+    "max_reference_depth": 1,
+    "max_agents_bytes": 131072,
+    "max_host_map_bytes": 65536,
+    "max_output_bytes": 262144
+  }
+}

@@ -81,3 +81,22 @@ Resolve approved requirement → affected nodes → plan/tasks → minimal scope
 Each new session binds its exact canonical Git checkout root, filesystem identity and Git admin directory. Session `status`, `checkpoint`, `record`, `finish`, architecture inspection, and context routing must re-check this binding. If the binding differs, fail closed with `SCOPE_VIOLATION`; do not silently reinitialize or auto-migrate an ACTIVE earlier-version session. Incoming Git HEAD changes invalidate prior context packs at checkpoint; MCP write actions (other than checkpoint) require fresh HEAD.
 
 All file reads/writes use Path Guard; `scope_io.py` anchors file operations to directory handles with no-follow protections on supported POSIX platforms. On Windows, checks are repeated but OS-level race freedom is **not** guaranteed; use a trusted local workspace and filesystem permissions. The `mcp_boundary.py` module is **only** a future-MCP authorization gate, not a running MCP server. See `docs/CONTINUOUS_SCOPE_ENFORCEMENT.md` in the source repository. Never treat path checks as authorization to modify a repository.
+
+## PLAN-080 v0.8.0 candidate: governance and workflow
+
+Before implementation, resolve applicable host AGENTS and policy document references:
+
+```sh
+python .agents/skills/spec-to-code/scripts/policy_resolver.py --root . --task-id T001 --task "Review scoped change" --operation plan --format summary
+```
+
+Read required host policies independently of token budgets. Resolver READY means references were located, never that approval exists.
+
+Workflow Guard is read-only by default and records explicit authorized stage transitions; it cannot run code, Spec Kit stages, Git operations or tests:
+
+```sh
+python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . status --task-id T001
+python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . evaluate --task-id T001 --phase DISCOVER
+```
+
+Host ownership, Scope IO/Path Guard, session binding, and exact-session handoff remain mandatory.

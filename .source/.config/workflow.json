@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "phases": [
+    "DISCOVER",
+    "SPECIFY_PLAN",
+    "IMPLEMENT",
+    "VERIFY",
+    "HANDOFF_REVIEW"
+  ],
+  "statuses": [
+    "PENDING",
+    "IN_PROGRESS",
+    "READY",
+    "NEEDS_REVIEW",
+    "BLOCKED",
+    "COMPLETE",
+    "INVALIDATED"
+  ],
+  "paths": {
+    "events": ".agents/state/workflow-events.jsonl",
+    "state": ".agents/state/workflow-state.json",
+    "lock": ".agents/state/workflow.lock"
+  },
+  "limits": {
+    "max_events": 4096,
+    "max_event_bytes": 16384,
+    "max_state_bytes": 262144,
+    "max_evidence_refs": 128
+  }
+}

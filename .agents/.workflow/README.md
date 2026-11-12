@@ -10,3 +10,13 @@
 8. **Review/merge:** no force push. Merge only after explicit review and required CI results; update changelog and statuses.
 
 All test claims must distinguish PASS, FAIL, SKIPPED, BLOCKED and NOT RUN.
+
+## PLAN-080 controlled lifecycle
+
+1. DISCOVER: validate checkout; read root/nested AGENTS and relevant policy candidates.
+2. SPECIFY_PLAN: establish requirement authority, feature spec/tasks, scope, risks and approval needs.
+3. IMPLEMENT: use a bound active session and approved code paths; track provenance.
+4. VERIFY: record actual test/build evidence; on FAIL return explicitly to IMPLEMENT.
+5. HANDOFF_REVIEW: finish exact session, preserve human and machine records, request independent review.
+
+Workflow Guard evaluates requirements and records user-authorized transitions. It does **not** execute Git, tests or code changes. NEEDS_REVIEW is not PASS.

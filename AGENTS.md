@@ -1,7 +1,7 @@
 # AGENTS.md — Spec2Code
 
 - This repository develops a **portable, universal** Spec-to-Code agent skill. Do not introduce application-specific dependencies, business rules, names, credentials or user data into the core.
-- Source of truth: `SKILL.md`, Python `scripts/`, `references/`, `integrations/`, and `tests/`. Target application state is not stored here.
+- Source of truth: `SKILL.md`, bundled `.config/`, Python `scripts/`, `references/`, `integrations/`, and `tests/`. Target application state is not stored here.
 - Keep the official Spec Kit separate and follow upstream artifact ownership for `.specify/` and `specs/`; this repository's bridge is read-only toward those files.
 - Before changing session, scanner, graph or handoff behavior, update/execute applicable unit tests. Commands: `python -m unittest discover -s tests -v`.
 - `scripts/path_guard.py` is the mandatory repository boundary for **every** CLI and programmatic entrypoint, including new MCP adapters. Never operate outside the exact validated Git worktree. Validate both user paths and cached paths; no fallback on failed checks.
@@ -17,3 +17,10 @@
 - MCP read actions must remain side-effect free. Allow write actions only through server-owned capability configuration and exact Session ID.
 - Local `session.json` contains host-specific checkout identity; never publish runtime state from a private application repository.
 - A static path check cannot fully protect against hostile concurrent filesystem mutation; use OS isolation for untrusted clients.
+
+## Configuration ownership (v0.6.4)
+
+- Non-secret policy data is stored in `.config/*.json`, not duplicated as Python literals. Loading fails closed on absent/invalid config; do not auto-generate defaults.
+- New modules must use `config_loader.load(section)` for tunable data. Python retains only invariant safety checks and implementation logic.
+- Never make repository-root binding, Spec Kit implementation prerequisites, path traversal protection, or MCP capabilities optional through config.
+- Installation must copy `.config/` with `SKILL.md`, `scripts/`, and `references/`.

@@ -16,18 +16,16 @@ import shutil
 import sys
 import path_guard as guard
 import scope_io
+import config_loader
 
-ARTIFACTS = ('spec.md', 'plan.md', 'tasks.md')
-STAGES = ('status', 'specify', 'plan', 'tasks', 'analyze', 'implement', 'converge')
-NEEDED = {
-    'status': (), 'specify': (), 'plan': ('spec.md',),
-    'tasks': ('spec.md', 'plan.md'),
-    'analyze': ARTIFACTS, 'implement': ARTIFACTS, 'converge': ARTIFACTS,
-}
-MAX_POINTER_BYTES = 8192
-MAX_ARTIFACT_BYTES = 1024 * 1024
-MAX_TASK_IDS = 24
-TASK_RE = re.compile(r'^\s*-\s*\[[ xX]\]\s*(?:\*\*)?(T\d{3,6})\b', re.M)
+SPECKIT_CONFIG = config_loader.load('speckit')
+ARTIFACTS = tuple(SPECKIT_CONFIG['artifacts'])
+STAGES = tuple(SPECKIT_CONFIG['stages'])
+NEEDED = {stage: tuple(names) for stage,names in SPECKIT_CONFIG['stage_prerequisites'].items()}
+MAX_POINTER_BYTES = SPECKIT_CONFIG['limits']['feature_pointer_bytes']
+MAX_ARTIFACT_BYTES = SPECKIT_CONFIG['limits']['artifact_bytes']
+MAX_TASK_IDS = SPECKIT_CONFIG['limits']['task_ids']
+TASK_RE = re.compile(SPECKIT_CONFIG['task_id_pattern'], re.M)
 
 
 def _safe_file(root: Path, path: Path) -> bool:

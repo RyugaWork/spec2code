@@ -1,4 +1,4 @@
-# Install Spec2Code v0.6.3 in any Git project
+# Install Spec2Code v0.6.4 in any Git project
 
 This is a **portable skill + local Python core**, not an installer that can rewrite projects without review.
 
@@ -11,15 +11,16 @@ This is a **portable skill + local Python core**, not an installer that can rewr
 
 ## Install
 
-Copy the top-level `SKILL.md`, `scripts/`, and `references/` folders from this repository into **one** target location:
+Copy the top-level `SKILL.md`, **`.config/`**, `scripts/`, and `references/` folders from this repository into **one** target location:
 
 ```text
 <target>/.agents/skills/spec-to-code/SKILL.md
+<target>/.agents/skills/spec-to-code/.config/
 <target>/.agents/skills/spec-to-code/scripts/
 <target>/.agents/skills/spec-to-code/references/
 ```
 
-Retain the original target `AGENTS.md`, business/security policies, source layout and Spec Kit files. The optional agent instructions in `docs/AGENTS_PATCH.md` require separate review.
+**Do not omit `.config/`: the scripts intentionally fail closed on missing or invalid bundled JSON.** Retain the original target `AGENTS.md`, business/security policies, source layout and Spec Kit files. The optional agent instructions in `docs/AGENTS_PATCH.md` require separate review.
 
 ## Example: any checked-out repository
 
@@ -51,3 +52,7 @@ Regression tests use disposable local repositories. The target project's own bui
 ## Path-bound sessions
 
 From v0.6.3 onward, an ACTIVE session is tied to the exact physical Git worktree. Complete and merge old-version sessions using the original skill before upgrading. See [Continuous Scope Enforcement](CONTINUOUS_SCOPE_ENFORCEMENT.md).
+
+## Configuration
+
+See [Configuration](CONFIGURATION.md). The bundled `.config/*.json` belongs **inside** `.agents/skills/spec-to-code/` in each target repository. Do not confuse it with target runtime overrides at `.agents/state/context-policy.json`. Runtime security authority and MCP write privileges cannot be granted by editing JSON.

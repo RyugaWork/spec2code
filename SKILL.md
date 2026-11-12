@@ -5,6 +5,8 @@ description: Run a repository-independent, evidence-based spec-to-code workflow 
 
 # Spec2Code v0.6.3 — Universal + Spec Kit Bridge
 
+The bundled `.config/*.json` files next to `SKILL.md` and `scripts/` are required; a missing or malformed config blocks execution. See `docs/CONFIGURATION.md` in the source repository.
+
 The target repository's `AGENTS.md`, approved requirements, security policies and Git workflow take precedence. Do not assume ASP.NET Core, React, a `.source/` directory, or any business domain. This skill **does not automatically install Spec Kit**, create commits, modify business requirements, or execute unapproved coding actions.
 
 ## First: enforce Path Guard and create a coding session

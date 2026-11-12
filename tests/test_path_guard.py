@@ -183,6 +183,8 @@ class RepositoryBoundaryTests(unittest.TestCase):
         installed = self.repo / '.agents/skills/spec-to-code/scripts'
         installed.mkdir(parents=True)
         shutil.copy2(SCRIPTS / 'path_guard.py', installed / 'path_guard.py')
+        shutil.copy2(SCRIPTS / 'config_loader.py', installed / 'config_loader.py')
+        shutil.copytree(SCRIPTS.parent / '.config', installed.parent / '.config')
         other = Path(self.tmp.name) / 'other-repo'
         other.mkdir()
         subprocess.run(['git', 'init', '-q'], cwd=other, check=True)

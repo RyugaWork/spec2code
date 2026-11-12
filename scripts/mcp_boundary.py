@@ -15,22 +15,12 @@ from typing import Mapping
 
 import path_guard as guard
 import scan_infrastructure as infra
+import config_loader
 
-READ_ACTIONS = frozenset({'status', 'preview_changes', 'architecture_slice', 'speckit_status'})
-WRITE_ACTIONS = frozenset({'start_session', 'checkpoint_session', 'record_change',
-                           'finish_session', 'merge_handoff'})
-# Fail closed: adapters must not smuggle unadvertised parameters to future tool handlers.
-ACTION_ARGS = {
-    'status': frozenset(),
-    'preview_changes': frozenset(),
-    'architecture_slice': frozenset({'layer'}),
-    'speckit_status': frozenset({'stage'}),
-    'start_session': frozenset(),
-    'checkpoint_session': frozenset({'session_id'}),
-    'record_change': frozenset({'session_id', 'paths'}),
-    'finish_session': frozenset({'session_id'}),
-    'merge_handoff': frozenset({'session_id'}),
-}
+MCP_CONFIG = config_loader.load('mcp')
+READ_ACTIONS = frozenset(MCP_CONFIG['read_actions'])
+WRITE_ACTIONS = frozenset(MCP_CONFIG['write_actions'])
+ACTION_ARGS = {name: frozenset(args) for name,args in MCP_CONFIG['action_arguments'].items()}
 
 
 @dataclass(frozen=True)

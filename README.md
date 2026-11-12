@@ -2,9 +2,11 @@
 
 **Universal, infrastructure-aware agent skill with official GitHub Spec Kit integration.**
 
-Version: **0.6.3** (development branch). Use with Python 3.10+ and Git. Core scanning and routing require no hosted AI API. Official Spec Kit is optional and installed separately (Python 3.11+ for its CLI).
+Version: **0.6.4** (config-driven development branch). Use with Python 3.10+ and Git. Core scanning and routing require no hosted AI API. Official Spec Kit is optional and installed separately (Python 3.11+ for its CLI).
 
 ## Capabilities
+
+- Config-driven rules in the bundled `.config/*.json` files; strict schema validation and no silent fallback. See [Configuration](docs/CONFIGURATION.md).
 
 - Path Guard: exact Git worktree-root validation, symlink/path traversal protection, nested-repo exclusion, and safe state/handoff boundaries. See [Path Guard](docs/PATH_GUARD.md).
 - Multi-repository support: conventional `src/`, `app/`, `backend/`, `frontend/`, `web/`, `packages/`, `.source/`, test and monorepo layouts; no fixed framework, project namespace or business domain.
@@ -18,7 +20,7 @@ Version: **0.6.3** (development branch). Use with Python 3.10+ and Git. Core sca
 
 ## Install into a target Git project
 
-Copy `SKILL.md`, `scripts/`, `references/` to `<target>/.agents/skills/spec-to-code/` (preserve existing project policy and source structure). See [docs/INSTALL.md](docs/INSTALL.md).
+Copy `SKILL.md`, `.config/`, `scripts/`, `references/` to `<target>/.agents/skills/spec-to-code/` (preserve existing project policy and source structure). See [docs/INSTALL.md](docs/INSTALL.md).
 
 ```sh
 python .agents/skills/spec-to-code/scripts/session_guard.py --root . start

@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "paths": {
+    "policy": ".agents/state/context-policy.json",
+    "pack": ".agents/state/context-pack.json",
+    "session": ".agents/state/session.json",
+    "graph": ".agents/state/system-graph.json",
+    "symbols": ".agents/state/symbol-cache.json",
+    "docs": ".agents/state/architecture-docs.json"
+  },
+  "modes": [
+    "minimal",
+    "balanced",
+    "deep"
+  ],
+  "default_policy": {
+    "schema_version": 1,
+    "default_mode": "balanced",
+    "budgets": {
+      "minimal": 500,
+      "balanced": 1300,
+      "deep": 3300
+    },
+    "max_source_paths": {
+      "minimal": 3,
+      "balanced": 8,
+      "deep": 16
+    },
+    "max_function_docs": {
+      "minimal": 2,
+      "balanced": 5,
+      "deep": 12
+    },
+    "max_neighbor_hops": {
+      "minimal": 0,
+      "balanced": 1,
+      "deep": 2
+    },
+    "high_risk_patterns": [
+      "auth",
+      "authorization",
+      "identity",
+      "permission",
+      "role",
+      "csrf",
+      "login",
+      "register",
+      "signup",
+      "credential",
+      "otp",
+      "jwt",
+      "cookie",
+      "password",
+      "encrypt",
+      "decrypt",
+      "kms",
+      "pii",
+      "medical",
+      "health",
+      "payment",
+      "billing",
+      "financial",
+      "transaction",
+      "migration",
+      "schema",
+      "sql injection",
+      "sqli",
+      "concurrency",
+      "data loss",
+      "destructive",
+      "backup",
+      "secret",
+      "production"
+    ],
+    "low_risk_patterns": [
+      "documentation",
+      "readme",
+      "typo",
+      "copy",
+      "label",
+      "text",
+      "comment",
+      "css",
+      "style",
+      "format",
+      "translation"
+    ]
+  },
+  "task_stopwords": [
+    "apply",
+    "backend",
+    "change",
+    "component",
+    "controller",
+    "create",
+    "current",
+    "existing",
+    "feature",
+    "fixing",
+    "from",
+    "frontend",
+    "function",
+    "implement",
+    "issue",
+    "method",
+    "please",
+    "record",
+    "review",
+    "should",
+    "spec2code",
+    "system",
+    "update",
+    "using",
+    "will",
+    "with"
+  ]
+}

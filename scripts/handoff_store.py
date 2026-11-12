@@ -15,18 +15,21 @@ from contextlib import contextmanager
 import scan_infrastructure as infra
 import path_guard as guard
 import scope_io
+import config_loader
 
-HANDOFF_DIR=Path('.handoffs')
-DETAIL_DIR=HANDOFF_DIR/'.details'  # Owner typo `.detials` normalized.
-BUILDNOTES=HANDOFF_DIR/'.buildnotes.handoff.md'
-LOCK=HANDOFF_DIR/'.merge.lock'
-SESSION_RE=re.compile(r'^S2C-\d{8}-\d{6}-[0-9A-F]{8}$')
-EVENT_TYPES={'visualChange','specChange'}
-MARKER_RE=re.compile(r'^<!-- SPEC2CODE-MERGED session=(S2C-\d{8}-\d{6}-[0-9A-F]{8}) type=(visualChange|specChange) sha256=([0-9a-f]{64}) -->$',re.M)
-HEAD='<!-- spec2code:managed-handoff v1 -->'
-LEDGER='<!-- SPEC2CODE-HANDOFF-LEDGER -->'
-MAX_BYTES=1024*1024
-MAX_LEDGER=24*1024*1024
+HANDOFF_CONFIG = config_loader.load('handoff')
+HANDOFF_DIR = Path(HANDOFF_CONFIG['paths']['directory'])
+DETAIL_DIR = Path(HANDOFF_CONFIG['paths']['details'])
+BUILDNOTES = Path(HANDOFF_CONFIG['paths']['buildnotes'])
+LOCK = Path(HANDOFF_CONFIG['paths']['lock'])
+# Session-ID and ledger marker format are protocol invariants, not editable policy.
+SESSION_RE = re.compile(r'^S2C-\d{8}-\d{6}-[0-9A-F]{8}$')
+EVENT_TYPES = set(HANDOFF_CONFIG['event_types'])
+MARKER_RE = re.compile(r'^<!-- SPEC2CODE-MERGED session=(S2C-\d{8}-\d{6}-[0-9A-F]{8}) type=(visualChange|specChange) sha256=([0-9a-f]{64}) -->$', re.M)
+HEAD = HANDOFF_CONFIG['managed_marker']
+LEDGER = HANDOFF_CONFIG['ledger_marker']
+MAX_BYTES = HANDOFF_CONFIG['limits']['pending_bytes']
+MAX_LEDGER = HANDOFF_CONFIG['limits']['ledger_bytes']
 
 
 def validate_session(sid: str) -> None:

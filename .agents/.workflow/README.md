@@ -20,3 +20,11 @@ All test claims must distinguish PASS, FAIL, SKIPPED, BLOCKED and NOT RUN.
 5. HANDOFF_REVIEW: finish exact session, preserve human and machine records, request independent review.
 
 Workflow Guard evaluates requirements and records user-authorized transitions. It does **not** execute Git, tests or code changes. NEEDS_REVIEW is not PASS.
+
+## PLAN-080.1 scope binding and review boundary
+
+- Run `policy_resolver.py` for the actual task ID, description, affected paths and operation. Treat `READY` as discovered policy references only.
+- Run `context_router.py` with identical task ID, description and paths. `NEEDS_REVIEW` is non-ready; required-policy conflicts block pack publication.
+- Run `workflow_guard.py begin/evaluate/advance` with identical `--task` and `--paths`. A different description or path set cannot reuse recorded workflow state.
+- Root and nested AGENTS, scoped policy documents, host policy map and context-pack fingerprints are snapshot inputs. Change invalidation requires explicit reconciliation.
+- Workflow Guard never approves a human gate, executes tests, modifies source, pushes Git or certifies Windows TOCTOU resistance. Review requires an independently trusted host decision; CLI stage commands alone cannot self-authorize.

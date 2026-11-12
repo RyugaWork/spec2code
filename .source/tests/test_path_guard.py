@@ -66,7 +66,7 @@ class RepositoryBoundaryTests(unittest.TestCase):
                 self.assertNotEqual(out.returncode, 0, (out.stdout, out.stderr))
                 self.assertIn('PATH_GUARD_BLOCKED', out.stderr)
         self.assertFalse((self.outside / '.agents').exists())
-        self.assertFalse((self.outside / '.handoffs').exists())
+        self.assertFalse((self.outside / '.agents/.handoffs').exists())
         self.assertEqual((self.outside / 'keep.txt').read_text(), 'DO-NOT-TOUCH')
 
     def test_nested_git_directory_rejected_for_status_and_scan(self):
@@ -94,12 +94,12 @@ class RepositoryBoundaryTests(unittest.TestCase):
         self.assertFalse((self.outside / 'session.json').exists())
 
     def test_symlinked_buildnotes_and_layer_refused_even_on_status(self):
-        for link in ('.handoffs/.buildnotes.handoff.md', 'Present'):
+        for link in ('.agents/.handoffs/.buildnotes.handoff.md', 's2c'):
             with self.subTest(link=link):
                 p = self.repo / link
                 p.parent.mkdir(exist_ok=True, parents=True)
                 try:
-                    p.symlink_to(self.outside, target_is_directory=(link == 'Present'))
+                    p.symlink_to(self.outside, target_is_directory=(link == 's2c'))
                 except (OSError, NotImplementedError):
                     self.skipTest('Filesystem does not support symlinks')
                 out = self.cli('session_guard.py', self.repo, 'status')

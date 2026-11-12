@@ -36,8 +36,8 @@ class AdaptiveModeTests(unittest.TestCase):
         self.write_json('.agents/state/system-graph.json', {'nodes':[{'id':i} for i in ['presentation','api','application','security','quality']],
            'edges':[{'from':'presentation','to':'api'},{'from':'api','to':'application'},{'from':'api','to':'security'}, {'from':'quality','to':'api'}]})
         self.write_json('.agents/state/symbol-cache.json', {self.paths[0]:{'functions':[{'name':'Status','line':1}]}, self.paths[1]:{'functions':[{'name':'Login','line':1}]},self.paths[2]:{'functions':[{'name':'GetMember','line':1}]}})
-        self.write_json('.agents/state/architecture-docs.json',{'functions':{f'{self.paths[0]}#Status:1':{'document':'Present/Status/.Status.Status.md'}}})
-        for p in ['.summerize.md','Present/.summerize.md','Present/Status/.Status.Status.md','Present/Status/.summerize.md','API/.summerize.md','Application/.summerize.md','Security/.summerize.md']:
+        self.write_json('.agents/state/architecture-docs.json',{'functions':{f'{self.paths[0]}#Status:1':{'document':'s2c/Present/Status/.Status.Status.md'}}})
+        for p in ['s2c/.summerize.md','s2c/Present/.summerize.md','s2c/Present/Status/.Status.Status.md','s2c/Present/Status/.summerize.md','s2c/API/.summerize.md','s2c/Application/.summerize.md','s2c/Security/.summerize.md']:
             t=self.root/p
             t.parent.mkdir(parents=True,exist_ok=True)
             t.write_text('short layer index\n')
@@ -58,10 +58,18 @@ class AdaptiveModeTests(unittest.TestCase):
     def test_auto_minimal_and_preserve_existing_layout(self):
         pack=router.route(self.root,'TASK-1','Change Status page label',[self.paths[0]],'Status','auto',0)
         self.assertEqual(pack['effective_mode'],'minimal')
-        self.assertIn('Present/.summerize.md',pack['layer_summary_paths'])
-        self.assertIn('Present/Status/.Status.Status.md',pack['function_document_paths'])
+        self.assertIn('s2c/Present/.summerize.md',pack['layer_summary_paths'])
+        self.assertIn('s2c/Present/Status/.Status.Status.md',pack['function_document_paths'])
         self.assertNotIn('NEVER_SEND_SOURCE_BYTES_TO_CONTEXT_PACK',(self.root/router.PACK).read_text())
-        self.assertFalse((self.root/'.handoffs').exists())
+        self.assertFalse((self.root/'.agents/.handoffs').exists())
+
+    def test_cache_doc_in_root_layer_blocked(self):
+        state = json.loads((self.root / '.agents/state/architecture-docs.json').read_text())
+        first = next(iter(state['functions'].values()))
+        first['document'] = 'Present/Status/.Status.Status.md'
+        self.write_json('.agents/state/architecture-docs.json', state)
+        with self.assertRaisesRegex(RuntimeError, 'ARCH_DOC_SCOPE_BLOCKED'):
+            router.route(self.root, 'TASK-STALE', 'Review old document', [self.paths[0]], '', 'balanced', 0)
 
     def test_high_risk_requires_deep_even_manual_minimal(self):
         pack=router.route(self.root,'TASK-2','Change login authentication',[self.paths[1]],'Login','minimal',0)

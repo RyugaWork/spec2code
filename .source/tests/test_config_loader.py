@@ -50,6 +50,24 @@ class ConfigLoaderTests(TestCase):
         with self.assertRaisesRegex(RuntimeError,'CONFIG_INVALID'):
             config_loader._validate('architecture', policy)
 
+    def test_target_handoff_layout_cannot_escape_reserved_folder(self):
+        policy=deepcopy(config_loader.load('handoff'))
+        policy['paths']['buildnotes']='.handoffs/.buildnotes.handoff.md'
+        with self.assertRaisesRegex(RuntimeError,'CONFIG_INVALID'):
+            config_loader._validate('handoff',policy)
+
+    def test_target_architecture_root_cannot_retarget_source(self):
+        policy=deepcopy(config_loader.load('architecture'))
+        policy['output_root']='src'
+        with self.assertRaisesRegex(RuntimeError,'CONFIG_INVALID'):
+            config_loader._validate('architecture',policy)
+
+    def test_reserved_s2c_directory_not_scannable(self):
+        policy=deepcopy(config_loader.load('scanner'))
+        policy['source_roots'].append('s2c')
+        with self.assertRaisesRegex(RuntimeError,'CONFIG_INVALID'):
+            config_loader._validate('scanner',policy)
+
     def test_speckit_implementation_gate_cannot_be_disabled(self):
         policy=deepcopy(config_loader.load('speckit'))
         policy['stage_prerequisites']['implement'].remove('tasks.md')

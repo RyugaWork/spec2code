@@ -101,7 +101,7 @@ class ContinuousScopeTests(unittest.TestCase):
             self.assertTrue(scope_io._supports_anchoring())
 
     def test_verified_unlink_exact_hash_only(self):
-        target = self.root / '.handoffs/.details/pending.md'
+        target = self.root / '.agents/.handoffs/.details/pending.md'
         scope_io.atomic_text(self.root, target, 'session-log')
         with self.assertRaisesRegex(RuntimeError, 'SCOPE_VIOLATION'):
             scope_io.unlink_verified(self.root, target, '0' * 64)

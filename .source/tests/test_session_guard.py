@@ -57,8 +57,8 @@ class SessionGuardTests(unittest.TestCase):
         first = self.call('start')
         self.assertIn('SESSION_START', first.stdout)
         self.assertIn('BASELINE', first.stdout)
-        self.assertFalse((self.root / '.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
-        self.assertFalse((self.root / '.handoffs/.details' / f'.specChange.{self.state()["id"]}.md').exists())
+        self.assertFalse((self.root / '.agents/.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
+        self.assertFalse((self.root / '.agents/.handoffs/.details' / f'.specChange.{self.state()["id"]}.md').exists())
         summary = (self.root / '.agents/state/layerSummary.md').read_text()
         self.assertIn('scaffold_only', summary)
         self.assertIn('api', summary)
@@ -79,12 +79,12 @@ class SessionGuardTests(unittest.TestCase):
         self.git('commit', '-qm', 'feat(api): add member endpoint')
         second = self.call('start')
         self.assertIn('OUT_OF_SESSION_CHANGE', second.stdout)
-        visual = (self.root / '.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').read_text()
+        visual = (self.root / '.agents/.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').read_text()
         self.assertIn('OUT_OF_SESSION', visual)
         self.assertIn('MemberController.cs', visual)
         self.assertIn('external_commits=1', second.stdout)
         self.assertIn('.source/backend/Sample.Api/Controllers/MemberController.cs', self.state()['startup_external_paths'])
-        self.assertFalse((self.root / '.handoffs/.details' / f'.specChange.{self.state()["id"]}.md').exists())
+        self.assertFalse((self.root / '.agents/.handoffs/.details' / f'.specChange.{self.state()["id"]}.md').exists())
         matrix = (self.root / '.agents/state/impactMatrix.md').read_text()
         self.assertIn('| api |', matrix)
 
@@ -93,12 +93,12 @@ class SessionGuardTests(unittest.TestCase):
         self.write('.source/backend/Sample.Api/Program.cs', 'app.MapControllers();\napp.UseAuthorization();\n')
         self.call('record', '--paths', '.source/backend/Sample.Api/Program.cs',
                   '--note', 'Apply approved auth middleware', '--requirement', 'S2C-SEC-02')
-        self.assertFalse((self.root / '.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
-        self.assertIn('S2C-SEC-02', (self.root / '.handoffs/.details' / f'.specChange.{self.state()["id"]}.md').read_text())
+        self.assertFalse((self.root / '.agents/.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
+        self.assertIn('S2C-SEC-02', (self.root / '.agents/.handoffs/.details' / f'.specChange.{self.state()["id"]}.md').read_text())
         self.call('finish')
         self.assertEqual(self.state()['record_count'], 1)
         self.assertIn('NO_CHANGE', self.call('start').stdout)
-        self.assertFalse((self.root / '.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
+        self.assertFalse((self.root / '.agents/.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
 
     def test_unattributed_change_blocks_finish(self):
         self.call('start')
@@ -126,7 +126,7 @@ class SessionGuardTests(unittest.TestCase):
         self.git('commit', '-qm', 'chore: add compose without session trailer')
         result = self.call('checkpoint')
         self.assertIn('external_commits=1', result.stdout)
-        self.assertIn('EXTERNAL_COMMIT_DURING_SESSION', (self.root / '.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').read_text())
+        self.assertIn('EXTERNAL_COMMIT_DURING_SESSION', (self.root / '.agents/.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').read_text())
         self.call('finish')
 
     def test_internal_commits_using_trailer(self):
@@ -138,7 +138,7 @@ class SessionGuardTests(unittest.TestCase):
         self.git('commit', '-qm', f'feat(api): update entrypoint\n\nSpec2Code-Session: {sid}')
         self.call('record', '--paths', p, '--note', 'Entry point update')
         self.call('finish')
-        self.assertFalse((self.root / '.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
+        self.assertFalse((self.root / '.agents/.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
 
     def test_observed_project_reference_upgrades_graph_evidence(self):
         self.write('.source/backend/Sample.Business/Sample.Business.csproj', '<Project />')

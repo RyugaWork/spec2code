@@ -20,6 +20,14 @@ class InventorySafetyTests(unittest.TestCase):
         self.assertTrue(infra.metadata_only('appsettings.json'))
         self.assertTrue(infra.metadata_only('appsettings.Production.json'))
 
+    def test_generated_architecture_markdown_is_not_source(self):
+        # Windows treats generated 'API' and scanned 'api' as the same directory.
+        self.assertFalse(infra.tracked_candidate(Path('api/.summerize.md')))
+        self.assertFalse(infra.tracked_candidate(Path('api/Controller/.Controller.Get.md')))
+        self.assertTrue(infra.tracked_candidate(Path('api/Controller.cs')))
+        self.assertTrue(infra.tracked_candidate(Path('api/README.md')))
+        self.assertTrue(infra.tracked_candidate(Path('.source/backend/Program.cs')))
+
     def test_direct_cli_cannot_persist_and_does_not_log_visual(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

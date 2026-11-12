@@ -86,7 +86,7 @@ class SpecKitBridgeTests(unittest.TestCase):
                               '--root', str(self.root), 'start'], capture_output=True, text=True,
                              timeout=30)
         self.assertEqual(out.returncode, 0, out.stderr)
-        self.assertTrue((self.root / 'Application/service/.service.calculate.md').exists())
+        self.assertTrue((self.root / 's2c/Application/service/.service.calculate.md').exists())
         self.assertTrue((self.root / 's2c/.summerize.md').exists())
 
     def test_router_includes_spec_kit_artifacts(self):

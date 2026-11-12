@@ -63,7 +63,7 @@ class HandoffTreeTests(unittest.TestCase):
         self.call('record','--paths',p,'--note','Implement approved view','--requirement','G-1')
         self.assertTrue(self.pending('specChange').exists())
         self.assertFalse(self.pending('visualChange').exists())
-        function_doc = self.root / 'Present/MemberPage/.MemberPage.MemberPage.md'
+        function_doc = self.root / 's2c/Present/MemberPage/.MemberPage.MemberPage.md'
         self.assertIn('Implement approved view', function_doc.read_text())
         self.assertIn(sid, function_doc.read_text())
         self.call('merge','--session-id',sid,success=False)

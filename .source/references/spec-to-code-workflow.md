@@ -17,7 +17,7 @@ This reference describes the optional workflow when Spec Kit is **actually initi
 ## Context economy
 
 - Snapshot and Git diff are computed locally; do not send `infrastructure.json` or entire git logs into prompt.
-- Read only `.summerize.md` → relevant layer → component → function; follow observed edges and bounded heuristics.
+- Read only `s2c/.summerize.md` → relevant layer → component → function; follow observed edges and bounded heuristics.
 - Spec Kit artifacts are pointed to by `spec_kit.feature_id`, `artifacts.<name>.path` and `sha256`; load only relevant sections for the task.
 - If the feature pointer changes mid-session, re-run bridge and context route; don't silently use a stale context pack.
 - Token budgets are targets; required security and requirements evidence must not be truncated to satisfy a budget.

@@ -19,7 +19,7 @@ Use as a review checklist; report `PASS`, `FAIL`, `BLOCKED`, or `NOT RUN` with e
 - [ ] PII protected, errors/logs do not leak secrets, auth tokens not stored in browser localStorage.
 - [ ] Caches are isolated by actor/permission and invalidated appropriately.
 - [ ] Existing integrations/contracts preserved or compatibility change explicitly approved.
-- [ ] Each authored change registered in `.handoffs/.details/.specChange.{SessionID}.md` using `record` with current session and requirement ID; outside-session change goes only to `.handoffs/.details/.visualChange.{SessionID}.md`.
+- [ ] Each authored change registered in `.agents/.handoffs/.details/.specChange.{SessionID}.md` using `record` with current session and requirement ID; outside-session change goes only to `.agents/.handoffs/.details/.visualChange.{SessionID}.md`.
 
 ## Before claiming done
 - [ ] Each AC maps to code paths and a real test/check result.

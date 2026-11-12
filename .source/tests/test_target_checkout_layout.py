@@ -84,6 +84,36 @@ class TargetCheckoutLayoutTests(unittest.TestCase):
         self.assertEqual(json.loads(legacy.read_text())['generated_paths'], ['API/.summerize.md'])
         self.assertFalse((self.root/'s2c/.summerize.md').exists())
 
+    def test_installed_bundle_style_governance_workflow_smoke(self):
+        """Exercise actual CLI entrypoints on a disposable host checkout."""
+        self.assertEqual(self.run_cli('start').returncode, 0)
+        task = 'Update example function'
+        route = subprocess.run([
+            sys.executable, str(SCRIPTS / 'context_router.py'), '--root',
+            str(self.root), '--task-id', 'T001', '--task', task,
+            '--paths', 'src/example.py', '--speckit-stage', 'status'],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(route.returncode, 0, route.stderr)
+        pack = json.loads((self.root / '.agents/state/context-pack.json').read_text())
+        self.assertIn('governance', pack)
+        self.assertIn('status', pack['governance'])
+        common = ['--root', str(self.root), 'begin', '--task-id', 'T001',
+                  '--task', task, '--paths', 'src/example.py']
+        begin = subprocess.run([sys.executable, str(SCRIPTS / 'workflow_guard.py'), *common],
+                               capture_output=True, text=True, timeout=60)
+        self.assertEqual(begin.returncode, 0, begin.stderr)
+        initial = json.loads(begin.stdout)
+        self.assertFalse(initial['release_authorized'])
+        status = subprocess.run([
+            sys.executable, str(SCRIPTS / 'workflow_guard.py'), '--root',
+            str(self.root), 'evaluate', '--task-id', 'T001',
+            '--phase', 'DISCOVER', '--task', task, '--paths', 'src/example.py'],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(status.returncode, 0, status.stderr)
+        report = json.loads(status.stdout)
+        self.assertEqual(report['gate_status'], 'READY')
+        self.assertFalse(report['can_grant_permissions'])
+
 
 if __name__ == '__main__':
     unittest.main()

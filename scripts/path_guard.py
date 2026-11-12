@@ -48,7 +48,7 @@ def check_path(root: Path, value: str | Path) -> Path:
         dest = dest / part
         if dest.is_symlink():
             raise RuntimeError('PATH_GUARD_BLOCKED: symlink in repository path')
-    if not dest.resolve(strict=False).is_relative_to(root):
+    if not dest.resolve(strict=False).is_relative_to(root.resolve()):
         raise RuntimeError('PATH_GUARD_BLOCKED: resolved path outside repository')
     return dest
 
@@ -58,10 +58,18 @@ def git_env() -> dict[str, str]:
     return {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
 
 
+def _has_reparse_ancestor(path: Path) -> bool:
+    """Detect actual links/junctions without mistaking Windows 8.3 names for links."""
+    for part in (path, *path.parents):
+        if part.is_symlink() or (hasattr(part, 'is_junction') and part.is_junction()):
+            return True
+    return False
+
+
 def validate_root(root_input: str | Path) -> Path:
     """Require exactly the top-level directory of a non-bare Git worktree."""
     raw = Path(os.path.abspath(os.fspath(root_input)))
-    if raw != raw.resolve() or not raw.is_dir():
+    if not raw.is_dir() or _has_reparse_ancestor(raw):
         raise RuntimeError('PATH_GUARD_BLOCKED: missing or symlinked repository root')
     # When the skill is installed in the conventional target-project layout,
     # bind its executable module to that same checkout. This prevents an
@@ -71,7 +79,7 @@ def validate_root(root_input: str | Path) -> Path:
     if marker in (('.agents', 'skills', 'spec-to-code', 'scripts', 'path_guard.py'),
                   ('.agents', '.skills', 'spec-to-code', 'scripts', 'path_guard.py')):
         installed_root = module.parents[4]
-        if installed_root != raw or module.resolve() != module:
+        if installed_root.resolve() != raw.resolve() or _has_reparse_ancestor(module):
             raise RuntimeError('PATH_GUARD_BLOCKED: installed skill belongs to a different checkout')
     # Ignore caller Git directory overrides: Git must discover this worktree itself.
     env = git_env()
@@ -83,7 +91,7 @@ def validate_root(root_input: str | Path) -> Path:
         raise RuntimeError('PATH_GUARD_BLOCKED: Git root verification unavailable') from exc
     values = p.stdout.splitlines()
     if (p.returncode != 0 or len(values) != 3 or values[1:] != ['true', 'false']
-            or Path(values[0]).resolve() != raw):
+            or Path(values[0]).resolve() != raw.resolve()):
         raise RuntimeError('PATH_GUARD_BLOCKED: require exact non-bare Git worktree root')
     for relative in MANAGED_PATHS:
         check_path(raw, relative)

@@ -1,4 +1,4 @@
-# Install Spec2Code v0.6.4 in any Git project
+# Install Spec2Code v0.7.0 in any Git project
 
 This is a **portable skill + local Python core**, not an installer that can rewrite projects without review.
 
@@ -7,11 +7,14 @@ This is a **portable skill + local Python core**, not an installer that can rewr
 - Python 3.10+ for core scripts; local Git.
 - Optional: official GitHub Spec Kit's `specify-cli` (currently Python 3.11+), installed separately. See `integrations/speckit/README.md`.
 - An exact, non-bare Git worktree root. Spec2Code v0.6.2 rejects non-repo roots, nested working directories, root aliases and symlinked runtime paths. See [Path Guard](PATH_GUARD.md).
-- A clean or reviewable working tree. Check for existing `.agents/skills/spec-to-code`, `.agents/state` and `.handoffs` before installing. Never overwrite an ACTIVE session.
+- A clean or reviewable working tree. Check for existing `.agents/skills/spec-to-code`, `.agents/state` and `.agents/.handoffs` before installing. Never overwrite an ACTIVE session.
 
 ## Install
 
-Copy the top-level `SKILL.md`, **`.config/`**, `scripts/`, and `references/` folders from this repository into **one** target location:
+**Important:** `.source/` is a development-repository directory only. Copy its *contents* (not the `.source` directory itself) to the target skill folder. Preserve its hidden `.config/` folder. This is a manual, reviewable installation; do not overwrite target-owned state or an ACTIVE prior-version skill.
+
+
+Copy `.source/SKILL.md`, **`.source/.config/`**, `.source/scripts/`, and `.source/references/` from the development repository into **one** target location:
 
 ```text
 <target>/.agents/skills/spec-to-code/SKILL.md
@@ -36,15 +39,15 @@ Replace `src/feature.py` with an existing path, and select `--speckit-stage stat
 ## Data ownership and migration
 
 - `.specify/` and `specs/` are owned by official Spec Kit; the bridge **never writes** these files.
-- `.agents/state/`, `.summerize.md`, generated layer docs and `.handoffs/` are owned by the target checkout's Spec2Code runtime, not by the portable skill repository.
+- `.agents/state/`, `s2c/.summerize.md`, generated `s2c/` layer docs and `.agents/.handoffs/` are owned by the target checkout's Spec2Code runtime, not by the portable skill repository.
 - Do not switch versions over a live older session. Finish and merge it using the old matching version, back up generated state, and rebaseline before adopting new session formats/managed markers. No wildcard cleanup.
-- Existing hand-written `.summerize.md` and layer docs are not silently overwritten; collisions block rather than destroy data.
+- Existing hand-written `s2c/.summerize.md`, legacy root `.summerize.md` and layer docs are not silently overwritten; collisions block rather than destroy data.
 - Core has no MCP endpoint, arbitrary shell tool, GitHub remote fetch, automatic push or Spec Kit stage executor.
 
 ## Test
 
 ```sh
-python -m unittest discover -s tests -v
+python -m unittest discover -s .source/tests -v
 ```
 
 Regression tests use disposable local repositories. The target project's own build and acceptance tests remain mandatory before code changes are reported as verified.
@@ -56,3 +59,7 @@ From v0.6.3 onward, an ACTIVE session is tied to the exact physical Git worktree
 ## Configuration
 
 See [Configuration](CONFIGURATION.md). The bundled `.config/*.json` belongs **inside** `.agents/skills/spec-to-code/` in each target repository. Do not confuse it with target runtime overrides at `.agents/state/context-policy.json`. Runtime security authority and MCP write privileges cannot be granted by editing JSON.
+
+## v0.7.0 target output migration (review required)
+
+A fresh checkout receives generated architecture documents under `s2c/` and exact-session handoffs under `.agents/.handoffs/`. Existing `.handoffs/` evidence and root-level generated architecture docs **are not automatically migrated or deleted**. Finish/merge ACTIVE older sessions using their matching version, preserve exact bytes and hashes, and approve a manual migration plan before starting the new version. If the host already owns files in `s2c/`, the runtime refuses to overwrite them. The application's own source directories do not move.

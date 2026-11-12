@@ -1,4 +1,4 @@
-# Spec2Code v0.6.1 — Universal layout and Spec Kit integration
+# Spec2Code v0.7.0 — Universal layout and Spec Kit integration
 
 ## Ownership boundaries
 
@@ -8,10 +8,12 @@
 | `.specify/`, `specs/` | Official GitHub Spec Kit process | Constitution, selected feature, approved specs, plans and tasks |
 | `.agents/skills/spec-to-code/` | Spec2Code installer / human reviewer | Portable skill, scripts and references |
 | `.agents/state/` | Local Spec2Code scripts | Git snapshot, graph, adaptive mode, active session and context pack |
-| `.summerize.md` and `<Layer>/**` | Local architecture index writer | Lightweight layer/component/function routing docs |
-| `.handoffs/.details/` | Active session writer | Pending visualChange/specChange journals |
-| `.handoffs/.buildnotes.handoff.md` | Safe exact-session merge | Indexed archived changes |
+| `s2c/.summerize.md` and `s2c/<Layer>/**` | Local architecture index writer | Lightweight layer/component/function routing docs |
+| `.agents/.handoffs/.details/` | Active session writer | Pending visualChange/specChange journals |
+| `.agents/.handoffs/.buildnotes.handoff.md` | Safe exact-session merge | Indexed archived changes |
 | `src/`, `app/`, `.source/`, etc. | Host application development | Implementation, tests and configuration |
+
+**Legacy safety:** old `.handoffs/`, root `.summerize.md` and root layer docs are not auto-moved or deleted. Existing active sessions require their old installed version before migration; retain byte-for-byte backups and explicit approval.
 
 ## Token-aware flow
 

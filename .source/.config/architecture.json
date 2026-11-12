@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "layer_directories": {
+    "governance": "Governance",
+    "presentation": "Present",
+    "api": "API",
+    "application": "Application",
+    "data": "DataAccess",
+    "persistence": "Persistence",
+    "security": "Security",
+    "integrations": "Integrations",
+    "delivery": "Delivery",
+    "quality": "Quality"
+  },
+  "summary_name": ".summerize.md",
+  "paths": {
+    "state_file": ".agents/state/architecture-docs.json",
+    "symbol_cache": ".agents/state/symbol-cache.json"
+  },
+  "limits": {
+    "components": 300,
+    "functions": 1200,
+    "source_bytes": 262144,
+    "visible_components": 16,
+    "visible_functions": 18
+  },
+  "managed_marker": "<!-- spec2code:managed-architecture v1 -->",
+  "classification": {
+    "governance_exact": [
+      "agents.md",
+      "readme.md",
+      "pyproject.toml"
+    ],
+    "governance_prefixes": [
+      ".agents/.documents/",
+      "specs/"
+    ],
+    "quality_prefixes": [
+      "tests/",
+      "test/"
+    ],
+    "quality_contains": [
+      "/tests/"
+    ],
+    "quality_name_prefixes": [
+      "test_"
+    ],
+    "quality_name_suffixes": [
+      ".test.ts",
+      ".spec.ts",
+      "test.java"
+    ],
+    "delivery_prefixes": [
+      ".github/"
+    ],
+    "delivery_name_contains": [
+      "compose"
+    ],
+    "delivery_names": [
+      "dockerfile"
+    ],
+    "delivery_suffixes": [
+      ".tf",
+      ".tfvars"
+    ],
+    "security_contains": [
+      "/security/",
+      "/identity/",
+      "/authentication/",
+      "/auth/"
+    ],
+    "persistence_contains": [
+      "/migrations/",
+      "/database/",
+      "/persistence/"
+    ],
+    "persistence_suffixes": [
+      ".sql"
+    ],
+    "data_contains": [
+      "/repository/",
+      "/repositories/",
+      "/dataaccess/",
+      "/data/",
+      "/dao/"
+    ],
+    "data_regexes": [
+      "/[^/]+\\.dataaccess/"
+    ],
+    "integrations_contains": [
+      "/integrations/",
+      "/infrastructure/",
+      "/adapters/",
+      "/external/"
+    ],
+    "integrations_regexes": [
+      "/[^/]+\\.infrastructure/"
+    ],
+    "api_contains": [
+      "/controllers/",
+      "/routes/",
+      "/endpoints/"
+    ],
+    "api_name_suffixes": [
+      "controller.cs"
+    ],
+    "api_regexes": [
+      "/(?:[^/]+\\.)?api/"
+    ],
+    "api_presentation_prefixes": [
+      "web/",
+      "frontend/",
+      "client/",
+      ".source/web/"
+    ],
+    "presentation_prefixes": [
+      "web/",
+      "frontend/",
+      "client/",
+      ".source/web/",
+      ".source/frontend/"
+    ],
+    "api_top_prefixes": [
+      "api/",
+      ".source/backend/"
+    ],
+    "api_top_contains": [
+      "/api/"
+    ],
+    "api_top_names": [
+      "program.cs",
+      "startup.cs"
+    ],
+    "presentation_code_prefixes": [
+      "app/",
+      "src/"
+    ],
+    "presentation_extensions": [
+      ".tsx",
+      ".jsx",
+      ".vue",
+      ".svelte",
+      ".css",
+      ".scss"
+    ],
+    "application_contains": [
+      "/services/",
+      "/domain/",
+      "/business/",
+      "/usecases/"
+    ],
+    "governance_late_prefixes": [
+      ".agents/",
+      ".specify/"
+    ],
+    "application_prefixes": [
+      "backend/",
+      "server/",
+      "api/",
+      ".source/backend/",
+      "src/",
+      "app/",
+      "lib/",
+      "core/",
+      "services/"
+    ],
+    "governance_suffixes": [
+      ".md"
+    ]
+  },
+  "component_rules": {
+    "api_controller_suffixes": [
+      "Controller.cs"
+    ],
+    "api_extensions": [
+      ".py",
+      ".go",
+      ".java",
+      ".ts",
+      ".js"
+    ],
+    "presentation_extensions": [
+      ".tsx",
+      ".jsx",
+      ".ts",
+      ".js",
+      ".vue",
+      ".svelte",
+      ".py"
+    ],
+    "implementation_layers": [
+      "application",
+      "data",
+      "persistence",
+      "security",
+      "integrations"
+    ],
+    "implementation_extensions": [
+      ".cs",
+      ".py",
+      ".go",
+      ".rs",
+      ".java",
+      ".kt",
+      ".rb",
+      ".php"
+    ],
+    "generated_code_suffixes": [
+      ".g.cs",
+      ".Designer.cs"
+    ],
+    "quality_extensions": [
+      ".cs",
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx",
+      ".py",
+      ".go",
+      ".java"
+    ],
+    "documentation_layers": [
+      "delivery",
+      "governance"
+    ],
+    "documentation_extensions": [
+      ".md",
+      ".json",
+      ".yml",
+      ".yaml"
+    ],
+    "documentation_names": [
+      "AGENTS.md",
+      "README.md",
+      "Dockerfile"
+    ],
+    "exclude_prefixes": [
+      "specs/"
+    ],
+    "presentation_route_names": [
+      "page",
+      "layout",
+      "index",
+      "route"
+    ],
+    "presentation_generic_parents": [
+      "src",
+      "app",
+      "pages"
+    ]
+  },
+  "output_root": "s2c"
+}

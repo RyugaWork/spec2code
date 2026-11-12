@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "paths": {
+    "directory": ".agents/.handoffs",
+    "details": ".agents/.handoffs/.details",
+    "buildnotes": ".agents/.handoffs/.buildnotes.handoff.md",
+    "lock": ".agents/.handoffs/.merge.lock"
+  },
+  "event_types": [
+    "visualChange",
+    "specChange"
+  ],
+  "managed_marker": "<!-- spec2code:managed-handoff v1 -->",
+  "ledger_marker": "<!-- SPEC2CODE-HANDOFF-LEDGER -->",
+  "limits": {
+    "pending_bytes": 1048576,
+    "ledger_bytes": 25165824
+  }
+}

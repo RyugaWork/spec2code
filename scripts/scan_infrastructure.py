@@ -149,7 +149,7 @@ def sha256_file(path: Path) -> str:
 
 
 def describe_file(root: Path, rel: Path, old: dict | None, verify: bool) -> dict:
-    p = root / rel
+    p = guard.check_path(root, rel)
     st = p.stat()
     out = {'size': st.st_size, 'mtime_ns': st.st_mtime_ns}
     if metadata_only(p.name):
@@ -221,6 +221,7 @@ def extract_facts(root: Path, files: dict, old: dict | None) -> dict:
                'MapControllers', 'AddControllers', 'MapGroup',
                'UseRateLimiter', 'AddRateLimiter')
     for path, details in files.items():
+        guard.check_path(root, path)  # Never trust cached or caller-provided path keys.
         name = Path(path).name
         if not (name in {'package.json', 'Program.cs', 'Startup.cs'}
                 or name.endswith('.csproj')

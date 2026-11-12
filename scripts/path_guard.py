@@ -13,7 +13,13 @@ import subprocess
 
 # These runtime-owned locations must not be symlinks, including symlinked parents.
 MANAGED_PATHS = (
-    '.agents', '.agents/state', '.agents/state/infrastructure.json',
+    '.agents', '.agents/skills', '.agents/skills/spec-to-code',
+    '.agents/skills/spec-to-code/scripts',
+    '.agents/skills/spec-to-code/scripts/path_guard.py',
+    '.agents/.skills', '.agents/.skills/spec-to-code',
+    '.agents/.skills/spec-to-code/scripts',
+    '.agents/.skills/spec-to-code/scripts/path_guard.py',
+    '.agents/state', '.agents/state/infrastructure.json',
     '.agents/state/infrastructure-index.md', '.agents/state/session.json',
     '.agents/state/sessions.jsonl', '.agents/state/system-graph.json',
     '.agents/state/context-pack.json', '.agents/state/context-policy.json',
@@ -69,6 +75,16 @@ def validate_root(root_input: str | Path) -> Path:
     raw = Path(os.path.abspath(os.fspath(root_input)))
     if raw != raw.resolve() or not raw.is_dir():
         raise RuntimeError('PATH_GUARD_BLOCKED: missing or symlinked repository root')
+    # When the skill is installed in the conventional target-project layout,
+    # bind its executable module to that same checkout. This prevents an
+    # installed skill from being aimed at another *valid* Git repository.
+    module = Path(os.path.abspath(__file__))
+    marker = module.parts[-5:]
+    if marker in (('.agents', 'skills', 'spec-to-code', 'scripts', 'path_guard.py'),
+                  ('.agents', '.skills', 'spec-to-code', 'scripts', 'path_guard.py')):
+        installed_root = module.parents[4]
+        if installed_root != raw or module.resolve() != module:
+            raise RuntimeError('PATH_GUARD_BLOCKED: installed skill belongs to a different checkout')
     # Ignore caller Git directory overrides: Git must discover this worktree itself.
     env = git_env()
     try:

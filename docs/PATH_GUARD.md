@@ -4,14 +4,15 @@
 
 Every Spec2Code CLI entrypoint must first establish a **single, exact, local Git worktree root**. A directory inside a Git repository is not the root; a bare repository, ordinary directory, symlink alias, or directory outside the checkout is not permitted. The guard is implemented by `scripts/path_guard.py` and reused by `session_guard.py`, `scan_infrastructure.py`, `context_router.py`, and `speckit_bridge.py`.
 
-The same validation applies to programmatic session/graph/handoff entrypoints in preparation for future MCP adapters. Only the **explicitly selected checkout** is permitted as a source or destination of Spec2Code file operations. Git worktrees are supported; their `.git` administrative pointer may legitimately reference external Git metadata, but Spec2Code does not read/write application files through that pointer.
+The same validation applies to programmatic session/graph/handoff entrypoints in preparation for future MCP adapters. Only the **explicitly selected checkout** is permitted as a source or destination of Spec2Code file operations. When the skill is installed at `.agents/skills/spec-to-code/`, its `path_guard.py` is additionally **bound to that same checkout**: it cannot target another valid Git repository. Git worktrees are supported; their `.git` administrative pointer may legitimately reference external Git metadata, but Spec2Code does not read/write application files through that pointer.
 
 ## Allowed / blocked
 
 | Request | Outcome | Reason |
 | --- | --- | --- |
 | `--root .` while the current directory is the Git root | ALLOW | Exact working tree root |
-| `--root /path/to/checkout` | ALLOW | Canonical exact Git root |
+| `--root /path/to/checkout` | ALLOW | Canonical exact Git root; must match installed skill checkout when installed |
+| Installed skill directed to another valid Git checkout | BLOCK | Installed-skill checkout binding |
 | `--root src/` or `--root repo/subdir` | BLOCK | Repository subdirectory is not the Git root |
 | `--root /tmp/non-repo` | BLOCK | Not a Git worktree |
 | `--root /tmp/alias` where alias is a symlink | BLOCK | Root aliasing/symlink escape |

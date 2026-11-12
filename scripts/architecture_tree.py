@@ -113,6 +113,7 @@ def component_name(path: str, layer: str) -> str:
 
 
 def extract_symbols(root: Path, path: str, layer: str, fingerprint: str, cached: dict | None) -> dict:
+    guard.check_path(root, path)
     if cached and cached.get('fingerprint') == fingerprint:
         return cached
     result = {'fingerprint': fingerprint, 'functions': [], 'imports': [], 'source_status': 'unparsed'}
@@ -164,6 +165,7 @@ def evidence_graph(root: Path, manifest: dict, graph: dict, old_cache: dict) -> 
     components = {}
     by_path = {}
     for path in sorted(files):
+        guard.check_path(root, path)  # Cached manifest path must not escape checkout.
         layer = layer_for_path(path)
         if not observed_component(path, layer):
             continue

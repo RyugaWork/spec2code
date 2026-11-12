@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -12,6 +13,7 @@ SCRIPTS = Path(__file__).resolve().parents[1] / 'scripts'
 sys.path.insert(0, str(SCRIPTS))
 import path_guard
 import scan_infrastructure as scanner
+import architecture_tree as arch
 
 
 class RepositoryBoundaryTests(unittest.TestCase):
@@ -105,6 +107,16 @@ class RepositoryBoundaryTests(unittest.TestCase):
                 self.assertIn('PATH_GUARD_BLOCKED', out.stderr)
                 p.unlink()
 
+    def test_symlinked_skill_directory_is_rejected(self):
+        (self.repo / '.agents').mkdir()
+        try:
+            (self.repo / '.agents/skills').symlink_to(self.outside, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest('Filesystem does not support symlinks')
+        out = self.cli('session_guard.py', self.repo, 'status')
+        self.assertNotEqual(out.returncode, 0)
+        self.assertIn('PATH_GUARD_BLOCKED', out.stderr)
+
     def test_root_symlink_is_blocked(self):
         alias = Path(self.tmp.name) / 'alias'
         try:
@@ -143,6 +155,16 @@ class RepositoryBoundaryTests(unittest.TestCase):
         self.assertFalse((self.repo / '.agents/state/context-pack.json').exists())
         self.assertEqual((self.outside / 'keep.txt').read_text(), 'DO-NOT-TOUCH')
 
+    def test_low_level_symbol_and_inventory_readers_reject_external_path(self):
+        malicious = Path('../outside/keep.txt')
+        with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):
+            scanner.describe_file(self.repo, malicious, None, True)
+        with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):
+            scanner.extract_facts(self.repo, {'../outside/package.json': {'sha256': 'fake'}}, None)
+        with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):
+            arch.extract_symbols(self.repo, '../outside/keep.txt', 'application', 'fake', None)
+        self.assertEqual((self.outside / 'keep.txt').read_text(), 'DO-NOT-TOUCH')
+
     def test_nested_git_repo_not_scanned(self):
         sub = self.repo / 'src/vendor'
         sub.mkdir()
@@ -156,6 +178,23 @@ class RepositoryBoundaryTests(unittest.TestCase):
         except (OSError, NotImplementedError):
             self.skipTest('Filesystem does not support symlinks')
         self.assertNotIn(Path('src/outside.py'), scanner.all_files(self.repo))
+
+    def test_installed_skill_cannot_target_another_valid_git_repository(self):
+        installed = self.repo / '.agents/skills/spec-to-code/scripts'
+        installed.mkdir(parents=True)
+        shutil.copy2(SCRIPTS / 'path_guard.py', installed / 'path_guard.py')
+        other = Path(self.tmp.name) / 'other-repo'
+        other.mkdir()
+        subprocess.run(['git', 'init', '-q'], cwd=other, check=True)
+        snippet = ('import path_guard; path_guard.validate_root(' + repr(str(other)) + ')')
+        env = os.environ.copy()
+        env['PYTHONPATH'] = str(installed)
+        out = subprocess.run([sys.executable, '-c', snippet], capture_output=True, text=True, env=env)
+        self.assertNotEqual(out.returncode, 0)
+        self.assertIn('PATH_GUARD_BLOCKED: installed skill belongs to a different checkout', out.stderr)
+        snippet = ('import path_guard; path_guard.validate_root(' + repr(str(self.repo)) + ')')
+        allowed = subprocess.run([sys.executable, '-c', snippet], capture_output=True, text=True, env=env)
+        self.assertEqual(allowed.returncode, 0, allowed.stderr)
 
     def test_valid_git_worktree_supported(self):
         extra = Path(self.tmp.name) / 'linked-worktree'

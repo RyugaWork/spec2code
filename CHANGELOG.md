@@ -4,6 +4,7 @@
 
 ### Security
 - Add shared `path_guard.py` to enforce exact Git worktree roots before all CLI actions, including read-only/status/merge calls.
+- Bind conventionally installed skills to their own target checkout, including when another valid Git repository is specified.
 - Reject absolute foreign paths, `..`, UNC/drive paths, symlinked managed paths, and unsafe cache-derived document locations.
 - Scrub inherited Git environment overrides during root verification, drift tracking, and inventory Git queries.
 - Exclude nested Git checkout/submodule content from repository scanning.

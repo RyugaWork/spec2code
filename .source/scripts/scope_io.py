@@ -26,7 +26,7 @@ def _verified_local_root(root: Path) -> Path:
     still reject root symlinks, traversal and directory substitution using handles.
     """
     raw = Path(os.path.abspath(os.fspath(root)))
-    if not raw.is_dir() or raw.is_symlink() or raw.resolve() != raw:
+    if not raw.is_dir() or guard._has_reparse_ancestor(raw):
         raise RuntimeError('SCOPE_VIOLATION: invalid local filesystem root')
     return raw
 
@@ -68,7 +68,7 @@ def atomic_text(root: Path, destination: Path | str, content: str) -> None:
     if not _supports_anchoring():
         path.parent.mkdir(parents=True, exist_ok=True)
         guard.check_path(root, path)
-        with tempfile.NamedTemporaryFile('w', dir=path.parent, encoding='utf-8',
+        with tempfile.NamedTemporaryFile('w', dir=path.parent, encoding='utf-8', newline='\n',
                                          prefix='.s2c-', delete=False) as stream:
             temp = Path(stream.name)
             stream.write(content)
@@ -89,7 +89,7 @@ def atomic_text(root: Path, destination: Path | str, content: str) -> None:
         handle = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
                          0o600, dir_fd=fd)
         try:
-            with os.fdopen(handle, 'w', encoding='utf-8') as stream:
+            with os.fdopen(handle, 'w', encoding='utf-8', newline='\n') as stream:
                 stream.write(content)
                 stream.flush()
                 os.fsync(stream.fileno())
@@ -117,13 +117,13 @@ def append_text(root: Path, destination: Path | str, content: str) -> None:
     if not _supports_anchoring():
         path.parent.mkdir(parents=True, exist_ok=True)
         guard.check_path(root, path)
-        with path.open('a', encoding='utf-8') as stream:
+        with path.open('a', encoding='utf-8', newline='\n') as stream:
             stream.write(content)
         return
     with _parent_fd(root, path, create=True) as (fd, name):
         out = os.open(name, os.O_WRONLY | os.O_APPEND | os.O_CREAT | os.O_NOFOLLOW,
                       0o600, dir_fd=fd)
-        with os.fdopen(out, 'a', encoding='utf-8') as stream:
+        with os.fdopen(out, 'a', encoding='utf-8', newline='\n') as stream:
             if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
                 raise RuntimeError('PATH_GUARD_BLOCKED: append target is not a regular file')
             stream.write(content)

@@ -60,7 +60,7 @@ def git(root: Path, *argv: str, check: bool = True) -> str | None:
 
 def ensure_git_root(root: Path) -> str:
     top = git(root, 'rev-parse', '--show-toplevel')
-    if Path(top).resolve() != root:
+    if Path(top).resolve() != root.resolve():
         raise RuntimeError('Run against repository root; refusing nested-directory scan')
     return git(root, 'rev-parse', 'HEAD')
 

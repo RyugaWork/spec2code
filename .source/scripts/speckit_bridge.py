@@ -39,7 +39,7 @@ def _safe_file(root: Path, path: Path) -> bool:
     cur = root
     for part in rel.parts:
         cur = cur / part
-        if cur.is_symlink():
+        if cur.is_symlink() or (hasattr(cur, 'is_junction') and cur.is_junction()):
             return False
     return path.is_file()
 
@@ -51,10 +51,11 @@ def _feature_path(root: Path, value: str) -> Path:
     if path.is_absolute() or '..' in path.parts or path.parts[0] in {'.', ''}:
         raise RuntimeError('EXTERNAL_FEATURE_DIRECTORY_BLOCKED')
     full = root / path
-    if not full.resolve().is_relative_to(root) or not full.is_dir():
+    if not full.resolve().is_relative_to(root.resolve()) or not full.is_dir():
         raise RuntimeError('FEATURE_DIRECTORY_NOT_FOUND_OR_UNSAFE')
-    if not full.is_relative_to(root) or any((root.joinpath(*path.parts[:i])).is_symlink()
-                                              for i in range(1, len(path.parts) + 1)):
+    if not full.is_relative_to(root) or any(
+            node.is_symlink() or (hasattr(node, 'is_junction') and node.is_junction())
+            for node in (root.joinpath(*path.parts[:i]) for i in range(1, len(path.parts) + 1))):
         raise RuntimeError('SYMLINKED_FEATURE_DIRECTORY_BLOCKED')
     return full
 

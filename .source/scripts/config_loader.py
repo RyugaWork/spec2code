@@ -214,11 +214,15 @@ def load(name: str) -> dict:
     if name not in CONFIG_NAMES:
         raise RuntimeError('CONFIG_INVALID: unknown configuration section')
     skill_root = Path(__file__).absolute().parent.parent
-    if skill_root != skill_root.resolve() or skill_root.is_symlink():
+    if any(part.is_symlink() or (hasattr(part, 'is_junction') and part.is_junction())
+           for part in (skill_root, *skill_root.parents)):
         raise RuntimeError('CONFIG_INVALID: symlinked skill package root')
     config_dir = skill_root / '.config'
     source = config_dir / (name + '.json')
-    if config_dir.is_symlink() or source.is_symlink() or not config_dir.is_dir():
+    if (config_dir.is_symlink() or source.is_symlink() or
+            (hasattr(config_dir, 'is_junction') and config_dir.is_junction()) or
+            (hasattr(source, 'is_junction') and source.is_junction()) or
+            not config_dir.is_dir()):
         raise RuntimeError(f'CONFIG_INVALID: symlink or missing bundled config for {name}')
     if not source.is_file() or source.stat().st_size > MAX_CONFIG_BYTES:
         raise RuntimeError(f'CONFIG_INVALID: missing/oversized bundled config for {name}')

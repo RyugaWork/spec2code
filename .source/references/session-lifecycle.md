@@ -9,9 +9,9 @@ Read this file when a session is interrupted, Git diverges, or authorship is dis
 - `start` refuses when another session remains ACTIVE. Retrieve the ID with `status` and continue that session instead; the tool does not guess whether a prior process is still running.
 - A new ID follows `S2C-YYYYMMDD-HHMMSS-XXXXXXXX` with UTC start and a random suffix; log the ID in a handoff/commit trailer when authorized.
 - First-ever scan creates a `BASELINE`: it never claims all source files are newly authored or externally changed.
-- `start` compares the previous snapshot with present files, computes new local commits since the last saved HEAD, and logs differences as `OUT_OF_SESSION` in `.handoffs/.details/.visualChange.{SessionID}.md`.
-- `checkpoint` detects commits since the session's last observed HEAD. Commits without matching `Spec2Code-Session:` are external **to the skill session**, and their changed paths appear in `.handoffs/.details/.visualChange.{SessionID}.md`. Other unrecorded local edits remain `UNATTRIBUTED`, not external.
-- `record --paths <path...> --note <note> --requirement <id>` asserts this session intentionally authored specific source/config changes. Only actual modified/new/deleted paths since session start are recorded in `.handoffs/.details/.specChange.{SessionID}.md`. Repeat after further edits.
+- `start` compares the previous snapshot with present files, computes new local commits since the last saved HEAD, and logs differences as `OUT_OF_SESSION` in `.agents/.handoffs/.details/.visualChange.{SessionID}.md`.
+- `checkpoint` detects commits since the session's last observed HEAD. Commits without matching `Spec2Code-Session:` are external **to the skill session**, and their changed paths appear in `.agents/.handoffs/.details/.visualChange.{SessionID}.md`. Other unrecorded local edits remain `UNATTRIBUTED`, not external.
+- `record --paths <path...> --note <note> --requirement <id>` asserts this session intentionally authored specific source/config changes. Only actual modified/new/deleted paths since session start are recorded in `.agents/.handoffs/.details/.specChange.{SessionID}.md`. Repeat after further edits.
 - `finish` refuses if any final difference is neither accounted for by an external commit nor represented by a matching final registered fingerprint. Correct attribution before closure; never auto-register another person's work.
 - `sessions.jsonl` is a JSON Lines history of session START/FINISH metadata; state machine's active snapshots remain in `session.json`.
 
@@ -39,12 +39,12 @@ Matching trailer is an attribution convention, **not** a trusted identity signat
 
 ## Change-log ownership
 
-- `.handoffs/.details/.visualChange.{SessionID}.md` — external/out-of-session changes only; no scanner baseline, no self-authored source changes.
-- `.handoffs/.details/.specChange.{SessionID}.md` — authenticated-by-workflow (declared) implementation edits from this session; no automatic descriptions of other's work.
+- `.agents/.handoffs/.details/.visualChange.{SessionID}.md` — external/out-of-session changes only; no scanner baseline, no self-authored source changes.
+- `.agents/.handoffs/.details/.specChange.{SessionID}.md` — authenticated-by-workflow (declared) implementation edits from this session; no automatic descriptions of other's work.
 - Official Spec Kit feature artifact edits (`specs/**/*.md`) are permitted in `specChange` only when deliberately made and explicitly registered in the active session. The adapter itself is read-only.
 
 All records are **local observations**. A file existing or Compose declaring a service never proves an application is running or an integration is operational.
 
 ## v0.4 safe handoff merge
 
-After a successful `finish`, call `merge --session-id <ID>` for the exact closed session. This verifies headers and SHA-256, appends content to `.handoffs/.buildnotes.handoff.md` and deletes only exactly matched pending files. See `references/hierarchy-layout.md`. Legacy root logs from v0.3 are not automatically migrated or deleted.
+After a successful `finish`, call `merge --session-id <ID>` for the exact closed session. This verifies headers and SHA-256, appends content to `.agents/.handoffs/.buildnotes.handoff.md` and deletes only exactly matched pending files. See `references/hierarchy-layout.md`. Legacy root logs from v0.3 are not automatically migrated or deleted.

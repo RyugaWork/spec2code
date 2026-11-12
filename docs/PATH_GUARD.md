@@ -17,7 +17,7 @@ The same validation applies to programmatic session/graph/handoff entrypoints in
 | `--root /tmp/non-repo` | BLOCK | Not a Git worktree |
 | `--root /tmp/alias` where alias is a symlink | BLOCK | Root aliasing/symlink escape |
 | Path `../other-repo/file.py`, `C:\\outside`, or UNC path | BLOCK | Traversal, drive, or foreign path |
-| Repo-relative path under symlinked `.agents/state`, `.handoffs`, or generated layer | BLOCK | Read/write may escape checkout |
+| Repo-relative path under symlinked `.agents/state`, `.agents/.handoffs`, or `s2c/` generated layer | BLOCK | Read/write may escape checkout |
 | Nested Git repository/submodule encountered during source scanning | SKIP | Has its own repository ownership |
 | `GIT_DIR`/`GIT_WORK_TREE`/other injected Git variables | IGNORE | Cannot redirect Git validation/attribution |
 

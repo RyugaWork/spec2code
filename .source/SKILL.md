@@ -48,15 +48,15 @@ When planning a feature before `plan.md` or `tasks.md` exists, use `--speckit-st
 
 ## Read-on-demand architecture
 
-`./.summerize.md` → `<Layer>/.summerize.md` → `<Layer>/<Component>/.summerize.md` → `.<Component>.<Function>.md` → exact source lines. Reuse the machine graph and symbol cache under `.agents/state/` without loading entire JSON files into the model. Generated docs provide **static/lexical evidence only**. Unknown functions, dependencies and runtime behavior must never be invented. The historical `.summerize.md` spelling is deliberately retained for compatibility.
+`./s2c/.summerize.md` → `s2c/<Layer>/.summerize.md` → `s2c/<Layer>/<Component>/.summerize.md` → `.<Component>.<Function>.md` → exact source lines. Reuse the machine graph and symbol cache under `.agents/state/` without loading entire JSON files into the model. Generated docs provide **static/lexical evidence only**. Unknown functions, dependencies and runtime behavior must never be invented. The historical `.summerize.md` spelling is deliberately retained for compatibility.
 
 The generic scanner handles conventional roots such as `src/`, `app/`, `backend/`, `web/`, `packages/`, `tests/` and `.source/`; it does not promise full language-semantic or cross-language dependency analysis. Missing graph edges are **unknown**, not proof of independence.
 
 ## Provenance and exact-session handoff
 
-- `.handoffs/.details/.visualChange.{SessionID}.md`: observed outside-session Git changes, **not** current-session authored edits.
-- `.handoffs/.details/.specChange.{SessionID}.md`: actual source/spec changes **explicitly registered** to this active session. Spec Kit-managed `specs/**/*.md` changes can be registered here.
-- `.handoffs/.buildnotes.handoff.md`: quick index plus verifiable merge ledger. Never delete pending files by wildcard.
+- `.agents/.handoffs/.details/.visualChange.{SessionID}.md`: observed outside-session Git changes, **not** current-session authored edits.
+- `.agents/.handoffs/.details/.specChange.{SessionID}.md`: actual source/spec changes **explicitly registered** to this active session. Spec Kit-managed `specs/**/*.md` changes can be registered here.
+- `.agents/.handoffs/.buildnotes.handoff.md`: quick index plus verifiable merge ledger. Never delete pending files by wildcard.
 
 ```sh
 # After an authorized edit, and only for paths that actually changed:
@@ -67,6 +67,10 @@ python .agents/skills/spec-to-code/scripts/session_guard.py --root . merge --ses
 ```
 
 `merge` requires a FINISH audit event and validates the exact Session ID, pending type/header, SHA-256 and persisted archive before removing **only** matching pending files. Ambiguous changes remain `UNATTRIBUTED` until reconciled. Never auto-commit/push/rebase/force or delete user source. If explicitly permitted to commit in the target project, use Conventional Commits and `Spec2Code-Session: <exact ID>` trailer for traceability, not proof of authorship.
+
+## Target-output migration (v0.7.0)
+
+The target's runtime journals and ledger now live under `.agents/.handoffs/`, and generated architecture documents under `s2c/`. The old `.handoffs/` and root architecture files are never silently migrated or deleted. If known legacy evidence/state exists, fail with `LAYOUT_MIGRATION_REQUIRED` until old sessions are finished with matching binaries and an explicit backup/migration is reviewed. Unowned `s2c/` content blocks publication.
 
 ## Quality gates
 

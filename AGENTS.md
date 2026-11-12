@@ -13,11 +13,13 @@ This repository develops an independent universal Spec-to-Code agent skill. Do n
 ## Runtime invariants
 
 - Strict checkout-only `path_guard.py` and `scope_io.py` gates for every entrypoint and managed file access.
-- Host `.agents/state/` and `.handoffs/` are runtime output; developer governance `.agents/.handoffs/` is different.
+- Host `.agents/state/`, `.agents/.handoffs/.details/`, `.agents/.handoffs/.buildnotes.handoff.md`, and `s2c/` contain runtime output. This source repository keeps version-controlled governance records under `.agents/.handoffs/*.md`, which are distinct from exact-session runtime records.
 - Config remains within the installed bundle adjacent to scripts. Do not relocate target runtime files to development repo `.agents/`.
 - Do not silently relax traversal, symlink/junction, physical worktree identity, MCP capabilities, sensitive-data exclusions or exact-session SHA-256 verification.
 - No automatic commit, push, merge, rebase, force push, arbitrary shell, deletion, or Spec Kit stage execution without explicit authorization.
 - Path checking is **not** sandbox authorization for unrelated AI-agent tools.
+
+- Target migration is explicit. Preserve legacy `.handoffs/`, root `.summerize.md` and layer folders; block stale state or non-managed destinations until reviewed migration.
 
 ## Change gates
 

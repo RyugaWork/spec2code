@@ -8,7 +8,7 @@ Infrastructure-aware, universal Spec-to-Code agent skill with optional read-only
 
 Development repository is organized under `.agents/` (requirements, features, plans, risks, handoffs, workflow) and `.source/` (portable skill, scripts, tests, references, integrations, JSON configs). Read [structure](.agents/.structure.md), [features](.agents/.features.md), [plan](.agents/.plans.md), [risk register](.agents/.risk.md), [checklist](.agents/.checklist.md) and [handoff](.agents/.handoffs/v0.7.0-layout-handoff.md).
 
-The **installed target project** is different: copy the `.source/` skill bundle into `<target>/.agents/skills/spec-to-code/`; keep target-owned `.agents/state/`, `.handoffs/`, `.specify/` and `specs/` separate. See [INSTALL](docs/INSTALL.md).
+The **installed target project** is different: copy the `.source/` skill bundle into `<target>/.agents/skills/spec-to-code/`; keep target-owned `.agents/state/`, `.agents/.handoffs/`, `.specify/` and `specs/` separate. See [INSTALL](docs/INSTALL.md).
 
 ## Existing capabilities
 
@@ -19,6 +19,13 @@ Strict JSON config loading, Git root and path containment, physical checkout-bou
 ```sh
 python -m unittest discover -s .source/tests -v
 ```
+
+## Target project outputs
+
+- `.agents/state/`: local session, inventory, architecture graph and context cache.
+- `.agents/.handoffs/.details/`: session-specific pending change logs, and `.agents/.handoffs/.buildnotes.handoff.md`: verified merge ledger.
+- `s2c/.summerize.md` and `s2c/<Layer>/...`: generated read-on-demand architecture metadata separate from project source.
+- Legacy `.handoffs/`, root `.summerize.md`, and root layer directories are **not** deleted or moved automatically. Finish old sessions, back up and migrate explicitly.
 
 ## Portable installed skill example
 

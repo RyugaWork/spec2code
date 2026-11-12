@@ -30,7 +30,7 @@ spec-to-code/
 ## Configuration vs authorization
 
 - `scanner.json` and `security.json` may **add** indicators and ignore/sensitive paths, but cannot remove the mandatory protection for secrets, credential files or `.git`.
-- `architecture.json` cannot direct generated layer state into source directories such as `src/` or `backend/`; all state JSON paths must remain in `.agents/state/` and all handoff paths in `.handoffs/`.
+- `architecture.json` fixes generated documentation output to `s2c/`, never application source `src/` or `backend/`; all state JSON paths must remain in `.agents/state/` and all handoff paths in `.agents/.handoffs/`.
 - `routing.json` defines the bundled baseline. The optional target-specific `.agents/state/context-policy.json` may tune budgets or add risk indicators. Its values cannot suppress the bundled high-risk patterns. A requested minimal/balanced mode still cannot override an evidenced Deep risk floor.
 - `speckit.json` is **metadata**, not the upstream Spec Kit installer. At least `spec.md`, `plan.md`, `tasks.md` are always required for implementation.
 - `mcp.json` documents the fixed implemented action set. Editing JSON **cannot** invent a tool, enable arbitrary shell or grant write permission. A separate trusted MCP host and authorization policy are still required.
@@ -38,7 +38,7 @@ spec-to-code/
 
 ## Migrating existing installations
 
-Finish and merge any active session with its original installed version. Copy **all** of `SKILL.md`, `.config/`, `scripts/`, and `references/` together into `.agents/skills/spec-to-code/`. Do not replace only one `.py` file. Preserve the target repository's `.agents/state/`, `.handoffs/`, `.specify/`, and `specs/` directories; they are not bundled defaults. Run:
+Finish and merge any active session with its original installed version. Copy **all** of `SKILL.md`, `.config/`, `scripts/`, and `references/` together into `.agents/skills/spec-to-code/`. Do not replace only one `.py` file. Preserve the target repository's `.agents/state/`, `.agents/.handoffs/`, `.specify/`, and `specs/` directories; they are not bundled defaults. Run:
 
 ```sh
 python -m unittest discover -s .source/tests -v
@@ -50,3 +50,7 @@ No new database/service or Python dependency is required. JSON is used instead o
 ## v0.7.0 development repository
 
 The authoritative runtime JSON files are in `.source/.config/`. The separate `.agents/.config/` directory is for developer governance, not loaded by `config_loader.py`. Both source and installed skill must keep `scripts/` and `.config/` as siblings.
+
+## Target output contracts
+
+The installed skill's `.config/architecture.json` declares `output_root: "s2c"`; `.config/handoff.json` owns `.agents/.handoffs/`. The strict loader refuses redirection outside these reserved outputs. `s2c/` is a generated document namespace, while `.agents/state/` holds private machine state. The separate developer `.agents/.config/` folder is never loaded as runtime policy.

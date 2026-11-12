@@ -1,52 +1,35 @@
-# Spec2Code
+# Spec2Code v0.7.0
 
-**Universal, infrastructure-aware agent skill with official GitHub Spec Kit integration.**
+Infrastructure-aware, universal Spec-to-Code agent skill with optional read-only upstream GitHub Spec Kit bridge.
 
-Version: **0.6.4** (config-driven development branch). Use with Python 3.10+ and Git. Core scanning and routing require no hosted AI API. Official Spec Kit is optional and installed separately (Python 3.11+ for its CLI).
+**Status:** repository layout migration candidate; prior Windows/security risks remain open. Requires Python 3.10+ and Git. Spec Kit CLI is separate.
 
-## Capabilities
+## Repository layout and governance
 
-- Config-driven rules in the bundled `.config/*.json` files; strict schema validation and no silent fallback. See [Configuration](docs/CONFIGURATION.md).
+Development repository is organized under `.agents/` (requirements, features, plans, risks, handoffs, workflow) and `.source/` (portable skill, scripts, tests, references, integrations, JSON configs). Read [structure](.agents/.structure.md), [features](.agents/.features.md), [plan](.agents/.plans.md), [risk register](.agents/.risk.md), [checklist](.agents/.checklist.md) and [handoff](.agents/.handoffs/v0.7.0-layout-handoff.md).
 
-- Path Guard: exact Git worktree-root validation, symlink/path traversal protection, nested-repo exclusion, and safe state/handoff boundaries. See [Path Guard](docs/PATH_GUARD.md).
-- Multi-repository support: conventional `src/`, `app/`, `backend/`, `frontend/`, `web/`, `packages/`, `.source/`, test and monorepo layouts; no fixed framework, project namespace or business domain.
-- Spec Kit bridge: detects active feature from `.specify/feature.json` / explicit environment override, validates `spec.md`, `plan.md`, `tasks.md`, returns bounded artifact fingerprints and task IDs without duplicate text or modifying Spec Kit files.
-- Session ID, local Git drift detection, provenance-aware `visualChange`/`specChange` logs and exact-session verified handoff merging.
-- Observed architecture graph, compact `.summerize.md` hierarchy and source-to-function routing.
-- Adaptive context modes: `auto`, `minimal`, `balanced`, `deep`.
-- Continuous Scope Enforcement: bind sessions to physical Git checkouts; verify repository scope at command boundaries and every file path at access; anchored file operations where supported.
-- MCP workspace authorization gate (`mcp_boundary.py`): read-only by default, no client-selected root, no arbitrary shell, session-scoped writes and HEAD freshness checks; **MCP transport/server not yet implemented**.
-- Local synthetic regression tests and GitHub Actions CI.
+The **installed target project** is different: copy the `.source/` skill bundle into `<target>/.agents/skills/spec-to-code/`; keep target-owned `.agents/state/`, `.handoffs/`, `.specify/` and `specs/` separate. See [INSTALL](docs/INSTALL.md).
 
-## Install into a target Git project
+## Existing capabilities
 
-Copy `SKILL.md`, `.config/`, `scripts/`, `references/` to `<target>/.agents/skills/spec-to-code/` (preserve existing project policy and source structure). See [docs/INSTALL.md](docs/INSTALL.md).
+Strict JSON config loading, Git root and path containment, physical checkout-bound sessions, static infrastructure inventory and architecture graph, adaptive minimal/balanced/deep context routing, source-change provenance, exact-session handoff, read-only Spec Kit feature bridge and MCP-ready authorization *library*. No real MCP server, arbitrary shell/remote Git operation or automatic authorized code-writing agent exists.
 
+## Development tests
+
+```sh
+python -m unittest discover -s .source/tests -v
+```
+
+## Portable installed skill example
+
+From the **target Git repository root**, after copying `.source/` contents into `.agents/skills/spec-to-code/`:
 ```sh
 python .agents/skills/spec-to-code/scripts/session_guard.py --root . start
 python .agents/skills/spec-to-code/scripts/speckit_bridge.py --root . --stage status
-# After Spec Kit feature spec.md/plan.md/tasks.md exist:
-python .agents/skills/spec-to-code/scripts/context_router.py --root . --task-id T001 --task 'Implement approved feature' --paths src/feature.py --mode auto --speckit-stage implement
 ```
 
-**Replace example paths with paths actually present in your checkout.** A `status` call works even without Spec Kit; `--speckit-stage implement` requires its three artifacts. Use [integrations/speckit/README.md](integrations/speckit/README.md) to install/initialize upstream Spec Kit and invoke its agent skills, not shell process commands.
+The Spec Kit `implement` stage requires active feature `spec.md`, `plan.md`, `tasks.md`. Never treat an artifact's existence as human approval.
 
-## Tests
+## Security and release status
 
-```sh
-python -m unittest discover -s tests -v
-```
-
-## Safety
-
-No auto-fetch, commit, push, shell delegation, feature approval, remote MCP server, credential ingestion or silent deletion of application files. Spec2Code generates architecture docs and local state in the **target checkout**, not in this portable source repository. `visualChange` is for outside-session changes only. A `README` or `.gitkeep` scaffold is never proof of implemented runtime code.
-
-`v0.6.3` uses an additional per-session physical checkout binding; the earlier v0.6.x series also changed session prefixes and document management markers. Finish and merge any ACTIVE earlier-version session with its original version before upgrading; do not force-delete existing state.
-
-## References
-
-[SKILL.md](SKILL.md) · [Install](docs/INSTALL.md) · [Integration layout](docs/INTEGRATION_LAYOUT.md) · [Spec Kit bridge](integrations/speckit/README.md) · [Architecture graph](references/architecture-graph.md)
-
-## Continuous Scope Enforcement
-
-See [docs/CONTINUOUS_SCOPE_ENFORCEMENT.md](docs/CONTINUOUS_SCOPE_ENFORCEMENT.md). This is per-operation enforcement rather than a background watcher.
+No unconditional overwrite or deletion of host project files is authorized by this layout change. POSIX anchored file operations offer additional containment; Windows TOCTOU, case-folding, path alias, CRLF and generated-document collisions need additional verification. See [risk register](.agents/.risk.md) and [Path Guard](docs/PATH_GUARD.md).

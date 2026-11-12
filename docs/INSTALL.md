@@ -1,4 +1,4 @@
-# Install Spec2Code v0.6.4 in any Git project
+# Install Spec2Code v0.7.0 in any Git project
 
 This is a **portable skill + local Python core**, not an installer that can rewrite projects without review.
 
@@ -11,7 +11,10 @@ This is a **portable skill + local Python core**, not an installer that can rewr
 
 ## Install
 
-Copy the top-level `SKILL.md`, **`.config/`**, `scripts/`, and `references/` folders from this repository into **one** target location:
+**Important:** `.source/` is a development-repository directory only. Copy its *contents* (not the `.source` directory itself) to the target skill folder. Preserve its hidden `.config/` folder. This is a manual, reviewable installation; do not overwrite target-owned state or an ACTIVE prior-version skill.
+
+
+Copy `.source/SKILL.md`, **`.source/.config/`**, `.source/scripts/`, and `.source/references/` from the development repository into **one** target location:
 
 ```text
 <target>/.agents/skills/spec-to-code/SKILL.md
@@ -44,7 +47,7 @@ Replace `src/feature.py` with an existing path, and select `--speckit-stage stat
 ## Test
 
 ```sh
-python -m unittest discover -s tests -v
+python -m unittest discover -s .source/tests -v
 ```
 
 Regression tests use disposable local repositories. The target project's own build and acceptance tests remain mandatory before code changes are reported as verified.

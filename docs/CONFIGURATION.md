@@ -1,4 +1,4 @@
-# Spec2Code v0.6.4 — Bundled configuration
+# Spec2Code v0.7.0 — Bundled configuration
 
 The skill keeps **policy data** in `.config/*.json`; Python modules implement the algorithms and enforce non-configurable security invariants. The configuration directory is **required**, versioned and deployed *inside the installed skill*, not at an arbitrary home/current working directory.
 
@@ -23,7 +23,7 @@ spec-to-code/
 ## How values are loaded
 
 1. Every Python module loads its section with `config_loader.load('scanner')`, etc.
-2. The loader searches **only** `<script-parent>/.config/<section>.json`. It will not walk ancestors, read the target project's root `.config`, or use environment-variable fallback paths.
+2. The loader searches **only** `<script-parent>/.config/<section>.json` within the adjacent development `.source/` or installed-skill bundle. It will not walk ancestors, read the target project's root `.config`, or use environment-variable fallback paths.
 3. JSON files are versioned (`schema_version: 1`), bounded (64 KiB each), checked for duplicate keys, strict top-level fields, unsafe paths, invalid types, symlinks and contradictory policies. Invalid or missing files fail with `CONFIG_INVALID`.
 4. Values are loaded once per process; updating JSON requires restarting the Python process. File-system access still goes through Path Guard/Scope IO where appropriate.
 
@@ -41,8 +41,12 @@ spec-to-code/
 Finish and merge any active session with its original installed version. Copy **all** of `SKILL.md`, `.config/`, `scripts/`, and `references/` together into `.agents/skills/spec-to-code/`. Do not replace only one `.py` file. Preserve the target repository's `.agents/state/`, `.handoffs/`, `.specify/`, and `specs/` directories; they are not bundled defaults. Run:
 
 ```sh
-python -m unittest discover -s tests -v
+python -m unittest discover -s .source/tests -v
 python .agents/skills/spec-to-code/scripts/speckit_bridge.py --root . --stage status
 ```
 
 No new database/service or Python dependency is required. JSON is used instead of arbitrary `.py`/`.env` evaluation so config remains portable and reviewable.
+
+## v0.7.0 development repository
+
+The authoritative runtime JSON files are in `.source/.config/`. The separate `.agents/.config/` directory is for developer governance, not loaded by `config_loader.py`. Both source and installed skill must keep `scripts/` and `.config/` as siblings.

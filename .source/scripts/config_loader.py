@@ -56,7 +56,7 @@ def _validate(name: str, data: dict) -> None:
     required = {
         'scanner': {'root_files', 'code_extensions', 'excluded_directories', 'excluded_suffixes',
                     'metadata_only_files', 'source_roots', 'extra_scan_roots', 'limits', 'paths'},
-        'architecture': {'layer_directories', 'summary_name', 'paths', 'limits', 'managed_marker', 'classification', 'component_rules'},
+        'architecture': {'layer_directories', 'output_root', 'summary_name', 'paths', 'limits', 'managed_marker', 'classification', 'component_rules'},
         'routing': {'paths', 'modes', 'default_policy', 'task_stopwords'},
         'session': {'paths', 'limits', 'layers'},
         'speckit': {'artifacts', 'stages', 'stage_prerequisites', 'limits', 'task_id_pattern'},
@@ -83,7 +83,7 @@ def _validate(name: str, data: dict) -> None:
                 _path_value(value,'scanner.paths.'+key)
                 if key!='changelog_dir' and not (value=='.agents/state' or value.startswith('.agents/state/')):
                     raise RuntimeError('CONFIG_INVALID: scanner state outside reserved directory')
-                if key=='changelog_dir' and not value.startswith('.handoffs/'):
+                if key=='changelog_dir' and not value.startswith('.agents/.handoffs/'):
                     raise RuntimeError('CONFIG_INVALID: scanner changelog outside reserved directory')
             if not {'.env','.git'}.isdisjoint(data['source_roots']):
                 raise RuntimeError('CONFIG_INVALID: scanner cannot use secret or Git source roots')
@@ -93,7 +93,7 @@ def _validate(name: str, data: dict) -> None:
             if not {'.pem','.key','.pfx','.p12','.db','.sqlite','.sqlite3'}.issubset(
                     data['excluded_suffixes']):
                 raise RuntimeError('CONFIG_INVALID: scanner cannot remove secure exclusions')
-            forbidden = {'.git', '.handoffs', '.agents/state', '.agents/skills', '.config'}
+            forbidden = {'.git', '.handoffs', '.agents/.handoffs', '.agents/state', '.agents/skills', '.config', 's2c'}
             if set(data['source_roots']) & forbidden or set(data['extra_scan_roots']) & forbidden:
                 raise RuntimeError('CONFIG_INVALID: scanner cannot inventory internal or Git directories')
     if name in {'architecture','routing','session','handoff'}:
@@ -104,9 +104,18 @@ def _validate(name: str, data: dict) -> None:
             _path_value(value, f'{name}.paths.{field}')
             if name in {'architecture','routing','session'} and not value.startswith('.agents/state/'):
                 raise RuntimeError(f'CONFIG_INVALID: {name} state path outside reserved state directory')
-            if name == 'handoff' and not (value == '.handoffs' or value.startswith('.handoffs/')):
+            if name == 'handoff' and not (value == '.agents/.handoffs' or value.startswith('.agents/.handoffs/')):
                 raise RuntimeError('CONFIG_INVALID: handoff path outside reserved directory')
+    if name == 'handoff':
+        expected = {'directory': '.agents/.handoffs', 'details': '.agents/.handoffs/.details',
+                    'buildnotes': '.agents/.handoffs/.buildnotes.handoff.md',
+                    'lock': '.agents/.handoffs/.merge.lock'}
+        if data['paths'] != expected:
+            raise RuntimeError('CONFIG_INVALID: handoff layout must remain reserved and session-owned')
     if name == 'architecture':
+        # Only the fixed reserved target output namespace is permitted; source dirs are never valid.
+        if data.get('output_root') != 's2c':
+            raise RuntimeError('CONFIG_INVALID: architecture must publish inside s2c')
         dirs = data['layer_directories']
         if not isinstance(dirs, dict) or not dirs:
             raise RuntimeError('CONFIG_INVALID: architecture layers missing')
@@ -114,7 +123,7 @@ def _validate(name: str, data: dict) -> None:
             _path_value(v, 'architecture.layer_directories.'+k)
         protected = {'.git','.config','.agents','.handoffs','.specify','specs','src','app',
                      'backend','frontend','server','web','scripts','tests','references'}
-        if any('/' in v or v.lower() in protected for v in dirs.values()):
+        if any('/' in v or v.lower() in protected for v in dirs.values()) or len({v.casefold() for v in dirs.values()}) != len(dirs):
             raise RuntimeError('CONFIG_INVALID: architecture output directory conflicts with source')
         _path_value(data['summary_name'], 'architecture.summary_name')
         for group in ('classification','component_rules'):

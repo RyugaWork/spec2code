@@ -324,6 +324,7 @@ def inspect(root: Path, layer: str | None) -> int:
 
 def run_start(root: Path, *, verify: bool = False) -> int:
     root = guard.validate_root(root)
+    handoffs.ensure_layout(root)  # Block legacy pending data before any new runtime writes.
     old_session = read_state(root)
     if old_session and old_session['status'] == 'ACTIVE':
         guard.assert_scope(root, old_session.get('repository_binding'))
@@ -357,7 +358,7 @@ def run_start(root: Path, *, verify: bool = False) -> int:
                   'out_of_session_delta': len(changes)})
     status = 'BASELINE' if prev is None else ('OUT_OF_SESSION_CHANGE' if changes or commit_info['outside_commits'] else 'NO_CHANGE')
     print(f'SESSION_START | {session_id} | {status} | files={len(current["files"])} | drift={len(changes)} | external_commits={len(commit_info["outside_commits"])}')
-    print('Architecture: .summerize.md -> <Layer>/.summerize.md -> <Component>/.summerize.md -> exact function doc; read only relevant paths.')
+    print('Architecture: s2c/.summerize.md -> s2c/<Layer>/.summerize.md -> <Component>/.summerize.md -> exact function doc; read only relevant paths.')
     return 0
 
 

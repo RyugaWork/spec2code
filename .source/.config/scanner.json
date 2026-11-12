@@ -84,6 +84,7 @@
     "node_modules",
     "obj",
     "playwright-report",
+    "s2c",
     "test-results",
     "vendor",
     "venv"
@@ -154,6 +155,6 @@
     "state_dir": ".agents/state",
     "manifest": ".agents/state/infrastructure.json",
     "index": ".agents/state/infrastructure-index.md",
-    "changelog_dir": ".handoffs/.details"
+    "changelog_dir": ".agents/.handoffs/.details"
   }
 }

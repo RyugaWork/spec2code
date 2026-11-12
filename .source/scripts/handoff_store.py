@@ -37,6 +37,14 @@ def validate_session(sid: str) -> None:
         raise RuntimeError('Invalid Spec2Code Session ID format; refusing handoff operation')
 
 
+def ensure_layout(root: Path) -> None:
+    """Stop old handoff logs from silently disappearing after directory relocation."""
+    old_notes = guard.check_path(root, '.handoffs/.buildnotes.handoff.md')
+    old_details = guard.check_path(root, '.handoffs/.details')
+    if old_notes.exists() or (old_details.is_dir() and any(old_details.iterdir())):
+        raise RuntimeError('LAYOUT_MIGRATION_REQUIRED: legacy handoff data detected; finish old sessions and migrate with backups')
+
+
 def path_for(root: Path, kind: str, sid: str) -> Path:
     validate_session(sid)
     if kind not in EVENT_TYPES:
@@ -62,6 +70,7 @@ def refuse_symlink(root: Path, path: Path) -> None:
 
 def append_event(root: Path, sid: str, kind: str, body: str) -> None:
     root=guard.validate_root(root)
+    ensure_layout(root)
     p=path_for(root, kind, sid)
     guard.check_path(root, p)
     refuse_symlink(root,p)
@@ -159,6 +168,7 @@ def quick_summary(ledger: str) -> str:
 
 def merge(root: Path, sid: str) -> dict:
     root=guard.validate_root(root)
+    ensure_layout(root)
     validate_session(sid)
     state = infra.read_json(root / '.agents/state/session.json', root=root)
     if state and state.get('id') == sid and state.get('repository_binding'):

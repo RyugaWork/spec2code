@@ -12,3 +12,9 @@ build/
 .agents/state/
 .handoffs/.details/
 .DS_Store
+
+# Installed-skill runtime outputs; repository governance records remain versioned.
+.agents/.handoffs/.details/
+.agents/.handoffs/.buildnotes.handoff.md
+.agents/.handoffs/.merge.lock
+s2c/

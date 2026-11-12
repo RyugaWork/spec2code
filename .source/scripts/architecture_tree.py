@@ -22,6 +22,7 @@ import config_loader
 
 ARCH_CONFIG = config_loader.load('architecture')
 LAYER_DIRS = ARCH_CONFIG['layer_directories']
+OUTPUT_ROOT = Path(ARCH_CONFIG['output_root'])
 SUMMARY_NAME = ARCH_CONFIG['summary_name']  # The historical spelling is retained in config.
 STATE_FILE = Path(ARCH_CONFIG['paths']['state_file'])
 SYMBOL_CACHE = Path(ARCH_CONFIG['paths']['symbol_cache'])
@@ -255,7 +256,7 @@ def render_root(graph: dict, manifest: dict, focus: set[str], counts: dict[str, 
     nodes = {n['id']: n for n in graph['nodes']}
     keys = list(LAYER_DIRS)
     out = [GENERATED, '# Architecture Routing Matrix', '',
-           'Local static evidence only. Documents under root layer folders are **architecture indexes**, not application code.',
+           'Local static evidence only. Documents under s2c/ layer folders are **architecture indexes**, not application code.',
            f"- Git HEAD: `{manifest['git']['head']}`; branch: `{manifest['git']['branch']}`",
            f'- Changed layers in last scan: {", ".join("`"+LAYER_DIRS[x]+"`" for x in sorted(focus)) or "none"}',
            '', '## Layer routing', '', '| Layer | Source status | Controllers / components | Direct dependencies |', '| --- | --- | ---: | --- |']
@@ -357,17 +358,30 @@ def render_function(c: dict, fn: dict, version: int, change: str) -> str:
 
 def publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
     root = guard.validate_root(root)
+    legacy_summary = guard.check_path(root, SUMMARY_NAME)
+    if legacy_summary.is_file() and scope_io.read_bytes(root, legacy_summary, max_bytes=1024*1024).startswith(GENERATED.encode('utf-8')):
+        raise RuntimeError('LAYOUT_MIGRATION_REQUIRED: old root architecture docs must be reviewed and archived manually')
     old_symbols = infra.read_json(root / SYMBOL_CACHE, root=root) or {}
     components, symbols = evidence_graph(root,manifest,graph,old_symbols)
     old_state = infra.read_json(root / STATE_FILE, root=root) or {'schema_version': VERSION, 'functions':{}}
     if old_state.get('schema_version') != VERSION:
         raise RuntimeError('Architecture version mismatch; manual migration required')
+    # Legacy cached paths must never point writes/annotations into old root layer folders.
+    historic = old_state.get('generated_paths', [])
+    documents = [x.get('document', '') for x in old_state.get('functions', {}).values() if isinstance(x, dict)]
+    if any(not isinstance(p, str) or not p.startswith(OUTPUT_ROOT.as_posix() + '/') for p in historic + documents):
+        raise RuntimeError('LAYOUT_MIGRATION_REQUIRED: older architecture paths in state; preserve data and migrate explicitly')
+    output = guard.check_path(root, OUTPUT_ROOT)
+    if output.exists() and (not output.is_dir() or (any(output.iterdir()) and not (output / SUMMARY_NAME).is_file())):
+        raise RuntimeError('ARCH_OUTPUT_COLLISION: pre-existing s2c content is not a managed architecture tree')
+    if (output / SUMMARY_NAME).is_file() and not scope_io.read_bytes(root, output / SUMMARY_NAME, max_bytes=1024*1024).startswith(GENERATED.encode('utf-8')):
+        raise RuntimeError('ARCH_OUTPUT_COLLISION: non-managed s2c root summary')
     old_functions=old_state.get('functions',{})
     funcs_new={}
     old_notes=old_state.get('notes_by_path', {})
     planned=[]
     for (layer, name), c in components.items():
-        target = root / LAYER_DIRS[layer] / name
+        target = root / OUTPUT_ROOT / LAYER_DIRS[layer] / name
         planned.append((target/SUMMARY_NAME,render_component(c,[x for (l,_),x in components.items() if l==layer])))
         for fn in c['functions']:
             key=function_key(c,fn)
@@ -380,14 +394,14 @@ def publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
             provenance=old_notes.get(c['source'],{})
             if provenance.get('fingerprint')==new_fp:
                 change=f"Recorded by session `{provenance['session']}` for requirement `{provenance['requirement']}`: {provenance['note']} (declared authorship, not semantic proof)."
-            funcs_new[key]={'version':ver,'fingerprint':new_fp,'document':f'{LAYER_DIRS[layer]}/{name}/{function_filename(c, fn)}'}
+            funcs_new[key]={'version':ver,'fingerprint':new_fp,'document':f'{OUTPUT_ROOT.as_posix()}/{LAYER_DIRS[layer]}/{name}/{function_filename(c, fn)}'}
             fname=function_filename(c, fn)
             planned.append((target/fname,render_function(c,fn,ver,change)))
     counts={layer: sum(1 for (l,_) in components if l==layer) for layer in LAYER_DIRS}
-    planned.append((root/SUMMARY_NAME, render_root(graph,manifest,focus,counts)))
+    planned.append((root/OUTPUT_ROOT/SUMMARY_NAME, render_root(graph,manifest,focus,counts)))
     for layer in LAYER_DIRS:
         layer_comps=[c for (l,_),c in sorted(components.items()) if l==layer]
-        planned.append((root/LAYER_DIRS[layer]/SUMMARY_NAME,render_layer(layer,layer_comps,graph,focus)))
+        planned.append((root/OUTPUT_ROOT/LAYER_DIRS[layer]/SUMMARY_NAME,render_layer(layer,layer_comps,graph,focus)))
     # All-or-nothing preflight for unsafe collisions or symlinked directories.
     for p,_ in planned:
         a=p
@@ -427,6 +441,8 @@ def annotate_recorded_change(root: Path, paths: list[str], note: str, requiremen
         for key,info in state['functions'].items():
             if key.startswith(path+'#') and info.get('fingerprint')==fp:
                 target=guard.check_path(root,info['document'])
+                if not str(target.relative_to(root).as_posix()).startswith(OUTPUT_ROOT.as_posix() + '/'):
+                    raise RuntimeError('ARCH_DOC_SCOPE_BLOCKED: cached document is outside s2c')
                 if not target.is_file() or target.is_symlink():
                     raise RuntimeError(f'Missing/unsafe function doc for annotation: {target}')
                 prior=scope_io.read_bytes(root, target, max_bytes=1024*1024).decode('utf-8')

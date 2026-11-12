@@ -248,5 +248,6 @@
       "app",
       "pages"
     ]
-  }
+  },
+  "output_root": "s2c"
 }

@@ -73,14 +73,14 @@ def is_sensitive(name: str) -> bool:
 
 def tracked_candidate(rel: Path) -> bool:
     parts = rel.parts
-    if not parts:
+    if not parts or parts[0] == 's2c':
         return False
     if any(p in SKIP_DIRS for p in parts[:-1]):
         return False
     name = rel.name
     if is_excluded(name) or name in {'.gitkeep', '.DS_Store'}:
         return False
-    if rel in {Path('visualChange.md'), Path('specChange.md')} or parts[:2] in [('.agents', 'state'),
+    if rel in {Path('visualChange.md'), Path('specChange.md')} or parts[:2] in [('.agents', '.handoffs'), ('.agents', 'state'),
                                                          ('.agents', 'skills'),
                                                          ('.agents', '.skills')]:
         return False
@@ -409,7 +409,7 @@ def render_index(manifest: dict) -> str:
 
 ## How to use this index
 
-Read **this file only** to decide which parts exist. Consult `layerSummary.md`, and `impactMatrix.md` only when relevant. `.handoffs/.details/.visualChange.{{SessionID}}.md` holds external evidence; `.specChange.{{SessionID}}.md` in the same directory holds explicitly registered authored work. They are managed by `session_guard.py`. `infrastructure.json` is machine-readable state for the scanner, **not** routine LLM context. Existing architecture documents describe **intent**, not proof of implementation. Use `--verify` for a full rehash when timestamps are unreliable; use `--runtime` only when separately authorized.
+Read **this file only** to decide which parts exist. Consult `layerSummary.md`, and `impactMatrix.md` only when relevant. `.agents/.handoffs/.details/.visualChange.{{SessionID}}.md` holds external evidence; `.specChange.{{SessionID}}.md` in the same directory holds explicitly registered authored work. They are managed by `session_guard.py`. `infrastructure.json` is machine-readable state for the scanner, **not** routine LLM context. Existing architecture documents describe **intent**, not proof of implementation. Use `--verify` for a full rehash when timestamps are unreliable; use `--runtime` only when separately authorized.
 '''
 
 

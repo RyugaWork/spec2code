@@ -16,7 +16,7 @@ import config_loader
 # boundaries stay hardcoded so modifying config cannot remove containment.
 SECURITY_CONFIG = config_loader.load('security')
 MANAGED_PATHS = tuple(sorted(set(SECURITY_CONFIG['managed_paths']) | {
-    '.agents', '.handoffs', '.summerize.md',
+    '.agents', '.agents/.handoffs', '.handoffs', 's2c', '.summerize.md',
 }))
 
 

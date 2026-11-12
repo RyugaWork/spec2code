@@ -228,14 +228,18 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
     function_docs = []
     for layer in linked_layers:
         d = arch.LAYER_DIRS.get(layer)
-        if d and (root / d / arch.SUMMARY_NAME).is_file():
-            doc_paths.append(f'{d}/{arch.SUMMARY_NAME}')
+        if d and (root / arch.OUTPUT_ROOT / d / arch.SUMMARY_NAME).is_file():
+            doc_paths.append(f'{arch.OUTPUT_ROOT.as_posix()}/{d}/{arch.SUMMARY_NAME}')
     doc_state = docs.get('functions',{})
     selected_set = set(readable)
     for key,item in sorted(doc_state.items()):
         if key.split('#',1)[0] in selected_set:
             p = item.get('document','')
-            if p and guard.check_path(root, p).is_file():
+            if p:
+                doc = guard.check_path(root, p)
+                if not p.startswith(arch.OUTPUT_ROOT.as_posix() + '/'):
+                    raise RuntimeError('ARCH_DOC_SCOPE_BLOCKED: cached function document outside s2c')
+            if p and doc.is_file():
                 if fn and fn.lower() not in key.lower():
                     continue
                 function_docs.append(p)
@@ -263,7 +267,7 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
         'layer_summary_paths': doc_paths,
         'component_summary_paths': component_docs,
         'function_document_paths': function_docs,
-        'root_summary_path': '.summerize.md' if not missing and (root/'.summerize.md').is_file() else None,
+        'root_summary_path': f'{arch.OUTPUT_ROOT.as_posix()}/{arch.SUMMARY_NAME}' if not missing and (root/arch.OUTPUT_ROOT/arch.SUMMARY_NAME).is_file() else None,
         'spec_lookup': '.specify/feature.json (or explicit SPECIFY_FEATURE_DIRECTORY); resolved by speckit_bridge',
         'unselected_matches': truncated,
         'notes': [

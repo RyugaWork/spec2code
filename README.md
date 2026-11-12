@@ -1,43 +1,43 @@
 # Spec2Code
 
-Infrastructure-aware Spec-to-Code agent skill with Git drift detection, layered architecture graph, session tracking, provenance-aware change logs and adaptive token budgets.
+**Universal, infrastructure-aware agent skill with official GitHub Spec Kit integration.**
 
-**Current release candidate:** v0.6.0. This is a source repository for the portable skill. Its current implementation has Gymuro-oriented defaults; general-purpose adapters and MCP support are not yet implemented.
+Version: **0.6.1** (development branch). Use with Python 3.10+ and Git. Core scanning and routing require no hosted AI API. Official Spec Kit is optional and installed separately (Python 3.11+ for its CLI).
 
-## Features
+## Capabilities
 
-- Local session guard: unique Session ID, checkpoint, Git drift attribution, safe handoff merging.
-- Incremental infrastructure inventory, architecture graph and layer/component/function `.summerize.md` routing.
-- Adaptive task modes: `auto`, `minimal`, `balanced` and `deep`.
-- Separation of external `visualChange` and current-session `specChange`.
-- Optional Spec Kit integration without duplicating `.specify/` or `specs/`.
-- Python standard library only; no AI API or GitHub token required for local scanning.
+- Multi-repository support: conventional `src/`, `app/`, `backend/`, `frontend/`, `web/`, `packages/`, `.source/`, test and monorepo layouts; no fixed framework, project namespace or business domain.
+- Spec Kit bridge: detects active feature from `.specify/feature.json` / explicit environment override, validates `spec.md`, `plan.md`, `tasks.md`, returns bounded artifact fingerprints and task IDs without duplicate text or modifying Spec Kit files.
+- Session ID, local Git drift detection, provenance-aware `visualChange`/`specChange` logs and exact-session verified handoff merging.
+- Observed architecture graph, compact `.summerize.md` hierarchy and source-to-function routing.
+- Adaptive context modes: `auto`, `minimal`, `balanced`, `deep`.
+- Local synthetic regression tests and GitHub Actions CI.
 
-## Installation in a target project
+## Install into a target Git project
 
-Copy `SKILL.md`, `scripts/` and `references/` into:
+Copy `SKILL.md`, `scripts/`, `references/` to `<target>/.agents/skills/spec-to-code/` (preserve existing project policy and source structure). See [docs/INSTALL.md](docs/INSTALL.md).
 
-```text
-<project>/.agents/skills/spec-to-code/
+```sh
+python .agents/skills/spec-to-code/scripts/session_guard.py --root . start
+python .agents/skills/spec-to-code/scripts/speckit_bridge.py --root . --stage status
+# After Spec Kit feature spec.md/plan.md/tasks.md exist:
+python .agents/skills/spec-to-code/scripts/context_router.py --root . --task-id T001 --task 'Implement approved feature' --paths src/feature.py --mode auto --speckit-stage implement
 ```
 
-From the target repository root:
+**Replace example paths with paths actually present in your checkout.** A `status` call works even without Spec Kit; `--speckit-stage implement` requires its three artifacts. Use [integrations/speckit/README.md](integrations/speckit/README.md) to install/initialize upstream Spec Kit and invoke its agent skills, not shell process commands.
 
-```powershell
-py -3 .agents/skills/spec-to-code/scripts/session_guard.py --root . start
-py -3 .agents/skills/spec-to-code/scripts/context_router.py --root . --task-id TASK-001 --task "Update one UI label" --paths <existing-source-path> --mode auto
-```
-
-Read [docs/INSTALL.md](docs/INSTALL.md), [docs/INTEGRATION_LAYOUT.md](docs/INTEGRATION_LAYOUT.md) and [SKILL.md](SKILL.md) for lifecycle and safety requirements.
-
-## Test
+## Tests
 
 ```sh
 python -m unittest discover -s tests -v
 ```
 
-## Scope and security
+## Safety
 
-Local scanner operations do **not** fetch from remote GitHub, push, make commits, approve requirements, or launch Spec Kit by themselves. They inspect only the checked-out repository. Do not commit runtime session state, logs containing confidential data, secrets, or real customer records. Keep source-of-truth business and technical policies in the host project. Treat `docs/AGENTS_PATCH.md` as a proposed integration patch, **not** an automatically installed policy.
+No auto-fetch, commit, push, shell delegation, feature approval, remote MCP server, credential ingestion or silent deletion of application files. Spec2Code generates architecture docs and local state in the **target checkout**, not in this portable source repository. `visualChange` is for outside-session changes only. A `README` or `.gitkeep` scaffold is never proof of implemented runtime code.
 
-This repository is currently public. Review its visibility and all future commits accordingly.
+`v0.6.1` changes session prefixes and document management markers. Finish and merge any ACTIVE earlier-version session with its original version before upgrading; do not force-delete existing state.
+
+## References
+
+[SKILL.md](SKILL.md) · [Install](docs/INSTALL.md) · [Integration layout](docs/INTEGRATION_LAYOUT.md) · [Spec Kit bridge](integrations/speckit/README.md) · [Architecture graph](references/architecture-graph.md)

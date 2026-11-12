@@ -32,7 +32,7 @@ LAYER_DIRS = {
 SUMMARY_NAME = '.summerize.md'  # Owner-selected spelling, deliberately retained.
 STATE_FILE = Path('.agents/state/architecture-docs.json')
 SYMBOL_CACHE = Path('.agents/state/symbol-cache.json')
-GENERATED = '<!-- gymuro:managed-architecture v1 -->'
+GENERATED = '<!-- spec2code:managed-architecture v1 -->'
 VERSION = 1
 MAX_COMPONENTS = 300
 MAX_METHODS = 1200
@@ -50,41 +50,55 @@ def safe_name(name: str) -> str:
 
 
 def layer_for_path(p: str) -> str:
-    s = p.lower()
-    if s.startswith(('.agents/.documents/', '.agents/.git.workflow')) or s in ('agents.md', 'readme.md'):
+    """Conservative path-based classification with no project-specific names."""
+    s = p.lower().replace('\\', '/')
+    name = Path(s).name
+    if s in {'agents.md', 'readme.md', 'pyproject.toml'} or s.startswith(('.agents/.documents/', 'specs/')):
         return 'governance'
-    if s.startswith(('.source/web/', '.source/frontend/')):
-        return 'presentation'
-    if s.startswith('tests/') or s.startswith('.source/backend/tests/'):
+    if s.startswith(('tests/', 'test/')) or '/tests/' in s or name.startswith('test_') or name.endswith(('.test.ts', '.spec.ts', 'test.java')):
         return 'quality'
-    if s.startswith('.github/') or 'compose' in s or s.endswith('dockerfile'):
+    if s.startswith('.github/') or 'compose' in name or name == 'dockerfile' or s.endswith(('.tf', '.tfvars')):
         return 'delivery'
-    if any(tok in s for tok in ('/security/', '/identity/', '/authentication/')):
+    if any(t in s for t in ('/security/', '/identity/', '/authentication/', '/auth/')):
         return 'security'
-    if s.startswith('.source/backend/gymuro.api/'):
-        return 'api'
-    if s.startswith('.source/backend/gymuro.business/'):
-        return 'application'
-    if s.startswith('.source/backend/gymuro.dataaccess/'):
-        return 'persistence' if any(t in s for t in ('/migrations/', '/persistence/')) else 'data'
-    if s.startswith('.source/backend/gymuro.infrastructure/'):
-        return 'integrations'
-    if s.endswith('.sql'):
+    if any(t in s for t in ('/migrations/', '/database/', '/persistence/')) or s.endswith('.sql'):
         return 'persistence'
-    return 'governance' if s.startswith('.agents/') else 'delivery'
-
+    if any(t in s for t in ('/repository/', '/repositories/', '/dataaccess/', '/data/', '/dao/')) or re.search(r'/[^/]+\.dataaccess/',s):
+        return 'data'
+    if any(t in s for t in ('/integrations/', '/infrastructure/', '/adapters/', '/external/')) or re.search(r'/[^/]+\.infrastructure/',s):
+        return 'integrations'
+    if any(t in s for t in ('/controllers/', '/routes/', '/endpoints/')) or name.endswith('controller.cs') or re.search(r'/(?:[^/]+\.)?api/', s):
+        # Web framework routes can be presentation; API folders remain API.
+        if s.startswith(('web/', 'frontend/', 'client/', '.source/web/')):
+            return 'presentation'
+        return 'api'
+    if s.startswith(('web/', 'frontend/', 'client/', '.source/web/', '.source/frontend/')):
+        return 'presentation'
+    if s.startswith(('api/', '.source/backend/')) and ('/api/' in s or name in ('program.cs','startup.cs')):
+        return 'api'
+    if s.startswith(('app/', 'src/')) and Path(s).suffix.lower() in {'.tsx', '.jsx', '.vue', '.svelte', '.css', '.scss'}:
+        return 'presentation'
+    if any(t in s for t in ('/services/', '/domain/', '/business/', '/usecases/')):
+        return 'application'
+    if s.startswith(('.agents/', '.specify/')):
+        return 'governance'
+    if s.startswith(('backend/', 'server/', 'api/', '.source/backend/', 'src/', 'app/', 'lib/', 'core/', 'services/')):
+        return 'application'
+    return 'governance' if name.endswith('.md') else 'delivery'
 
 def observed_component(path: str, layer: str) -> bool:
     p = Path(path)
     if layer == 'api':
-        return p.name.endswith('Controller.cs')
+        return p.name.endswith('Controller.cs') or p.suffix.lower() in {'.py','.go','.java','.ts','.js'}
     if layer == 'presentation':
-        return p.suffix.lower() in {'.tsx', '.jsx', '.ts', '.js'} and '/src/' in path
+        return p.suffix.lower() in {'.tsx', '.jsx', '.ts', '.js', '.vue', '.svelte', '.py'}
     if layer in {'application', 'data', 'persistence', 'security', 'integrations'}:
-        return p.suffix.lower() == '.cs' and not p.name.endswith(('.g.cs', '.Designer.cs'))
+        return p.suffix.lower() in {'.cs', '.py', '.go', '.rs', '.java', '.kt', '.rb', '.php'} and not p.name.endswith(('.g.cs', '.Designer.cs'))
     if layer == 'quality':
-        return p.suffix.lower() in {'.cs', '.ts', '.tsx', '.js', '.jsx'}
+        return p.suffix.lower() in {'.cs', '.ts', '.tsx', '.js', '.jsx', '.py', '.go', '.java'}
     if layer in {'delivery', 'governance'}:
+        if path.startswith('specs/'):
+            return False
         return p.suffix.lower() in {'.md', '.json', '.yml', '.yaml'} or p.name in {'AGENTS.md','README.md','Dockerfile'}
     return False
 
@@ -117,6 +131,9 @@ def extract_symbols(root: Path, path: str, layer: str, fingerprint: str, cached:
             if n not in {'if', 'for', 'foreach', 'while', 'switch', 'catch', 'using'}:
                 functions.append({'name': n, 'line': source.count('\n', 0, match.start()) + 1,
                                   'kind': 'C# method (declaration heuristic)'})
+    elif p.suffix.lower() == '.py':
+        for match in re.finditer(r'^\s*(?:async\s+)?def\s+(?P<name>[A-Za-z_]\w*)\s*\(', source, re.M):
+            functions.append({'name':match.group('name'), 'line':source.count('\n',0,match.start())+1, 'kind':'Python function/method (declaration heuristic)'})
     elif p.suffix.lower() in {'.ts', '.tsx', '.js', '.jsx'}:
         js_patterns = [
             (re.compile(r'^\s*(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s+(?P<name>[A-Za-z_]\w*)\s*\(', re.M), 'function'),
@@ -232,7 +249,7 @@ def matrix_row_matrix(names: list[str], links: set[tuple[str, str]], title: str)
 def render_root(graph: dict, manifest: dict, focus: set[str], counts: dict[str, int]) -> str:
     nodes = {n['id']: n for n in graph['nodes']}
     keys = list(LAYER_DIRS)
-    out = [GENERATED, '# Gymuro Architecture Routing Matrix', '',
+    out = [GENERATED, '# Architecture Routing Matrix', '',
            'Local static evidence only. Documents under root layer folders are **architecture indexes**, not application code.',
            f"- Git HEAD: `{manifest['git']['head']}`; branch: `{manifest['git']['branch']}`",
            f'- Changed layers in last scan: {", ".join("`"+LAYER_DIRS[x]+"`" for x in sorted(focus)) or "none"}',

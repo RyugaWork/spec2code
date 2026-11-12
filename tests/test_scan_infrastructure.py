@@ -34,7 +34,7 @@ class InventorySafetyTests(unittest.TestCase):
     def test_dependency_indicators_are_not_runtime_claims(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            f = root / '.source/backend/Gymuro.Api/Program.cs'
+            f = root / '.source/backend/Sample.Api/Program.cs'
             f.parent.mkdir(parents=True)
             f.write_text('builder.Services.AddIdentityCore<User>();')
             inventory = {f.relative_to(root).as_posix(): {'sha256': infra.sha256_file(f), 'size': f.stat().st_size}}

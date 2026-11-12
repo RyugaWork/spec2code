@@ -12,13 +12,13 @@ GUARD = SCRIPTS / 'session_guard.py'
 
 class SessionGuardTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix='gymuro-session-test-')
+        self.temp = tempfile.TemporaryDirectory(prefix='spec2code-session-test-')
         self.root = Path(self.temp.name)
         self.write('AGENTS.md', '# Rules\n')
-        self.write('.source/backend/Gymuro.Api/Program.cs', 'app.MapControllers();\n')
-        self.write('.source/backend/Gymuro.Api/Gymuro.Api.csproj', '<Project />\n')
-        self.write('.source/backend/Gymuro.Business/.gitkeep', '')
-        self.write('.source/backend/Gymuro.DataAccess/.gitkeep', '')
+        self.write('.source/backend/Sample.Api/Program.cs', 'app.MapControllers();\n')
+        self.write('.source/backend/Sample.Api/Sample.Api.csproj', '<Project />\n')
+        self.write('.source/backend/Sample.Business/.gitkeep', '')
+        self.write('.source/backend/Sample.DataAccess/.gitkeep', '')
         self.write('.source/web/package.json', '{"dependencies":{"react":"19"}}\n')
         self.write('.source/.env', 'DATABASE_PASSWORD=ULTRA_PRIVATE')
         self.git('init', '-q')
@@ -63,8 +63,7 @@ class SessionGuardTests(unittest.TestCase):
         self.assertIn('scaffold_only', summary)
         self.assertIn('api', summary)
         graph = json.loads((self.root / '.agents/state/system-graph.json').read_text())
-        self.assertIn({'from': 'api', 'to': 'application', 'kind': 'depends_on',
-                       'evidence_level': 'architecture_policy_only'}, graph['edges'])
+        self.assertFalse(graph['edges'], 'Do not fabricate dependencies for generic projects')
         self.assertIn('No changed layers', (self.root / '.agents/state/impactMatrix.md').read_text())
         self.assertIn('api |', self.call('inspect', '--layer', 'api').stdout)
         self.assertIn('NO', self.call('checkpoint').stdout.replace('changed=0', 'NO'))
@@ -75,8 +74,8 @@ class SessionGuardTests(unittest.TestCase):
     def test_out_of_session_commit_classification(self):
         self.call('start')
         self.call('finish')
-        self.write('.source/backend/Gymuro.Api/Controllers/MemberController.cs', 'class MemberController {}\n')
-        self.git('add', '.source/backend/Gymuro.Api/Controllers/MemberController.cs')
+        self.write('.source/backend/Sample.Api/Controllers/MemberController.cs', 'class MemberController {}\n')
+        self.git('add', '.source/backend/Sample.Api/Controllers/MemberController.cs')
         self.git('commit', '-qm', 'feat(api): add member endpoint')
         second = self.call('start')
         self.assertIn('OUT_OF_SESSION_CHANGE', second.stdout)
@@ -84,18 +83,18 @@ class SessionGuardTests(unittest.TestCase):
         self.assertIn('OUT_OF_SESSION', visual)
         self.assertIn('MemberController.cs', visual)
         self.assertIn('external_commits=1', second.stdout)
-        self.assertIn('.source/backend/Gymuro.Api/Controllers/MemberController.cs', self.state()['startup_external_paths'])
+        self.assertIn('.source/backend/Sample.Api/Controllers/MemberController.cs', self.state()['startup_external_paths'])
         self.assertFalse((self.root / '.handoffs/.details' / f'.specChange.{self.state()["id"]}.md').exists())
         matrix = (self.root / '.agents/state/impactMatrix.md').read_text()
         self.assertIn('| api |', matrix)
 
     def test_internal_record_is_not_external(self):
         self.call('start')
-        self.write('.source/backend/Gymuro.Api/Program.cs', 'app.MapControllers();\napp.UseAuthorization();\n')
-        self.call('record', '--paths', '.source/backend/Gymuro.Api/Program.cs',
-                  '--note', 'Apply approved auth middleware', '--requirement', 'GYM-SEC-02')
+        self.write('.source/backend/Sample.Api/Program.cs', 'app.MapControllers();\napp.UseAuthorization();\n')
+        self.call('record', '--paths', '.source/backend/Sample.Api/Program.cs',
+                  '--note', 'Apply approved auth middleware', '--requirement', 'S2C-SEC-02')
         self.assertFalse((self.root / '.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
-        self.assertIn('GYM-SEC-02', (self.root / '.handoffs/.details' / f'.specChange.{self.state()["id"]}.md').read_text())
+        self.assertIn('S2C-SEC-02', (self.root / '.handoffs/.details' / f'.specChange.{self.state()["id"]}.md').read_text())
         self.call('finish')
         self.assertEqual(self.state()['record_count'], 1)
         self.assertIn('NO_CHANGE', self.call('start').stdout)
@@ -112,7 +111,7 @@ class SessionGuardTests(unittest.TestCase):
 
     def test_modified_after_record_requires_new_record(self):
         self.call('start')
-        p = '.source/backend/Gymuro.Api/Program.cs'
+        p = '.source/backend/Sample.Api/Program.cs'
         self.write(p, 'code first\n')
         self.call('record', '--paths', p, '--note', 'First edit')
         self.write(p, 'code second\n')
@@ -133,18 +132,18 @@ class SessionGuardTests(unittest.TestCase):
     def test_internal_commits_using_trailer(self):
         self.call('start')
         sid = self.state()['id']
-        p = '.source/backend/Gymuro.Api/Program.cs'
+        p = '.source/backend/Sample.Api/Program.cs'
         self.write(p, 'code modified\n')
         self.git('add', p)
-        self.git('commit', '-qm', f'feat(api): update entrypoint\n\nGymuro-Session: {sid}')
+        self.git('commit', '-qm', f'feat(api): update entrypoint\n\nSpec2Code-Session: {sid}')
         self.call('record', '--paths', p, '--note', 'Entry point update')
         self.call('finish')
         self.assertFalse((self.root / '.handoffs/.details' / f'.visualChange.{self.state()["id"]}.md').exists())
 
     def test_observed_project_reference_upgrades_graph_evidence(self):
-        self.write('.source/backend/Gymuro.Business/Gymuro.Business.csproj', '<Project />')
-        self.write('.source/backend/Gymuro.Api/Gymuro.Api.csproj',
-                   '<Project><ItemGroup><ProjectReference Include="../Gymuro.Business/Gymuro.Business.csproj" /></ItemGroup></Project>')
+        self.write('.source/backend/Sample.Business/Sample.Business.csproj', '<Project />')
+        self.write('.source/backend/Sample.Api/Sample.Api.csproj',
+                   '<Project><ItemGroup><ProjectReference Include="../Sample.Business/Sample.Business.csproj" /></ItemGroup></Project>')
         self.call('start')
         graph = json.loads((self.root / '.agents/state/system-graph.json').read_text())
         found = [e for e in graph['edges'] if e['from'] == 'api' and e['to'] == 'application']

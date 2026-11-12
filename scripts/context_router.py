@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local-only, bounded, adaptive context routing for Gymuro Spec-to-Code.
+"""Local-only, bounded, adaptive context routing for Spec2Code Spec-to-Code.
 
 Reads v0.4 metadata/symbol graph, NOT application source or configuration contents.
 Produces path-only .agents/state/context-pack.json; stdout stays compact.
@@ -18,6 +18,7 @@ import sys
 
 import architecture_tree as arch
 import scan_infrastructure as infra
+import speckit_bridge
 
 POLICY = Path('.agents/state/context-policy.json')
 PACK = Path('.agents/state/context-pack.json')
@@ -102,7 +103,7 @@ def safe_id(text: str) -> str:
 def terms(task: str) -> set[str]:
     return {w.lower() for w in re.findall(r'[A-Za-z][A-Za-z0-9_]{4,}', task) if w.lower() not in {
         'create', 'update', 'change', 'implement', 'current', 'feature', 'existing',
-        'function', 'method', 'controller', 'system', 'gymuro', 'using', 'from',
+        'function', 'method', 'controller', 'system', 'spec2code', 'using', 'from',
         'with', 'will', 'should', 'please', 'component', 'backend', 'frontend',
         'review', 'apply', 'method', 'fixing', 'record', 'issue',
     }}
@@ -162,7 +163,7 @@ def layer_neighborhood(start: set[str], graph: dict, hops: int) -> list[str]:
 
 
 def route(root: Path, task_id: str, task: str, raw_paths: list[str],
-          fn: str, requested: str, limit: int) -> dict:
+          fn: str, requested: str, limit: int, speckit_stage: str = 'status') -> dict:
     task_id = safe_id(task_id)
     if len(task) > 2000 or not task.strip():
         raise RuntimeError('Task description must be non-empty and <= 2000 characters')
@@ -273,7 +274,7 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
         'component_summary_paths': component_docs,
         'function_document_paths': function_docs,
         'root_summary_path': '.summerize.md' if not missing and (root/'.summerize.md').is_file() else None,
-        'spec_lookup': 'Resolve approved active feature from .specify/feature.json; never guess paths' if (root / '.specify/feature.json').is_file() else None,
+        'spec_lookup': '.specify/feature.json (or explicit SPECIFY_FEATURE_DIRECTORY); resolved by speckit_bridge',
         'unselected_matches': truncated,
         'notes': [
             'Path-only routing. Read no files not necessary for current task.',
@@ -281,6 +282,8 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
             'Use approved business and security requirements independent of token budget.',
         ],
     }
+    # Spec Kit artifacts are referenced by path/hash only; no duplicated spec body.
+    pack['spec_kit'] = speckit_bridge.discover(root, speckit_stage)
     # Do not include task free text in machine file; it could contain PII/secrets.
     infra.atomic_text(root / PACK, json.dumps(pack, ensure_ascii=False, indent=2) + '\n')
     return pack
@@ -294,13 +297,15 @@ def main() -> int:
     p.add_argument('--mode', choices=('auto',*MODES), default='auto')
     p.add_argument('--paths', nargs='*', default=[], metavar='PATH')
     p.add_argument('--function', default='', help='Optional exact or distinctive function name for narrow selection')
+    p.add_argument('--speckit-stage', choices=speckit_bridge.STAGES, default='status',
+                   help='Validate active Spec Kit feature and required artifacts before stage (implement = spec/plan/tasks)')
     p.add_argument('--token-limit', type=int, default=0, help='Override lower than default target budget')
     args = p.parse_args()
     root = Path(args.root).resolve()
     try:
         if args.token_limit < 0:
             raise RuntimeError('Token budget must be nonnegative')
-        result = route(root,args.task_id,args.task,args.paths,args.function,args.mode,args.token_limit)
+        result = route(root,args.task_id,args.task,args.paths,args.function,args.mode,args.token_limit,args.speckit_stage)
         print(f"CONTEXT_ROUTE | {result['task_id']} | session={result['session_id']} | {result['effective_mode'].upper()} | {result['routing_status']} | source={len(result['source_paths'])} | layers={','.join(result['direct_layers']) or '-'} | target={result['token_budget_target']} tokens")
         print('CONTEXT_PACK | .agents/state/context-pack.json | ' + '; '.join(result['reasons'][:2]))
         if result['routing_status'] == 'NEEDS_EXPLICIT_PATH':

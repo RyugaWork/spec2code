@@ -1,4 +1,4 @@
-# Gymuro Adaptive Context Routing — v0.6
+# Spec2Code Adaptive Context Routing — v0.6.1
 
 This extension uses **the existing v0.4 hierarchy**, not another architecture store:
 
@@ -14,7 +14,7 @@ This extension uses **the existing v0.4 hierarchy**, not another architecture st
 ## How to use
 
 1. `session_guard.py --root . start` (or `checkpoint` when resuming). This inspects local Git and incrementally updates the current graph before coding.
-2. Run `context_router.py --root . --task-id TASK-001 --task "Change Member page label" --paths .source/web/src/MemberPage.tsx --mode auto`.
+2. Run `context_router.py --root . --task-id TASK-001 --task "Update dashboard label" --paths src/dashboard.tsx --mode auto`.
 3. Read the short two-line output; open `context-pack.json` **only if routing details are needed**. Then open selected exact layer/component/function documents. Do not read all referenced paths automatically.
 4. If `NEEDS_EXPLICIT_PATH`, supply an observed path or exact function. If `STALE_GIT_HEAD`, run checkpoint first. If `TRUNCATED`, split task or review only the missed relevant paths.
 5. If the task changes in a material way (new layer, security policy, database contract, outside commit), re-run the router to elevate/recompute mode. Do not restart Spec Kit phases that are unaffected.
@@ -36,7 +36,7 @@ Order of precedence: explicit observed high-risk path/topic or intersecting exte
 
 ## Spec Kit integration
 
-When Spec Kit is installed, run routing at pre-plan and pre-implement gates and let `specs/<active-feature>/spec.md` and `tasks.md` remain Spec Kit's authority. Resolve active feature only from observed workspace metadata. `context-pack.json` points to paths and should not duplicate Specs or the `.summerize.md` hierarchy. When spec/plan/tasks are unchanged, avoid recreating them; an implementation continuation may use its checkpoint. Do not assume Spec Kit is installed when `.specify/` is missing.
+When official Spec Kit is initialized, use `speckit_bridge.py --stage plan` before planning and `context_router.py --speckit-stage implement` before implementation. Route at pre-plan and pre-implement gates and let `specs/<active-feature>/spec.md` and `tasks.md` remain Spec Kit's authority. Resolve active feature only from observed workspace metadata. `context-pack.json` points to paths and should not duplicate Specs or the `.summerize.md` hierarchy. When spec/plan/tasks are unchanged, avoid recreating them; an implementation continuation may use its checkpoint. Do not assume Spec Kit is installed when `.specify/` is missing.
 
 ## Limitations and security
 

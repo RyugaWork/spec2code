@@ -18,18 +18,18 @@ HANDOFF_DIR=Path('.handoffs')
 DETAIL_DIR=HANDOFF_DIR/'.details'  # Owner typo `.detials` normalized.
 BUILDNOTES=HANDOFF_DIR/'.buildnotes.handoff.md'
 LOCK=HANDOFF_DIR/'.merge.lock'
-SESSION_RE=re.compile(r'^GYM-\d{8}-\d{6}-[0-9A-F]{8}$')
+SESSION_RE=re.compile(r'^S2C-\d{8}-\d{6}-[0-9A-F]{8}$')
 EVENT_TYPES={'visualChange','specChange'}
-MARKER_RE=re.compile(r'^<!-- GYMURO-MERGED session=(GYM-\d{8}-\d{6}-[0-9A-F]{8}) type=(visualChange|specChange) sha256=([0-9a-f]{64}) -->$',re.M)
-HEAD='<!-- gymuro:managed-handoff v1 -->'
-LEDGER='<!-- GYMURO-HANDOFF-LEDGER -->'
+MARKER_RE=re.compile(r'^<!-- SPEC2CODE-MERGED session=(S2C-\d{8}-\d{6}-[0-9A-F]{8}) type=(visualChange|specChange) sha256=([0-9a-f]{64}) -->$',re.M)
+HEAD='<!-- spec2code:managed-handoff v1 -->'
+LEDGER='<!-- SPEC2CODE-HANDOFF-LEDGER -->'
 MAX_BYTES=1024*1024
 MAX_LEDGER=24*1024*1024
 
 
 def validate_session(sid: str) -> None:
     if not SESSION_RE.fullmatch(sid):
-        raise RuntimeError('Invalid Gymuro Session ID format; refusing handoff operation')
+        raise RuntimeError('Invalid Spec2Code Session ID format; refusing handoff operation')
 
 
 def path_for(root: Path, kind: str, sid: str) -> Path:
@@ -40,7 +40,7 @@ def path_for(root: Path, kind: str, sid: str) -> Path:
 
 
 def header(sid: str, kind: str) -> str:
-    return '\n'.join([f'<!-- gymuro:pending-change v1 session={sid} type={kind} -->',
+    return '\n'.join([f'<!-- spec2code:pending-change v1 session={sid} type={kind} -->',
                       f'# {kind}: {sid}', '',
                       f'- Session-ID: `{sid}`',
                       f'- Change-Type: `{kind}`',
@@ -82,7 +82,7 @@ def merge_lock(root: Path):
         raise RuntimeError('Handoff merge already in progress or stale lock present; do not auto-remove lock')
     try:
         with os.fdopen(fd,'w') as f:
-            f.write('Gymuro handoff merge lock. Do not remove during an active merge.\n')
+            f.write('Spec2Code handoff merge lock. Do not remove during an active merge.\n')
         yield
     finally:
         p.unlink(missing_ok=True)
@@ -176,7 +176,7 @@ def merge(root: Path, sid: str) -> dict:
                 if not content.startswith(header(sid,kind)):
                     raise RuntimeError(f'Pending log has wrong Session ID or type: {f}')
                 digest=hashlib.sha256(raw).hexdigest()
-                mark=f'<!-- GYMURO-MERGED session={sid} type={kind} sha256={digest} -->'
+                mark=f'<!-- SPEC2CODE-MERGED session={sid} type={kind} sha256={digest} -->'
                 pending.append((kind,f,raw,mark,content))
         if not pending:
             return {'merged':0,'removed':0,'message':'NO_PENDING_SESSION_LOGS'}
@@ -187,7 +187,7 @@ def merge(root: Path, sid: str) -> dict:
                 written+=1
         if len(ledger.encode('utf-8'))>MAX_LEDGER:
             raise RuntimeError('Buildnotes cap exceeded; archive explicitly before merging')
-        new=HEAD+'\n# Gymuro Build Notes Handoff\n\n'+quick_summary(ledger)+LEDGER+ledger
+        new=HEAD+'\n# Spec2Code Build Notes Handoff\n\n'+quick_summary(ledger)+LEDGER+ledger
         if new!=existing:
             infra.atomic_text(p,new)
         # Re-read persisted data before unlinking any exact filename.

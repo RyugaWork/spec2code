@@ -13,12 +13,12 @@ import context_router as router
 
 class AdaptiveModeTests(unittest.TestCase):
     def setUp(self):
-        self.tmp=tempfile.TemporaryDirectory(prefix='gymuro-adaptive-')
+        self.tmp=tempfile.TemporaryDirectory(prefix='spec2code-adaptive-')
         self.root=Path(self.tmp.name)
         self.paths=[
             '.source/web/src/Status.tsx',
-            '.source/backend/Gymuro.Api/Controllers/LoginController.cs',
-            '.source/backend/Gymuro.Business/Services/MemberService.cs',
+            '.source/backend/Sample.Api/Controllers/LoginController.cs',
+            '.source/backend/Sample.Business/Services/MemberService.cs',
         ]
         for p in self.paths:
             t=self.root/p
@@ -30,7 +30,7 @@ class AdaptiveModeTests(unittest.TestCase):
         self.git('add','.')
         self.git('commit','-qm','chore: baseline')
         head=self.git('rev-parse','HEAD')
-        self.write_json('.agents/state/session.json',{'id':'GYM-TEST','status':'ACTIVE', 'last_seen_head':head,'outside_paths':[]})
+        self.write_json('.agents/state/session.json',{'id':'S2C-TEST','status':'ACTIVE', 'last_seen_head':head,'outside_paths':[]})
         self.write_json('.agents/state/infrastructure.json',{'git':{'head':head[:12]},'files':{p:{'sha256':'test'} for p in self.paths}})
         self.write_json('.agents/state/system-graph.json', {'nodes':[{'id':i} for i in ['presentation','api','application','security','quality']],
            'edges':[{'from':'presentation','to':'api'},{'from':'api','to':'application'},{'from':'api','to':'security'}, {'from':'quality','to':'api'}]})
@@ -110,7 +110,7 @@ class AdaptiveModeTests(unittest.TestCase):
         self.assertEqual(pack['token_budget_target'],350)
 
     def test_sensitive_metadata_never_becomes_read_target(self):
-        target='.source/backend/Gymuro.Api/appsettings.json'
+        target='.source/backend/Sample.Api/appsettings.json'
         t=self.root/target
         t.parent.mkdir(parents=True,exist_ok=True)
         t.write_text('{"ConnectionStrings":{"Secret":"NEVER_READ_ME"}}')

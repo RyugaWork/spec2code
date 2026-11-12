@@ -1,4 +1,4 @@
-# Gymuro Hierarchical Architecture and Handoff Contract (v0.4)
+# Spec2Code Hierarchical Architecture and Handoff Contract (v0.6.1)
 
 ## Owner-defined paths
 
@@ -27,17 +27,17 @@
 - `./<Layer>/<Component>/.<Component>.<Function>.md`: function symbol, source line, revision `rN`, last file-fingerprint change summary; semantic behavior not automatically invented.
 - `.agents/state/infrastructure.json`, `.agents/state/system-graph.json`, `.agents/state/architecture-docs.json`, `.agents/state/symbol-cache.json`: machine-only inventories.
 
-The static declaration parser indexes conventional C#/TypeScript/JavaScript method patterns; it is not a full semantic compiler. A missing edge/function is **unknown**, not proof of no dependency. C# project references are observed static layer links. Frontend relative imports establish same-layer component links. Other edges are documented architectural intent until source evidence exists.
+The static declaration parser indexes conventional C#, Python, TypeScript and JavaScript declaration patterns; it is not a full semantic compiler. A missing edge/function is **unknown**, not proof of no dependency. C# project references are observed static layer links. Frontend relative imports establish same-layer component links. There are no built-in assumed cross-layer edges. Other dependencies remain unobserved until evidence exists.
 
-Generated documents carry `<!-- gymuro:managed-architecture v1 -->`; script refuses to overwrite a hand-written collision. The tool never removes source or hand-written docs, and does not remove orphaned generated docs silently. Current root index is authoritative for active components; review stale files before manual cleanup.
+Generated documents carry `<!-- spec2code:managed-architecture v1 -->`; script refuses to overwrite a hand-written collision. The tool never removes source or hand-written docs, and does not remove orphaned generated docs silently. Current root index is authoritative for active components; review stale files before manual cleanup.
 
 ## Pending and merged handoff protocol
 
 1. `start`: compare local Git HEAD and eligible file fingerprints to the last session checkpoint. External changes go to the new session ID's pending visual log; baseline does not create a change event.
 2. `record`: register specific authored source changes in the same session's pending spec log.
-3. `checkpoint`: discover commits with no matching `Gymuro-Session:` trailer; append external events in that session's visual log.
+3. `checkpoint`: discover commits with no matching `Spec2Code-Session:` trailer; append external events in that session's visual log.
 4. `finish`: verify every in-session changed source path is either registered or attributed to an outside commit, then write FINISH event.
-5. `merge --session-id <EXACT-ID>`: verify FINISH, validate pending file header/type/session and SHA-256; append actual pending content to buildnotes ledger with `GYMURO-MERGED` marker; verify persisted content before `unlink` on each exact file.
+5. `merge --session-id <EXACT-ID>`: verify FINISH, validate pending file header/type/session and SHA-256; append actual pending content to buildnotes ledger with `SPEC2CODE-MERGED` marker; verify persisted content before `unlink` on each exact file.
 6. If the process crashes after ledger write but before deletion, retrying the same session recognizes the existing marker, verifies content and removes the pending file without appending a duplicate.
 7. If a pending file changed after the ledger write, it is not deleted unless its new content is safely archived and re-verified.
 

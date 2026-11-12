@@ -1,44 +1,19 @@
-# Linked layers and impact matrix — v0.3
+# Evidence-based universal layer graph
 
-This reference documents the compact graph; normal operation routes via `./.summerize.md` and only the task-relevant child `.summerize.md` files.
+`./.summerize.md` links to optional layers: Governance, Present, API, Application, DataAccess, Persistence, Security, Integrations, Delivery, Quality. Generated documentation is a routing index, not proof that a fixed stack or dependency exists.
 
-## Layers
+The graph has **no assumed cross-layer edges by default**. Static observations may add edges such as C# `ProjectReference` or entrypoint registration. Symbol extraction supports limited Python, JavaScript/TypeScript and C# declaration patterns, but cannot prove dynamic calls, business behavior or cross-language dependencies.
 
-| Layer | Typical path / evidence | Depends on |
-| --- | --- | --- |
-| governance | AGENTS.md, .agents/.documents | - |
-| presentation | .source/web | api |
-| api | .source/backend/Gymuro.Api | application, security |
-| application | .source/backend/Gymuro.Business | data, integrations |
-| data | .source/backend/Gymuro.DataAccess/Repositories | persistence |
-| persistence | DbContext, migrations, persistence / SQL | - |
-| security | ASP.NET Identity middleware, auth code/package signals | - |
-| integrations | .source/backend/Gymuro.Infrastructure | - |
-| delivery | Docker Compose, .github/workflows | presentation, api, data |
-| quality | tests/, .source/backend/tests | presentation, api, application, data |
+Graph edges are `from` consumer, `to` dependency, labeled with an evidence level and an evidence path when available. An absent edge means **not observed**, not guaranteed independent.
 
-Edges point **consumer -> dependency** and are labeled `architecture_policy_only`: they must not be construed as verified runtime calls, dynamic imports, or transitive dependencies in compiled code.
+## Storage
 
-## Generated files
+- `.agents/state/infrastructure.json`: source-path metadata and safe file facts.
+- `.agents/state/system-graph.json`: observed layer nodes and edges.
+- `.agents/state/symbol-cache.json`: bounded lexical declarations.
+- `.agents/state/impactMatrix.md`: impact from observed edges; 3 = direct/high, 2 = intermediate, 1 = indirect, 0 = not observed.
+- `./.summerize.md` and layer/component/function `.summerize.md` documents: compact navigation only.
 
-- `.agents/state/infrastructure.json`: machine index by path, status, SHA-256/metadata, facts, snapshot HEAD.
-- `.agents/state/system-graph.json`: machine nodes, evidence paths, dependency edges.
-- `.agents/state/infrastructure-index.md`: short architecture clues, entrypoint and manifests.
-- `.agents/state/layerSummary.md`: short layer-state/neighbor table for model context.
-- `.agents/state/impactMatrix.md`: automatically derived potential impact for the latest detected changed layers.
-- `.agents/state/session.json`, `sessions.jsonl`: machine session provenance. Do not paste full content into model context.
+## Token controls
 
-## Matrix scoring
-
-If a file in layer B changes, mark B=3 and propagate influence along **reverse** dependency edges. Direct dependents score 3, two hops 2, three or more hops 1, unrelated 0. Only review 2–3 scores by default. This is an **impact heuristic**, not quantitative risk, production criticality or assurance that a particular workflow failed.
-
-## Evidence quality
-
-- `not_observed` means no candidate files detected, **not** confirmed absence from all systems.
-- `scaffold_only` means directory exists with no eligible source; `.gitkeep` is never proof of code.
-- `observed_files`, `code_indicators`, `configured_not_runtime_verified` describe local static evidence only.
-- New real dependencies should be captured by a reviewed graph-generator change, not by silently inventing new edges.
-
-## Multi-level index (v0.4)
-
-The root `./.summerize.md` links to named layer directories, their component/controller summaries and optional function declarations. Read `references/hierarchy-layout.md` for graph matrix semantics and pending handoff merge protocol.
+Default to Minimal for one low-risk file, Balanced for an ordinary task, and Deep for security, schema, cross-layer or external-drift risk. A mode never certifies missing dependencies or replaces tests. Source body is not copied into machine context packs.

@@ -1,5 +1,11 @@
 [project]
-name = "gymuro-spec2code"
-version = "0.6.0"
-description = "Infrastructure-aware Spec-to-Code agent skill"
+name = "spec2code"
+version = "0.6.1"
+description = "Portable infrastructure-aware Spec-to-Code agent skill with official Spec Kit adapter"
 requires-python = ">=3.10"
+
+[project.optional-dependencies]
+speckit = ["specify-cli"]
+
+[tool.setuptools]
+py-modules = []

@@ -1,83 +1,71 @@
 ---
 name: spec-to-code
-description: Convert approved Gymuro requirements into minimal verified code changes using a session ID, Git drift checks, a multi-level layer/controller/function graph, impact/pathing matrices and provenance-separated pending handoffs. Use at the start of every coding session or when resuming a task. Independent of GitHub Spec Kit.
+description: Run a repository-independent, evidence-based spec-to-code workflow with optional official GitHub Spec Kit integration. Use for coding sessions, requirement-to-task traceability, architecture graph routing, external Git drift checks, incremental minimal/balanced/deep context selection, and session-scoped change handoffs. Do not use as permission to approve business rules, change Git history, or deploy.
 ---
 
-# Gymuro Spec-to-Code v0.6 — Session-Aware Architecture Graph + Adaptive Context
+# Spec2Code v0.6.1 — Universal + Spec Kit Bridge
 
-Root `AGENTS.md`, canonical business requirements and Git workflow always take precedence. This skill is **not** GitHub Spec Kit. It does not grant commit, push or requirement approval.
+The target repository's `AGENTS.md`, approved requirements, security policies and Git workflow take precedence. Do not assume ASP.NET Core, React, a `.source/` directory, or any business domain. This skill **does not automatically install Spec Kit**, create commits, modify business requirements, or execute unapproved coding actions.
 
-## Mandatory pre-code session check
+## First: check local repository and create a coding session
 
-From repository root, BEFORE reading feature source:
+From the **target Git repository root**, before coding:
 
-```powershell
-py -3 .agents/skills/spec-to-code/scripts/session_guard.py --root . start
+```sh
+python .agents/skills/spec-to-code/scripts/session_guard.py --root . start
 ```
 
-The script creates `GYM-YYYYMMDD-HHMMSS-XXXXXXXX`, verifies local Git HEAD changes since the previous checkpoint, incrementally hashes eligible files, updates evidence graphs and nested architecture documentation, and records **outside-session** changes in a pending visual log. It does **not** fetch remote GitHub commits. If another session is ACTIVE, reconcile it instead of starting over.
+The local script inventories recognized source roots, hashes only eligible changed files, creates a unique `S2C-YYYYMMDD-HHMMSS-XXXXXXXX` Session ID, indexes observable architecture and detects Git commits/outside-session changes. It never runs `git fetch`, sends source to an AI model, or reads environment-secret values. An ACTIVE session blocks a second `start`; checkpoint/resume instead. `status` and `inspect --layer <layer>` are available.
 
-Use `checkpoint` when new commits or external edits are suspected; use `--verify` only when timestamps/hash reuse cannot be trusted.
+## Spec Kit integration — mandatory gate when a feature uses Spec Kit
 
-## Adaptive mode selection (mandatory per coding task)
+Spec Kit is managed by the **official Specify CLI** and the target agent integration, NOT by files copied from this repository. Install and initialize it separately following `integrations/speckit/README.md`; retain Spec Kit ownership of `.specify/` and `specs/`.
 
-After `session_guard.py start` (or `checkpoint` on resume), run **the local context router** to choose scope and mode without reading source into model context:
+- Resolve the active feature from `SPECIFY_FEATURE_DIRECTORY` (explicit override) or `.specify/feature.json`; **do not infer from Git branch**.
+- Run the read-only bridge for the relevant stage before reading spec details:
 
-```powershell
-py -3 .agents/skills/spec-to-code/scripts/context_router.py --root . --task-id TASK-001 --task "Update Member page label" --paths .source/web/src/MemberPage.tsx --mode auto
+```sh
+python .agents/skills/spec-to-code/scripts/speckit_bridge.py --root . --stage implement
 ```
 
-`--mode` accepts `auto` (recommended), `minimal`, `balanced`, `deep`. The selector uses the **existing** graph/index, the active Session ID, source paths/functions and external drift status. It prints a compact result and writes `.agents/state/context-pack.json` with paths only. Read only the selected paths; no duplicate architecture graph, no source content in the pack. Unknown paths or stale Git HEAD block routing. If the router cannot identify the task source, supply the exact `--paths` or `--function`; do not expand to the whole codebase.
+- For implementation, the bridge requires an in-workspace active feature with `spec.md`, `plan.md`, `tasks.md`; missing files, unsafe pointers and symlinks **block** implementation. It reports paths, SHA-256 fingerprints and bounded task IDs, not spec content or human approval.
+- Use the agent's installed Spec Kit skills for `specify → clarify → plan → tasks → analyze → implement → converge` according to task size. Spec2Code does not impersonate or silently invoke those stages. Re-run only the stage invalidated by a relevant change.
+- Project policy and approved artifacts must be checked by the agent even when the bridge reports READY. READY means **files exist**, not that a human approved the requirement or that tests pass.
 
-Auto chooses Minimal for bounded low-risk UI/docs, Balanced for ordinary code changes and Deep for high-risk/cross-layer/external-drift changes. Manual lowering below an evidenced Deep safety floor is refused. Source content, approved requirements and compulsory verification may exceed target routing budgets; never omit a security gate to save tokens. See `references/adaptive-modes.md` only to tune or troubleshoot routing.
+If Spec Kit is not initialized, the bridge's `status` returns `NOT_INITIALIZED`. Do not claim a full Spec Kit workflow succeeded. Non-Spec Kit projects may continue with their own approved requirement documents.
 
-**Spec Kit handoff (when separately installed):** Route first, then pass only selected requirements + architecture paths to the relevant Spec Kit stage. Do not duplicate `.specify/` and `specs/` artifacts in layer summaries or re-run unaffected Spec Kit stages.
+## Adaptive context routing (once per task, after session preflight)
 
-## Read-on-demand architecture routing (token budget)
-
-1. Read `./.summerize.md` ONLY if choosing which layer(s) the task affects; otherwise use previous context.
-2. Read `./<Layer>/.summerize.md` for changed or directly required layers, and their direct high-impact neighbors only.
-3. Read `./<Layer>/<Component>/.summerize.md` for the relevant controller/component.
-4. Read **only** `./<Layer>/<Component>/.<Component>.<Function>.md` and the exact source file or bounded source lines necessary for the feature.
-5. `infrastructure.json`, `system-graph.json` and symbol cache under `.agents/state/` are machine-only; never paste them into LLM context.
-6. If a class/function was not observed, **do not invent** architecture docs. Scaffold directories do not establish implemented code.
-
-Example route: `./.summerize.md` → `./API/.summerize.md` → `./API/MemberController/.summerize.md` → `./API/MemberController/.MemberController.GetMember.md`. `Present/` denotes the frontend/presentation layer; other layers are `API`, `Application`, `DataAccess`, `Persistence`, `Security`, `Integrations`, `Delivery`, `Quality`, `Governance`.
-
-The spelling `.summerize.md` is intentionally retained exactly as the repository owner requested. For human-readable graph semantics and known limitations, read `references/hierarchy-layout.md` only when needed.
-
-## Provenance: one pending log per session and change class
-
-- `./.handoffs/.details/.visualChange.{SessionID}.md` — incoming commits and differences from **other/outside** the active session; never records the current session's declared authored changes.
-- `./.handoffs/.details/.specChange.{SessionID}.md` — changes **explicitly recorded** by this skill in the active session. `record` requires actual changed path(s) and an evidence note; do not infer authorship from raw Git diff.
-- `./.handoffs/.buildnotes.handoff.md` — compact quick handoff and a verifiable append-only ledger of merged session logs.
-
-During an active session, ambiguous unregistered local edits remain `UNATTRIBUTED`, not automatically reclassified as outside work. `finish` refuses to close if any non-external source changes are unregistered or stale. Never overwrite another developer's edits.
-
-```powershell
-# After actual authorized edits:
-py -3 .agents/skills/spec-to-code/scripts/session_guard.py --root . record --paths .source/backend/Gymuro.Api/Controllers/MemberController.cs --note "Apply approved requirement" --requirement GYM-001
-
-# If someone else committed or code unexpectedly changed:
-py -3 .agents/skills/spec-to-code/scripts/session_guard.py --root . checkpoint
-
-# Close only after accounting for all changes:
-py -3 .agents/skills/spec-to-code/scripts/session_guard.py --root . finish
-
-# AFTER closing, archive precisely that session's pending logs and remove only verified merged files:
-py -3 .agents/skills/spec-to-code/scripts/session_guard.py --root . merge --session-id GYM-YYYYMMDD-HHMMSS-XXXXXXXX
+```sh
+python .agents/skills/spec-to-code/scripts/context_router.py --root . --task-id T001 --task "Implement scoped task" --paths src/feature.py --mode auto --speckit-stage implement
 ```
 
-`merge` requires an existing FINISH audit event for the **exact** ID, validates each pending file's session/type header and SHA-256 content, atomically writes and checks the handoff ledger, then removes only the exact validated filenames. A retry is idempotent. **Never** use broad wildcard deletes, directory deletes, or manual cleanup of unmerged pending logs. If the merge fails, preserve the files for review. The typo `.detials` is **not** used; canonical directory is `.details`.
+Use paths **actually found in the checkout**, not literal examples. `--mode auto|minimal|balanced|deep` selects a bounded graph traversal based on file count, risk, affected layers and external drift. Manual requests cannot bypass an evidenced Deep safety floor. The router writes only `.agents/state/context-pack.json`, a **path/hash/ID** summary. It also includes the active Spec Kit feature and artifact paths through `speckit_bridge`, not duplicated specification bodies. An invalid Spec Kit gate must not overwrite an existing context pack.
 
-## Spec to code quality gates
+When planning a feature before `plan.md` or `tasks.md` exists, use `--speckit-stage plan` (or `status` for discovery); use `--speckit-stage implement` only once implementation prerequisites exist. Always read the approved security/requirements rules relevant to the task even if the token target is exceeded.
 
-1. Confirm requirement IDs and approved behavior from `.agents/.documents/.businessRequirements.md` plus relevant API/security/architecture policy. Separate known, inferred, proposed and unverified requirements.
-2. Use graph/matrix to identify exact impacted layers and component paths. Source evidence is static, not production runtime validation.
-3. Plan minimal component/function edits and acceptance tests; read only the linked requirements and affected source.
-4. Implement within approved source paths (`.source/`), preserve auth, ownership, SQL parameterization, DbContext lifetime and test separation requirements.
-5. Verify with relevant commands; truthfully report `PASS`, `FAIL`, `BLOCKED`, `NOT RUN`. Record your edits, checkpoint, finish and merge only after validation.
+## Read-on-demand architecture
 
-Do not automatically commit, push, switch branches, fetch, delete or replace user files. An in-session commit, if separately authorized, uses Conventional Commits and trailer `Gymuro-Session: <ID>` to assist attribution; it is not proof of who authored the code.
+`./.summerize.md` → `<Layer>/.summerize.md` → `<Layer>/<Component>/.summerize.md` → `.<Component>.<Function>.md` → exact source lines. Reuse the machine graph and symbol cache under `.agents/state/` without loading entire JSON files into the model. Generated docs provide **static/lexical evidence only**. Unknown functions, dependencies and runtime behavior must never be invented. The historical `.summerize.md` spelling is deliberately retained for compatibility.
 
-See `references/session-lifecycle.md` and `references/hierarchy-layout.md` only for nontrivial recovery and internals. Never read all reference documents by default.
+The generic scanner handles conventional roots such as `src/`, `app/`, `backend/`, `web/`, `packages/`, `tests/` and `.source/`; it does not promise full language-semantic or cross-language dependency analysis. Missing graph edges are **unknown**, not proof of independence.
+
+## Provenance and exact-session handoff
+
+- `.handoffs/.details/.visualChange.{SessionID}.md`: observed outside-session Git changes, **not** current-session authored edits.
+- `.handoffs/.details/.specChange.{SessionID}.md`: actual source/spec changes **explicitly registered** to this active session. Spec Kit-managed `specs/**/*.md` changes can be registered here.
+- `.handoffs/.buildnotes.handoff.md`: quick index plus verifiable merge ledger. Never delete pending files by wildcard.
+
+```sh
+# After an authorized edit, and only for paths that actually changed:
+python .agents/skills/spec-to-code/scripts/session_guard.py --root . record --paths src/feature.py --note "Implemented approved task" --requirement REQ-001
+python .agents/skills/spec-to-code/scripts/session_guard.py --root . checkpoint
+python .agents/skills/spec-to-code/scripts/session_guard.py --root . finish
+python .agents/skills/spec-to-code/scripts/session_guard.py --root . merge --session-id S2C-YYYYMMDD-HHMMSS-XXXXXXXX
+```
+
+`merge` requires a FINISH audit event and validates the exact Session ID, pending type/header, SHA-256 and persisted archive before removing **only** matching pending files. Ambiguous changes remain `UNATTRIBUTED` until reconciled. Never auto-commit/push/rebase/force or delete user source. If explicitly permitted to commit in the target project, use Conventional Commits and `Spec2Code-Session: <exact ID>` trailer for traceability, not proof of authorship.
+
+## Quality gates
+
+Resolve approved requirement → affected nodes → plan/tasks → minimal scoped edits → tests/verification → registered changes → finish/handoff. Report `PASS`, `FAIL`, `BLOCKED` and `NOT RUN` accurately. Use `references/spec-to-code-workflow.md` only for complex features; `references/session-lifecycle.md` for drift and recovery; `references/adaptive-modes.md` to customize the routing policy. Do not indiscriminately load all references or the full Git history.

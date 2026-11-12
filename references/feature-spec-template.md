@@ -1,7 +1,7 @@
 # Feature Specification — <Feature ID / name>
 
 > Status: DRAFT / APPROVED | Owner: <owner> | Source versions: <version> | Last reviewed: <date>
-> Authority: Derived from approved `.agents/.documents/.businessRequirements.md` and applicable technical contracts. This document does not itself approve new business rules.
+> Authority: Derived from approved project requirements (including Spec Kit `spec.md` when applicable) and relevant technical contracts. This document does not itself approve new business rules.
 
 ## 1. Scope and provenance
 - Purpose / user problem:

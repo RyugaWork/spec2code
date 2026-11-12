@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Gymuro spec-to-code session guard. Git is LOCAL ONLY; no network or secret reads.
+"""Spec2Code spec-to-code session guard. Git is LOCAL ONLY; no network or secret reads.
 
 Usage: python .agents/skills/spec-to-code/scripts/session_guard.py --root . start
        python ... session_guard.py --root . checkpoint
-       python ... session_guard.py --root . record --paths .source/... --note '...' --requirement GYM-123
+       python ... session_guard.py --root . record --paths .source/... --note '...' --requirement S2C-123
        python ... session_guard.py --root . finish
        python ... session_guard.py --root . status
        python ... session_guard.py --root . inspect --layer api
@@ -37,16 +37,16 @@ MAX_CHANGE_LIST = 12
 
 # Directed A -> B means A DEPENDS ON B. An edit to B can impact A.
 LAYER_DEFS = [
-    ('governance', 'Requirements & governance', []),
-    ('presentation', 'React presentation', ['api']),
-    ('api', 'HTTP API & controllers', ['application', 'security']),
-    ('application', 'Business logic', ['data', 'integrations']),
-    ('data', 'Repository / DataAccess', ['persistence']),
+    ('governance', 'Project requirements and governance', []),
+    ('presentation', 'Frontend / presentation', []),
+    ('api', 'HTTP API & controllers', []),
+    ('application', 'Business logic', []),
+    ('data', 'Repository / DataAccess', []),
     ('persistence', 'Database & migrations', []),
     ('security', 'Authentication & authorization', []),
     ('integrations', 'External adapters & services', []),
-    ('delivery', 'Docker, CI/CD & deployment', ['presentation', 'api', 'data']),
-    ('quality', 'Automated tests', ['presentation', 'api', 'application', 'data']),
+    ('delivery', 'Docker, CI/CD & deployment', []),
+    ('quality', 'Automated tests', []),
 ]
 LAYER_NAMES = {k: name for k, name, _ in LAYER_DEFS}
 DEPENDENCIES = {k: deps for k, _, deps in LAYER_DEFS}
@@ -98,14 +98,17 @@ def graph_for(root: Path, manifest: dict) -> dict:
     for key, name, _ in LAYER_DEFS:
         match = matching(key)
         # A directory containing only .gitkeep is scaffolding, not implementation.
-        folders = {'presentation': '.source/web', 'api': '.source/backend/Gymuro.Api',
-                   'application': '.source/backend/Gymuro.Business',
-                   'data': '.source/backend/Gymuro.DataAccess',
-                   'persistence': '.source/backend/Gymuro.DataAccess',
-                   'integrations': '.source/backend/Gymuro.Infrastructure',
-                   'quality': 'tests'}
+        folders = {
+            'presentation': ('web', 'frontend', 'client', '.source/web', 'app'),
+            'api': ('api', 'backend', 'server', '.source/backend'),
+            'application': ('src', 'services', 'backend', 'server', 'core', '.source/backend'),
+            'data': ('data', 'backend', 'server', '.source/backend'),
+            'persistence': ('migrations', 'database', 'backend', '.source/backend'),
+            'integrations': ('integrations', 'adapters', 'backend', '.source/backend'),
+            'quality': ('tests', 'test'),
+        }
         folder = folders.get(key)
-        present = bool(folder and (root / folder).is_dir())
+        present = bool(folder and any((root / candidate).is_dir() for candidate in folder))
         status = 'observed_files' if match else ('scaffold_only' if present else 'not_observed')
         if key == 'security' and cs['authentication']['status'] == 'code_indicators':
             status = 'code_indicators'
@@ -118,10 +121,8 @@ def graph_for(root: Path, manifest: dict) -> dict:
         nodes.append({'id': key, 'name': name, 'status': status,
                       'file_count': len(match), 'evidence_paths': match[:3]})
 
-    # Start with explicit intended graph, then overlay observed *static* references.
-    edges = {(src, dep): {'from': src, 'to': dep, 'kind': 'depends_on',
-                          'evidence_level': 'architecture_policy_only'}
-             for src, _, deps in LAYER_DEFS for dep in deps}
+    # Universal graph: no assumed cross-layer dependencies. Only observed static links.
+    edges = {}
     for path, facts in manifest.get('file_facts', {}).items():
         if path.endswith('.csproj'):
             source = layer_for_path(path)
@@ -135,7 +136,7 @@ def graph_for(root: Path, manifest: dict) -> dict:
                                                    'kind': 'depends_on',
                                                    'evidence_level': 'observed_project_reference',
                                                    'evidence_path': path}
-        if path.endswith(('/Program.cs', '/Startup.cs')) and path.startswith('.source/backend/Gymuro.Api/'):
+        if path.endswith(('/Program.cs', '/Startup.cs')) and layer_for_path(path) in {'api', 'application'}:
             if any('Identity' in x or 'Authentication' in x for x in facts.get('startup_signals', [])):
                 edges[('api', 'security')] = {'from': 'api', 'to': 'security',
                                               'kind': 'depends_on',
@@ -182,7 +183,7 @@ def impact(changed: set[str], graph: dict) -> dict[str, dict[str, int]]:
 
 def render_summary(graph: dict, *, changed: set[str]) -> str:
     deps = graph_dependencies(graph)
-    rows = ['# Gymuro Layer Summary', '',
+    rows = ['# Layer Summary', '',
             'Static evidence, not runtime proof. `*` means observed source reference/registration; otherwise policy-only link.', '',
             '| Layer | State | Files | Depends on |',
             '| --- | --- | ---: | --- |']
@@ -201,7 +202,7 @@ def render_summary(graph: dict, *, changed: set[str]) -> str:
 def render_matrix(changed: set[str], graph: dict) -> str:
     # Matrix is impact propagation, not measured production risk.
     table = impact(changed, graph)
-    lines = ['# Gymuro Change Impact Matrix', '',
+    lines = ['# Change Impact Matrix', '',
              'Potential impact from declared layer dependencies only. 3=direct/high, 2=one hop, 1=indirect, 0=none. **Not a runtime risk rating.**', '']
     if not table:
         return '\n'.join(lines + ['No changed layers in the latest scan.', ''])
@@ -281,7 +282,7 @@ def commit_delta(root: Path, previous: str, current: str, own_session: str | Non
         raise RuntimeError(f'Git delta exceeds {MAX_COMMITS} commits. Manual review required')
     for sha in ids:
         message = git(root, 'log', '-1', '--format=%B', sha)
-        match = re.search(r'^Gymuro-Session:\s*(GYM-[A-Za-z0-9-]+)\s*$', message, re.M | re.I)
+        match = re.search(r'^Spec2Code-Session:\s*(S2C-[A-Za-z0-9-]+)\s*$', message, re.M | re.I)
         trailer_id = match.group(1) if match else None
         if own_session is not None and trailer_id == own_session:
             result['own_commits'].append(sha)
@@ -341,7 +342,7 @@ def run_start(root: Path, *, verify: bool = False) -> int:
     previous_head = (prev or {}).get('git', {}).get('head')
     commit_info = commit_delta(root, previous_head, head, own_session=None) if previous_head else {
         'outside_commits': [], 'outside_paths': set(), 'own_commits': []}
-    session_id = f"GYM-{dt.datetime.now(dt.timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8].upper()}"
+    session_id = f"S2C-{dt.datetime.now(dt.timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8].upper()}"
     changed_layers = {layer_for_path(x['path']) for x in changes}
     if prev and (changes or commit_info['outside_commits']):
         handoffs.append_event(root, session_id, 'visualChange',
@@ -379,7 +380,7 @@ def refresh(root: Path, state: dict, *, print_result: bool = True, verify: bool 
         handoffs.append_event(root, state['id'], 'visualChange',
                    event_text(state['id'], 'EXTERNAL_COMMIT_DURING_SESSION',
                               external_changes, ext_shas,
-                              'incoming Git commits lack current Gymuro-Session trailer'))
+                              'incoming Git commits lack current Spec2Code-Session trailer'))
     state['outside_paths'] = sorted(set(state['outside_paths']) | ext_paths)
     state['last_seen_files'] = current['files']
     state['last_seen_head'] = head

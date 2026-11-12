@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gymuro infrastructure inventory: stdlib-only metadata scan + snapshot writes.
+"""Spec2Code infrastructure inventory: stdlib-only metadata scan + snapshot writes.
 
 No source content, environment-variable values, API responses, or secrets are
 sent to an LLM. The scanner hashes changed, permitted files and persists only
@@ -30,14 +30,17 @@ ROOT_FILES = {'AGENTS.md', 'README.md', '.gitignore', 'global.json',
               'Directory.Build.props', 'Directory.Packages.props',
               'docker-compose.yml', 'docker-compose.yaml', 'compose.yml',
               'compose.yaml', 'Dockerfile', 'Makefile', 'package.json',
-              'pnpm-workspace.yaml', '.dockerignore'}
+              'pnpm-workspace.yaml', '.dockerignore', 'pyproject.toml', 'go.mod',
+              'Cargo.toml', 'pom.xml', 'build.gradle', 'build.gradle.kts',
+              'requirements.txt', 'Gemfile', 'composer.json'}
 CODE_EXTS = {'.cs', '.csproj', '.fsproj', '.sln', '.slnx', '.props', '.targets',
              '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json', '.yml', '.yaml',
-             '.sql', '.ps1', '.sh', '.md', '.toml', '.config'}
+             '.sql', '.ps1', '.sh', '.md', '.toml', '.config', '.py', '.go', '.rs', '.java',
+             '.kt', '.swift', '.rb', '.php', '.vue', '.svelte', '.html', '.css', '.scss', '.tf', '.xml'}
 SKIP_DIRS = {'.git', 'node_modules', '.next', '.nuxt', '.venv', 'venv', '__pycache__',
              'bin', 'obj', 'dist', 'build', 'coverage', 'test-results',
              'playwright-report', '.turbo', '.cache', '.idea', '.vs',
-             '.angular', '.gradle', 'vendor', 'packages'}
+             '.angular', '.gradle', 'vendor'}
 SKIP_SUFFIX = {'.pem', '.key', '.pfx', '.p12', '.cer', '.crt', '.db', '.sqlite',
                '.sqlite3', '.bak', '.dump', '.zip', '.pdf', '.docx', '.xlsx',
                '.lockb'}
@@ -51,6 +54,12 @@ MAX_SIZE_HASH = 2 * 1024 * 1024
 MAX_INDEX_PATHS = 10
 MAX_CHANGE_PATHS = 35
 
+
+# Enumerate conventional source roots; no assumption about a framework, language or .source/ layout.
+SOURCE_ROOTS = {'.source', 'src', 'app', 'lib', 'libs', 'packages', 'services',
+                'backend', 'frontend', 'web', 'client', 'api', 'server', 'internal',
+                'cmd', 'pkg', 'core', 'tests', 'test', 'specs'}
+SCAN_ROOTS = tuple(sorted(SOURCE_ROOTS | {'.agents/.documents', '.github/workflows'}))
 
 def iso_now() -> str:
     return dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds')
@@ -98,14 +107,14 @@ def tracked_candidate(rel: Path) -> bool:
         return len(parts) >= 3 and parts[1] == '.documents' and rel.suffix.lower() == '.md'
     if parts[0] == '.github':
         return len(parts) >= 3 and parts[1] == 'workflows' and rel.suffix.lower() in {'.yml', '.yaml'}
-    if parts[0] in {'.source', 'tests'}:
+    if parts[0] in SOURCE_ROOTS:
         return rel.suffix.lower() in CODE_EXTS or name in {'Dockerfile', 'Makefile', '.gitignore'}
     return False
 
 
 def all_files(root: Path) -> list[Path]:
     result = []
-    for top in ('.source', 'tests', '.agents/.documents', '.github/workflows'):
+    for top in SCAN_ROOTS:
         base = root / top
         if not base.is_dir() or base.is_symlink():
             continue
@@ -264,43 +273,48 @@ def extract_facts(root: Path, files: dict, old: dict | None) -> dict:
 
 
 def component_evidence(root: Path, files: dict, file_facts: dict) -> dict:
+    """Metadata-level evidence across common monorepo and language layouts."""
     paths = set(files)
-    source_paths = sorted(p for p in paths if p.startswith('.source/'))
-    backend = [p for p in source_paths if p.startswith('.source/backend/')]
-    web = [p for p in source_paths if p.startswith(('.source/web/', '.source/frontend/'))]
-    tests = [p for p in paths if p.startswith(('tests/', '.source/backend/tests/'))]
-    bproj = sorted(p for p in backend if p.endswith(('.csproj', '.sln', '.slnx', '.fsproj')))
-    wpackages = sorted(p for p in web if p.endswith('package.json') and '/node_modules/' not in p)
-    bsource = [p for p in backend if p.endswith('.cs')]
-    wsource = [p for p in web if p.endswith(('.ts', '.tsx', '.js', '.jsx'))]
+    code_exts = {'.cs', '.py', '.go', '.rs', '.java', '.kt', '.rb', '.php', '.swift'}
+    web_exts = {'.js', '.jsx', '.ts', '.tsx', '.vue', '.svelte'}
+    web_roots = ('web/', 'frontend/', 'client/', '.source/web/', '.source/frontend/', 'app/')
+    backend_roots = ('backend/', 'server/', 'api/', 'services/', '.source/backend/', 'cmd/', 'internal/', 'pkg/')
+    web = [p for p in paths if p.startswith(web_roots) or p.endswith(('.tsx', '.jsx', '.vue', '.svelte'))]
+    backend = [p for p in paths if p.startswith(backend_roots) or Path(p).suffix in code_exts]
+    tests = [p for p in paths if p.startswith(('tests/', 'test/')) or '/tests/' in p or
+             Path(p).name.startswith('test_') or Path(p).name.endswith(('.test.ts', '.spec.ts', 'Test.java'))]
+    bproj = sorted(p for p in paths if p.endswith(('.csproj', '.sln', '.slnx', '.fsproj',
+                 'pyproject.toml', 'go.mod', 'Cargo.toml', 'pom.xml', 'build.gradle',
+                 'build.gradle.kts', 'requirements.txt')))
+    wpackages = sorted(p for p in paths if p.endswith('package.json'))
+    bsource = [p for p in backend if Path(p).suffix.lower() in code_exts]
+    wsource = [p for p in web if Path(p).suffix.lower() in web_exts]
     compose = sorted(p for p in paths if Path(p).name in {'compose.yml', 'compose.yaml',
-                                                           'docker-compose.yml', 'docker-compose.yaml'}
-                     or Path(p).name.startswith('docker-compose.'))
+                   'docker-compose.yml', 'docker-compose.yaml'} or
+                   Path(p).name.startswith('docker-compose.'))
     workflows = sorted(p for p in paths if p.startswith('.github/workflows/'))
-    policies = sorted(p for p in paths if p.startswith('.agents/.documents/'))
-    services = sorted(set(svc for p in compose for svc in file_facts.get(p, {}).get('declared_services', [])))
+    policies = sorted(p for p in paths if p.startswith('.agents/.documents/') or p == 'AGENTS.md')
+    services = sorted({svc for p in compose for svc in file_facts.get(p, {}).get('declared_services', [])})
     frontend = [{'path': p, **file_facts.get(p, {})} for p in wpackages]
-    bentry = sorted(p for p in backend if Path(p).name in {'Program.cs', 'Startup.cs'})
+    bentry = sorted(p for p in backend if Path(p).name in {'Program.cs', 'Startup.cs', 'main.py', 'main.go', 'app.py'})
     dbcontext = sorted(p for p in backend if p.endswith('DbContext.cs'))
-    api = sorted(p for p in backend if p.endswith('Controller.cs') or p.endswith('Controllers.cs'))
-    migrations = sorted(p for p in backend if '/Migrations/' in p and p.endswith(('.cs', '.sql')))
-    pkgs = sorted(set(k for p in bproj for k in file_facts.get(p, {}).get('package_indicators', [])))
-    startup_signals = sorted(set(k for p in bentry for k in file_facts.get(p, {}).get('startup_signals', [])))
-    component = {
-        'backend': {'status': 'active' if bproj or bsource else 'scaffold' if (root / '.source/backend').exists() else 'absent',
+    api = sorted(p for p in backend if Path(p).name.endswith(('Controller.cs', 'Controllers.cs')))
+    migrations = sorted(p for p in paths if '/migrations/' in p.lower() and Path(p).suffix in {'.cs', '.sql', '.py'})
+    pkgs = sorted({k for p in bproj for k in file_facts.get(p, {}).get('package_indicators', [])})
+    startup_signals = sorted({k for p in bentry for k in file_facts.get(p, {}).get('startup_signals', [])})
+    backend_dirs = ('backend', 'server', 'api', '.source/backend')
+    web_dirs = ('web', 'frontend', 'client', '.source/web')
+    return {
+        'backend': {'status': 'active' if bsource or bproj else 'scaffold' if any((root/x).is_dir() for x in backend_dirs) else 'absent',
                     'project_files': bproj, 'entrypoints': bentry, 'dbcontext_files': dbcontext,
                     'package_indicators': pkgs, 'startup_signals': startup_signals,
                     'controller_count': len(api), 'source_count': len(bsource)},
-        'database': {
-            'status': 'code_indicators' if dbcontext or migrations or any('EntityFramework' in x for x in pkgs) else 'not_observed',
-            'dbcontext_files': dbcontext, 'migration_count': len(migrations),
-            'provider_indicators': sorted(k for k in pkgs if 'EntityFramework' in k),
-        },
-        'authentication': {
-            'status': 'code_indicators' if any('Identity' in x or 'Authentication' in x or 'JwtBearer' in x for x in pkgs + startup_signals) else 'not_observed',
-            'startup_signals': sorted(k for k in startup_signals if 'Identity' in k or 'Authentication' in k or 'JwtBearer' in k),
-        },
-        'web': {'status': 'active' if wpackages or wsource else 'scaffold' if (root / '.source/web').exists() else 'absent',
+        'database': {'status': 'code_indicators' if dbcontext or migrations or any('EntityFramework' in x for x in pkgs) else 'not_observed',
+                     'dbcontext_files': dbcontext, 'migration_count': len(migrations),
+                     'provider_indicators': sorted(k for k in pkgs if 'EntityFramework' in k)},
+        'authentication': {'status': 'code_indicators' if any('Identity' in x or 'Authentication' in x or 'JwtBearer' in x for x in pkgs+startup_signals) else 'not_observed',
+                           'startup_signals': sorted(k for k in startup_signals if 'Identity' in k or 'Authentication' in k or 'JwtBearer' in k)},
+        'web': {'status': 'active' if wsource or wpackages else 'scaffold' if any((root/x).is_dir() for x in web_dirs) else 'absent',
                 'package_manifests': frontend, 'source_count': len(wsource)},
         'containers': {'status': 'configured' if compose else 'not_observed',
                        'compose_files': compose, 'declared_service_names': services},
@@ -308,21 +322,20 @@ def component_evidence(root: Path, files: dict, file_facts: dict) -> dict:
         'workflows': {'status': 'configured' if workflows else 'not_observed', 'paths': workflows},
         'policy_docs': {'status': 'present' if policies else 'not_observed', 'paths': policies},
     }
-    return component
 
 def category(path: str) -> str:
-    if path.startswith('.source/backend/'):
+    s = path.lower()
+    if s.startswith(('.source/backend/', 'backend/', 'server/', 'api/')):
         return 'Backend'
-    if path.startswith(('.source/web/', '.source/frontend/')):
+    if s.startswith(('.source/web/', '.source/frontend/', 'web/', 'frontend/', 'client/')):
         return 'Frontend'
-    if path.startswith('.agents/.documents/') or path == 'AGENTS.md':
+    if s.startswith('.agents/.documents/') or s == 'agents.md':
         return 'Governance'
-    if path.startswith('tests/'):
+    if s.startswith(('tests/', 'test/')) or '/tests/' in s:
         return 'Tests'
-    if path.startswith('.github/'):
+    if s.startswith('.github/'):
         return 'CI/CD'
     return 'Repository / deployment'
-
 
 def diff_files(before: dict, after: dict) -> list[dict]:
     changes = []
@@ -341,7 +354,7 @@ def diff_files(before: dict, after: dict) -> list[dict]:
 
 def render_topology(components: dict) -> str:
     return ('```mermaid\nflowchart LR\n'
-            '    R["Gymuro repository"] --> B["Backend: ' + components['backend']['status'] + '"]\n'
+            '    R["Spec2Code repository"] --> B["Backend: ' + components['backend']['status'] + '"]\n'
             '    R --> W["Web: ' + components['web']['status'] + '"]\n'
             '    B --> DB["Data access: ' + components['database']['status'] + '"]\n'
             '    B --> A["Auth: ' + components['authentication']['status'] + '"]\n'
@@ -361,7 +374,7 @@ def render_index(manifest: dict) -> str:
     b = c['backend']
     w = c['web']
     f = w['package_manifests']
-    return f'''# Gymuro Infrastructure Index (auto-generated)
+    return f'''# Spec2Code Infrastructure Index (auto-generated)
 
 **Evidence:** local repository file scan; **not** proof of deployed/runtime behavior. Do not interpret `.gitkeep` scaffolds as implemented code. The full inventory is stored in `infrastructure.json` (do not paste it into an agent prompt).
 
@@ -374,8 +387,8 @@ def render_index(manifest: dict) -> str:
 
 | Component | Evidence status | Minimal facts |
 | --- | --- | --- |
-| Backend | **{b['status']}** | {len(b['project_files'])} projects/solutions, {b['source_count']} C# files, {b['controller_count']} controllers |
-| Web | **{w['status']}** | {len(f)} package manifests, {w['source_count']} TS/JS source files |
+| Backend | **{b['status']}** | {len(b['project_files'])} projects/solutions, {b['source_count']} backend-language source files, {b['controller_count']} controllers |
+| Web | **{w['status']}** | {len(f)} package manifests, {w['source_count']} web source files |
 | Database integration | **{c['database']['status']}** | {len(c['database']['dbcontext_files'])} DbContext files, {c['database']['migration_count']} migration files |
 | Authentication | **{c['authentication']['status']}** | {', '.join(c['authentication']['startup_signals']) or 'no startup indicators'} |
 | Docker | **{c['containers']['status']}** | {len(c['containers']['compose_files'])} compose files; declared services: {', '.join(c['containers']['declared_service_names']) or 'not observed'} |
@@ -387,16 +400,16 @@ def render_index(manifest: dict) -> str:
 
 {render_topology(c)}
 
-## Backend code-based indicators (NOT runtime proof)
+## Code-based indicators (NOT runtime proof)
 
 - Packages found in project manifests: {', '.join(b['package_indicators']) or 'none observed'}
 - Registration/middleware calls found in entrypoints: {', '.join(b['startup_signals']) or 'none observed'}
 
-## Backend project & entrypoint paths
+## Project & entrypoint paths
 
 {items(b['project_files'] + b['entrypoints'] + b['dbcontext_files'])}
 
-## Frontend package evidence
+## Package manager evidence
 
 {items([f"{x['path']} (framework indicators: {', '.join(x.get('framework_indicators', [])) or 'none'}; scripts: {', '.join(x.get('script_names', [])) or 'none'})" for x in f])}
 
@@ -471,8 +484,6 @@ def run(args) -> int:
     root = Path(args.root).resolve()
     if not root.is_dir():
         raise RuntimeError('Repository root does not exist')
-    if not (root / 'AGENTS.md').is_file() and not (root / '.source').is_dir():
-        raise RuntimeError('Not a Gymuro-style repository root (AGENTS.md / .source missing)')
     old = read_json(root / MANIFEST)
     if old is not None and old.get('status') != 'UNINITIALIZED' and old.get('schema_version') != SCHEMA:
         raise RuntimeError('Inventory schema mismatch; migration required, no overwrite')
@@ -527,7 +538,7 @@ def run(args) -> int:
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--root', default='.', help='Gymuro-Project repository root')
+    p.add_argument('--root', default='.', help='target-repository repository root')
     p.add_argument('--verify', action='store_true', help='Rehash eligible files, even when metadata is unchanged')
     p.add_argument('--dry-run', action='store_true', help='Compute result without writing state or log')
     p.add_argument('--runtime', action='store_true', help='Opt-in local tool versions; no running service or secret inspection')

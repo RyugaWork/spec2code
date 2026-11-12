@@ -11,7 +11,7 @@ Use as a review checklist; report `PASS`, `FAIL`, `BLOCKED`, or `NOT RUN` with e
 - [ ] Specific implementation scope authorized, independent of Git branch/commit/push authorization.
 
 ## During implementation
-- [ ] Code placed under `.source/backend/` or `.source/web/` and follows boundary conventions.
+- [ ] Code placed in the host repository's observed source roots and follows its existing boundary conventions.
 - [ ] Authentication scheme correct: Identity Cookie Web vs approved JWT non-Web; CSRF on cookie mutations.
 - [ ] Actor ownership, role/permission and current business rules checked server-side.
 - [ ] SQL parameters and allowlisted dynamic identifiers used; row-level ownership filtering before paging.

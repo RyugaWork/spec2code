@@ -80,6 +80,21 @@ class HandoffTreeTests(unittest.TestCase):
         self.assertIn('## Quick handoff',notes)
         self.assertIn('NO_PENDING_SESSION_LOGS',self.call('merge','--session-id',sid).stdout)
 
+    def test_legacy_crlf_pending_evidence_merges_safely(self):
+        self.call('start')
+        sid=self.sid()
+        p='.source/web/src/MemberPage.tsx'
+        self.write(p, 'export function MemberPage() { return 52; }\n')
+        self.call('record','--paths',p,'--note','Approved view update')
+        self.call('finish')
+        pending=self.pending('specChange')
+        pending.write_bytes(pending.read_bytes().replace(b'\n', b'\r\n'))
+        raw_sha=hashlib.sha256(pending.read_bytes()).hexdigest()
+        out=self.call('merge','--session-id',sid)
+        self.assertIn('removed=1',out.stdout)
+        self.assertIn(raw_sha,(self.root/'.handoffs/.buildnotes.handoff.md').read_text())
+        self.assertFalse(pending.exists())
+
     def test_visual_and_spec_logs_from_separate_sessions(self):
         self.call('start'); old=self.sid(); self.call('finish')
         self.write('.source/backend/Sample.Api/Controllers/MemberController.cs','public class MemberController { public int Ping() => 1; }\n')

@@ -10,26 +10,14 @@ from __future__ import annotations
 import os
 from pathlib import Path, PureWindowsPath
 import subprocess
+import config_loader
 
-# These runtime-owned locations must not be symlinks, including symlinked parents.
-MANAGED_PATHS = (
-    '.agents', '.agents/skills', '.agents/skills/spec-to-code',
-    '.agents/skills/spec-to-code/scripts',
-    '.agents/skills/spec-to-code/scripts/path_guard.py',
-    '.agents/.skills', '.agents/.skills/spec-to-code',
-    '.agents/.skills/spec-to-code/scripts',
-    '.agents/.skills/spec-to-code/scripts/path_guard.py',
-    '.agents/state', '.agents/state/infrastructure.json',
-    '.agents/state/infrastructure-index.md', '.agents/state/session.json',
-    '.agents/state/sessions.jsonl', '.agents/state/system-graph.json',
-    '.agents/state/context-pack.json', '.agents/state/context-policy.json',
-    '.agents/state/architecture-docs.json', '.agents/state/symbol-cache.json',
-    '.agents/state/layerSummary.md', '.agents/state/impactMatrix.md',
-    '.handoffs', '.handoffs/.details', '.handoffs/.buildnotes.handoff.md',
-    '.handoffs/.merge.lock', '.summerize.md',
-    'Present', 'API', 'Application', 'DataAccess', 'Persistence',
-    'Security', 'Integrations', 'Delivery', 'Quality', 'Governance',
-)
+# Bundled security-sensitive paths are externalized, but the mandatory parent
+# boundaries stay hardcoded so modifying config cannot remove containment.
+SECURITY_CONFIG = config_loader.load('security')
+MANAGED_PATHS = tuple(sorted(set(SECURITY_CONFIG['managed_paths']) | {
+    '.agents', '.handoffs', '.summerize.md',
+}))
 
 
 def check_path(root: Path, value: str | Path) -> Path:

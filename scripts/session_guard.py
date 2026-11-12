@@ -25,31 +25,20 @@ import scan_infrastructure as infra
 import architecture_tree as arch
 import handoff_store as handoffs
 import path_guard as guard
+import config_loader
 import scope_io
 
-SESSION_FILE = Path('.agents/state/session.json')
-SESSION_EVENTS = Path('.agents/state/sessions.jsonl')
-GRAPH_FILE = Path('.agents/state/system-graph.json')
-SUMMARY_FILE = Path('.agents/state/layerSummary.md')
-MATRIX_FILE = Path('.agents/state/impactMatrix.md')
-# Session-scoped changes live in .handoffs/.details/; legacy root logs are not touched.
-SCHEMA = 1
-MAX_COMMITS = 200
-MAX_CHANGE_LIST = 12
-
-# Directed A -> B means A DEPENDS ON B. An edit to B can impact A.
-LAYER_DEFS = [
-    ('governance', 'Project requirements and governance', []),
-    ('presentation', 'Frontend / presentation', []),
-    ('api', 'HTTP API & controllers', []),
-    ('application', 'Business logic', []),
-    ('data', 'Repository / DataAccess', []),
-    ('persistence', 'Database & migrations', []),
-    ('security', 'Authentication & authorization', []),
-    ('integrations', 'External adapters & services', []),
-    ('delivery', 'Docker, CI/CD & deployment', []),
-    ('quality', 'Automated tests', []),
-]
+SESSION_CONFIG = config_loader.load('session')
+SESSION_FILE = Path(SESSION_CONFIG['paths']['session'])
+SESSION_EVENTS = Path(SESSION_CONFIG['paths']['events'])
+GRAPH_FILE = Path(SESSION_CONFIG['paths']['graph'])
+SUMMARY_FILE = Path(SESSION_CONFIG['paths']['summary'])
+MATRIX_FILE = Path(SESSION_CONFIG['paths']['matrix'])
+SCHEMA = 1  # persisted session format
+MAX_COMMITS = SESSION_CONFIG['limits']['commits']
+MAX_CHANGE_LIST = SESSION_CONFIG['limits']['change_list']
+# Directed A -> B indicates A depends on B. No speculative dependencies.
+LAYER_DEFS = [(item['id'],item['label'],item['dependencies']) for item in SESSION_CONFIG['layers']]
 LAYER_NAMES = {k: name for k, name, _ in LAYER_DEFS}
 DEPENDENCIES = {k: deps for k, _, deps in LAYER_DEFS}
 

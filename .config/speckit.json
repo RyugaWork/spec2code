@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "artifacts": [
+    "spec.md",
+    "plan.md",
+    "tasks.md"
+  ],
+  "stages": [
+    "status",
+    "specify",
+    "plan",
+    "tasks",
+    "analyze",
+    "implement",
+    "converge"
+  ],
+  "stage_prerequisites": {
+    "status": [],
+    "specify": [],
+    "plan": [
+      "spec.md"
+    ],
+    "tasks": [
+      "spec.md",
+      "plan.md"
+    ],
+    "analyze": [
+      "spec.md",
+      "plan.md",
+      "tasks.md"
+    ],
+    "implement": [
+      "spec.md",
+      "plan.md",
+      "tasks.md"
+    ],
+    "converge": [
+      "spec.md",
+      "plan.md",
+      "tasks.md"
+    ]
+  },
+  "limits": {
+    "feature_pointer_bytes": 8192,
+    "artifact_bytes": 1048576,
+    "task_ids": 24
+  },
+  "task_id_pattern": "^\\s*-\\s*\\[[ xX]\\]\\s*(?:\\*\\*)?(T\\d{3,6})\\b"
+}

@@ -20,34 +20,17 @@ import architecture_tree as arch
 import scan_infrastructure as infra
 import speckit_bridge
 import path_guard as guard
+import config_loader
 
-POLICY = Path('.agents/state/context-policy.json')
-PACK = Path('.agents/state/context-pack.json')
-SESSION = Path('.agents/state/session.json')
-GRAPH = Path('.agents/state/system-graph.json')
-SYMBOLS = Path('.agents/state/symbol-cache.json')
-DOC_STATE = Path('.agents/state/architecture-docs.json')
-MODES = ('minimal', 'balanced', 'deep')
-DEFAULT_POLICY = {
-    'schema_version': 1,
-    'default_mode': 'balanced',
-    'budgets': {'minimal': 500, 'balanced': 1300, 'deep': 3300},
-    'max_source_paths': {'minimal': 3, 'balanced': 8, 'deep': 16},
-    'max_function_docs': {'minimal': 2, 'balanced': 5, 'deep': 12},
-    'max_neighbor_hops': {'minimal': 0, 'balanced': 1, 'deep': 2},
-    'high_risk_patterns': [
-        'auth', 'authorization', 'identity', 'permission', 'role', 'csrf',
-        'login', 'register', 'signup', 'credential', 'otp',
-        'jwt', 'cookie', 'password', 'encrypt', 'decrypt', 'kms', 'pii',
-        'medical', 'health', 'payment', 'billing', 'financial', 'transaction',
-        'migration', 'schema', 'sql injection', 'sqli', 'concurrency',
-        'data loss', 'destructive', 'backup', 'secret', 'production',
-    ],
-    'low_risk_patterns': [
-        'documentation', 'readme', 'typo', 'copy', 'label', 'text', 'comment',
-        'css', 'style', 'format', 'translation',
-    ],
-}
+ROUTING_CONFIG = config_loader.load('routing')
+POLICY = Path(ROUTING_CONFIG['paths']['policy'])
+PACK = Path(ROUTING_CONFIG['paths']['pack'])
+SESSION = Path(ROUTING_CONFIG['paths']['session'])
+GRAPH = Path(ROUTING_CONFIG['paths']['graph'])
+SYMBOLS = Path(ROUTING_CONFIG['paths']['symbols'])
+DOC_STATE = Path(ROUTING_CONFIG['paths']['docs'])
+MODES = tuple(ROUTING_CONFIG['modes'])
+DEFAULT_POLICY = ROUTING_CONFIG['default_policy']
 
 
 def read_json(root: Path, path: Path) -> dict:
@@ -79,6 +62,10 @@ def load_policy(root: Path) -> dict:
         xs = merged[key]
         if not isinstance(xs, list) or len(xs) > 64 or not all(isinstance(s,str) and 2 <= len(s) <= 60 for s in xs):
             raise RuntimeError('Invalid ' + key)
+    # A target-repository override may ADD high-risk indicators, never remove the
+    # bundled safety baseline or downgrade a high-risk task to minimal mode.
+    merged['high_risk_patterns'] = list(dict.fromkeys(
+        DEFAULT_POLICY['high_risk_patterns'] + merged['high_risk_patterns']))
     return merged
 
 
@@ -100,12 +87,9 @@ def safe_id(text: str) -> str:
 
 
 def terms(task: str) -> set[str]:
-    return {w.lower() for w in re.findall(r'[A-Za-z][A-Za-z0-9_]{4,}', task) if w.lower() not in {
-        'create', 'update', 'change', 'implement', 'current', 'feature', 'existing',
-        'function', 'method', 'controller', 'system', 'spec2code', 'using', 'from',
-        'with', 'will', 'should', 'please', 'component', 'backend', 'frontend',
-        'review', 'apply', 'method', 'fixing', 'record', 'issue',
-    }}
+    stopwords = set(ROUTING_CONFIG['task_stopwords'])
+    return {w.lower() for w in re.findall(r'[A-Za-z][A-Za-z0-9_]{4,}', task)
+            if w.lower() not in stopwords}
 
 
 def classify(task: str, selected_paths: list[str], touched_layers: set[str],

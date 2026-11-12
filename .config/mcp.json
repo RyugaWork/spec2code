@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "read_actions": [
+    "architecture_slice",
+    "preview_changes",
+    "speckit_status",
+    "status"
+  ],
+  "write_actions": [
+    "checkpoint_session",
+    "finish_session",
+    "merge_handoff",
+    "record_change",
+    "start_session"
+  ],
+  "action_arguments": {
+    "status": [],
+    "preview_changes": [],
+    "architecture_slice": [
+      "layer"
+    ],
+    "speckit_status": [
+      "stage"
+    ],
+    "start_session": [],
+    "checkpoint_session": [
+      "session_id"
+    ],
+    "record_change": [
+      "session_id",
+      "paths"
+    ],
+    "finish_session": [
+      "session_id"
+    ],
+    "merge_handoff": [
+      "session_id"
+    ]
+  }
+}

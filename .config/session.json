@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "paths": {
+    "session": ".agents/state/session.json",
+    "events": ".agents/state/sessions.jsonl",
+    "graph": ".agents/state/system-graph.json",
+    "summary": ".agents/state/layerSummary.md",
+    "matrix": ".agents/state/impactMatrix.md"
+  },
+  "limits": {
+    "commits": 200,
+    "change_list": 12
+  },
+  "layers": [
+    {
+      "id": "governance",
+      "label": "Project requirements and governance",
+      "dependencies": []
+    },
+    {
+      "id": "presentation",
+      "label": "Frontend / presentation",
+      "dependencies": []
+    },
+    {
+      "id": "api",
+      "label": "HTTP API & controllers",
+      "dependencies": []
+    },
+    {
+      "id": "application",
+      "label": "Business logic",
+      "dependencies": []
+    },
+    {
+      "id": "data",
+      "label": "Repository / DataAccess",
+      "dependencies": []
+    },
+    {
+      "id": "persistence",
+      "label": "Database & migrations",
+      "dependencies": []
+    },
+    {
+      "id": "security",
+      "label": "Authentication & authorization",
+      "dependencies": []
+    },
+    {
+      "id": "integrations",
+      "label": "External adapters & services",
+      "dependencies": []
+    },
+    {
+      "id": "delivery",
+      "label": "Docker, CI/CD & deployment",
+      "dependencies": []
+    },
+    {
+      "id": "quality",
+      "label": "Automated tests",
+      "dependencies": []
+    }
+  ]
+}

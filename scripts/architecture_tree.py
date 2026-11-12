@@ -18,29 +18,20 @@ from typing import Any
 import scan_infrastructure as infra
 import path_guard as guard
 import scope_io
+import config_loader
 
-LAYER_DIRS = {
-    'governance': 'Governance',
-    'presentation': 'Present',
-    'api': 'API',
-    'application': 'Application',
-    'data': 'DataAccess',
-    'persistence': 'Persistence',
-    'security': 'Security',
-    'integrations': 'Integrations',
-    'delivery': 'Delivery',
-    'quality': 'Quality',
-}
-SUMMARY_NAME = '.summerize.md'  # Owner-selected spelling, deliberately retained.
-STATE_FILE = Path('.agents/state/architecture-docs.json')
-SYMBOL_CACHE = Path('.agents/state/symbol-cache.json')
-GENERATED = '<!-- spec2code:managed-architecture v1 -->'
-VERSION = 1
-MAX_COMPONENTS = 300
-MAX_METHODS = 1200
-MAX_SOURCE_BYTES = 256 * 1024
-MAX_VISIBLE_COMPONENTS = 16
-MAX_VISIBLE_FUNCTIONS = 18
+ARCH_CONFIG = config_loader.load('architecture')
+LAYER_DIRS = ARCH_CONFIG['layer_directories']
+SUMMARY_NAME = ARCH_CONFIG['summary_name']  # The historical spelling is retained in config.
+STATE_FILE = Path(ARCH_CONFIG['paths']['state_file'])
+SYMBOL_CACHE = Path(ARCH_CONFIG['paths']['symbol_cache'])
+GENERATED = ARCH_CONFIG['managed_marker']
+VERSION = 1  # persisted schema, not a policy setting
+MAX_COMPONENTS = ARCH_CONFIG['limits']['components']
+MAX_METHODS = ARCH_CONFIG['limits']['functions']
+MAX_SOURCE_BYTES = ARCH_CONFIG['limits']['source_bytes']
+MAX_VISIBLE_COMPONENTS = ARCH_CONFIG['limits']['visible_components']
+MAX_VISIBLE_FUNCTIONS = ARCH_CONFIG['limits']['visible_functions']
 
 
 def safe_name(name: str) -> str:
@@ -52,63 +43,71 @@ def safe_name(name: str) -> str:
 
 
 def layer_for_path(p: str) -> str:
-    """Conservative path-based classification with no project-specific names."""
+    """Ordered conservative mapping from bundled architecture classification data."""
+    rules = ARCH_CONFIG['classification']
     s = p.lower().replace('\\', '/')
     name = Path(s).name
-    if s in {'agents.md', 'readme.md', 'pyproject.toml'} or s.startswith(('.agents/.documents/', 'specs/')):
+    has = lambda key: any(t in s for t in rules[key])
+    prefix = lambda key: s.startswith(tuple(rules[key]))
+    suffix = lambda key: s.endswith(tuple(rules[key]))
+    named = lambda key: name in rules[key]
+    named_prefix = lambda key: name.startswith(tuple(rules[key]))
+    named_suffix = lambda key: name.endswith(tuple(rules[key]))
+    regex = lambda key: any(re.search(pattern,s) for pattern in rules[key])
+    if s in rules['governance_exact'] or prefix('governance_prefixes'):
         return 'governance'
-    if s.startswith(('tests/', 'test/')) or '/tests/' in s or name.startswith('test_') or name.endswith(('.test.ts', '.spec.ts', 'test.java')):
+    if prefix('quality_prefixes') or has('quality_contains') or named_prefix('quality_name_prefixes') or named_suffix('quality_name_suffixes'):
         return 'quality'
-    if s.startswith('.github/') or 'compose' in name or name == 'dockerfile' or s.endswith(('.tf', '.tfvars')):
+    if prefix('delivery_prefixes') or named('delivery_names') or any(t in name for t in rules['delivery_name_contains']) or suffix('delivery_suffixes'):
         return 'delivery'
-    if any(t in s for t in ('/security/', '/identity/', '/authentication/', '/auth/')):
+    if has('security_contains'):
         return 'security'
-    if any(t in s for t in ('/migrations/', '/database/', '/persistence/')) or s.endswith('.sql'):
+    if has('persistence_contains') or suffix('persistence_suffixes'):
         return 'persistence'
-    if any(t in s for t in ('/repository/', '/repositories/', '/dataaccess/', '/data/', '/dao/')) or re.search(r'/[^/]+\.dataaccess/',s):
+    if has('data_contains') or regex('data_regexes'):
         return 'data'
-    if any(t in s for t in ('/integrations/', '/infrastructure/', '/adapters/', '/external/')) or re.search(r'/[^/]+\.infrastructure/',s):
+    if has('integrations_contains') or regex('integrations_regexes'):
         return 'integrations'
-    if any(t in s for t in ('/controllers/', '/routes/', '/endpoints/')) or name.endswith('controller.cs') or re.search(r'/(?:[^/]+\.)?api/', s):
-        # Web framework routes can be presentation; API folders remain API.
-        if s.startswith(('web/', 'frontend/', 'client/', '.source/web/')):
-            return 'presentation'
-        return 'api'
-    if s.startswith(('web/', 'frontend/', 'client/', '.source/web/', '.source/frontend/')):
+    if has('api_contains') or named_suffix('api_name_suffixes') or regex('api_regexes'):
+        return 'presentation' if prefix('api_presentation_prefixes') else 'api'
+    if prefix('presentation_prefixes'):
         return 'presentation'
-    if s.startswith(('api/', '.source/backend/')) and ('/api/' in s or name in ('program.cs','startup.cs')):
+    if prefix('api_top_prefixes') and (has('api_top_contains') or named('api_top_names')):
         return 'api'
-    if s.startswith(('app/', 'src/')) and Path(s).suffix.lower() in {'.tsx', '.jsx', '.vue', '.svelte', '.css', '.scss'}:
+    if prefix('presentation_code_prefixes') and Path(s).suffix.lower() in rules['presentation_extensions']:
         return 'presentation'
-    if any(t in s for t in ('/services/', '/domain/', '/business/', '/usecases/')):
+    if has('application_contains'):
         return 'application'
-    if s.startswith(('.agents/', '.specify/')):
+    if prefix('governance_late_prefixes'):
         return 'governance'
-    if s.startswith(('backend/', 'server/', 'api/', '.source/backend/', 'src/', 'app/', 'lib/', 'core/', 'services/')):
+    if prefix('application_prefixes'):
         return 'application'
-    return 'governance' if name.endswith('.md') else 'delivery'
+    return 'governance' if name.endswith(tuple(rules['governance_suffixes'])) else 'delivery'
+
 
 def observed_component(path: str, layer: str) -> bool:
+    rules = ARCH_CONFIG['component_rules']
     p = Path(path)
+    suffix = p.suffix.lower()
     if layer == 'api':
-        return p.name.endswith('Controller.cs') or p.suffix.lower() in {'.py','.go','.java','.ts','.js'}
+        return p.name.endswith(tuple(rules['api_controller_suffixes'])) or suffix in rules['api_extensions']
     if layer == 'presentation':
-        return p.suffix.lower() in {'.tsx', '.jsx', '.ts', '.js', '.vue', '.svelte', '.py'}
-    if layer in {'application', 'data', 'persistence', 'security', 'integrations'}:
-        return p.suffix.lower() in {'.cs', '.py', '.go', '.rs', '.java', '.kt', '.rb', '.php'} and not p.name.endswith(('.g.cs', '.Designer.cs'))
+        return suffix in rules['presentation_extensions']
+    if layer in rules['implementation_layers']:
+        return suffix in rules['implementation_extensions'] and not p.name.endswith(tuple(rules['generated_code_suffixes']))
     if layer == 'quality':
-        return p.suffix.lower() in {'.cs', '.ts', '.tsx', '.js', '.jsx', '.py', '.go', '.java'}
-    if layer in {'delivery', 'governance'}:
-        if path.startswith('specs/'):
+        return suffix in rules['quality_extensions']
+    if layer in rules['documentation_layers']:
+        if path.startswith(tuple(rules['exclude_prefixes'])):
             return False
-        return p.suffix.lower() in {'.md', '.json', '.yml', '.yaml'} or p.name in {'AGENTS.md','README.md','Dockerfile'}
+        return suffix in rules['documentation_extensions'] or p.name in rules['documentation_names']
     return False
 
 
 def component_name(path: str, layer: str) -> str:
     p = Path(path)
-    if layer == 'presentation' and p.stem.lower() in {'page', 'layout', 'index', 'route'}:
-        dirname = p.parent.name if p.parent.name not in {'src', 'app', 'pages'} else 'Root'
+    if layer == 'presentation' and p.stem.lower() in ARCH_CONFIG['component_rules']['presentation_route_names']:
+        dirname = p.parent.name if p.parent.name not in ARCH_CONFIG['component_rules']['presentation_generic_parents'] else 'Root'
         return safe_name(dirname + '_' + p.stem.capitalize())
     return safe_name(p.stem)
 

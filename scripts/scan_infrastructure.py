@@ -16,51 +16,34 @@ from pathlib import Path
 import re
 import subprocess
 import path_guard as guard
+import config_loader
 import sys
 import tempfile
 from typing import Any
 
-SCHEMA = 2
-STATES_DIR = Path('.agents/state')
-MANIFEST = STATES_DIR / 'infrastructure.json'
-INDEX = STATES_DIR / 'infrastructure-index.md'
-CHANGELOG = Path('.handoffs/.details')  # pending logs are session-scoped; not written by direct scanner
+SCHEMA = 2  # persisted inventory format, not a configurable runtime policy
+SCAN_CONFIG = config_loader.load('scanner')
+SECURITY_CONFIG = config_loader.load('security')
+STATES_DIR = Path(SCAN_CONFIG['paths']['state_dir'])
+MANIFEST = Path(SCAN_CONFIG['paths']['manifest'])
+INDEX = Path(SCAN_CONFIG['paths']['index'])
+CHANGELOG = Path(SCAN_CONFIG['paths']['changelog_dir'])
 
-# Files examined as repository architecture and implementation evidence.
-ROOT_FILES = {'AGENTS.md', 'README.md', '.gitignore', 'global.json',
-              'Directory.Build.props', 'Directory.Packages.props',
-              'docker-compose.yml', 'docker-compose.yaml', 'compose.yml',
-              'compose.yaml', 'Dockerfile', 'Makefile', 'package.json',
-              'pnpm-workspace.yaml', '.dockerignore', 'pyproject.toml', 'go.mod',
-              'Cargo.toml', 'pom.xml', 'build.gradle', 'build.gradle.kts',
-              'requirements.txt', 'Gemfile', 'composer.json'}
-CODE_EXTS = {'.cs', '.csproj', '.fsproj', '.sln', '.slnx', '.props', '.targets',
-             '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json', '.yml', '.yaml',
-             '.sql', '.ps1', '.sh', '.md', '.toml', '.config', '.py', '.go', '.rs', '.java',
-             '.kt', '.swift', '.rb', '.php', '.vue', '.svelte', '.html', '.css', '.scss', '.tf', '.xml'}
-SKIP_DIRS = {'.git', 'node_modules', '.next', '.nuxt', '.venv', 'venv', '__pycache__',
-             'bin', 'obj', 'dist', 'build', 'coverage', 'test-results',
-             'playwright-report', '.turbo', '.cache', '.idea', '.vs',
-             '.angular', '.gradle', 'vendor'}
-SKIP_SUFFIX = {'.pem', '.key', '.pfx', '.p12', '.cer', '.crt', '.db', '.sqlite',
-               '.sqlite3', '.bak', '.dump', '.zip', '.pdf', '.docx', '.xlsx',
-               '.lockb'}
-# Secrets may be in configuration files; metadata-only and never read contents.
-METADATA_ONLY = {'appsettings.json', 'nuget.config', '.npmrc', '.pypirc',
-                 'credentials.json', 'secrets.json', 'appsettings.development.json',
-                 'appsettings.production.json', 'appsettings.staging.json',
-                 'web.config'}
-FILE_CAP = 12000  # explicit safety cap: fail rather than partial deletion claims
-MAX_SIZE_HASH = 2 * 1024 * 1024
-MAX_INDEX_PATHS = 10
-MAX_CHANGE_PATHS = 35
+# Data tables and resource limits are configured in bundled .config/scanner.json.
+ROOT_FILES = set(SCAN_CONFIG['root_files'])
+CODE_EXTS = set(SCAN_CONFIG['code_extensions'])
+SKIP_DIRS = set(SCAN_CONFIG['excluded_directories'])
+SKIP_SUFFIX = set(SCAN_CONFIG['excluded_suffixes']) | set(SECURITY_CONFIG['additional_excluded_suffixes'])
+METADATA_ONLY = set(SCAN_CONFIG['metadata_only_files']) | set(SECURITY_CONFIG['additional_sensitive_names'])
+FILE_CAP = SCAN_CONFIG['limits']['file_cap']
+MAX_SIZE_HASH = SCAN_CONFIG['limits']['max_hash_bytes']
+MAX_INDEX_PATHS = SCAN_CONFIG['limits']['index_paths']
+MAX_CHANGE_PATHS = SCAN_CONFIG['limits']['change_paths']
+SOURCE_ROOTS = set(SCAN_CONFIG['source_roots'])
+SCAN_ROOTS = tuple(sorted(SOURCE_ROOTS | set(SCAN_CONFIG['extra_scan_roots'])))
 
-
-# Enumerate conventional source roots; no assumption about a framework, language or .source/ layout.
-SOURCE_ROOTS = {'.source', 'src', 'app', 'lib', 'libs', 'packages', 'services',
-                'backend', 'frontend', 'web', 'client', 'api', 'server', 'internal',
-                'cmd', 'pkg', 'core', 'tests', 'test', 'specs'}
-SCAN_ROOTS = tuple(sorted(SOURCE_ROOTS | {'.agents/.documents', '.github/workflows'}))
+# Immutable safety floor: editing a JSON policy cannot re-enable scanning secrets.
+SECURE_SKIP_SUFFIX = ('.pem','.key','.pfx','.p12','.db','.sqlite','.sqlite3','.dump')
 
 def iso_now() -> str:
     return dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds')
@@ -73,7 +56,7 @@ def path_normal(path: Path) -> str:
 def is_excluded(name: str) -> bool:
     """Never traverse or inventory secrets, local tokens and environment files."""
     l = name.lower()
-    return (l == '.env' or l.startswith('.env.') or l.endswith(tuple(SKIP_SUFFIX))
+    return (l == '.env' or l.startswith('.env.') or l.endswith(tuple(SKIP_SUFFIX) + SECURE_SKIP_SUFFIX)
             or 'privatekey' in l or l in {'id_rsa', 'id_ed25519'})
 
 

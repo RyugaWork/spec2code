@@ -1,4 +1,4 @@
-# Spec2Code Adaptive Context Routing — v0.6.1
+# Spec2Code Adaptive Context Routing — v0.6.4
 
 This extension uses **the existing v0.4 hierarchy**, not another architecture store:
 
@@ -46,3 +46,5 @@ When official Spec Kit is initialized, use `speckit_bridge.py --stage plan` befo
 - The router never reads config contents, only manifest/graph/symbol metadata. Sensitive config paths are returned as `metadata_only_paths`, not read targets.
 - A missing static link is **unknown**, not `SAFE`.
 - `context-pack.json` contains no task description, source body, env values or external request payload.
+
+Bundled defaults and task stopwords are defined in `.config/routing.json`; host runtime overrides at `.agents/state/context-policy.json` are merged under the security floor and cannot remove high-risk indicators.

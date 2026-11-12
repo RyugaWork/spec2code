@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.6.4] - 2026-11-12
+
+### Added
+- Bundled `.config/{scanner,architecture,routing,session,speckit,handoff,mcp,security}.json` external policy data.
+- `scripts/config_loader.py` with strict schema/version/path validation and fail-closed loading.
+- Regression tests covering missing, malformed, duplicate-key and symlinked config files plus forbidden security downgrades.
+
+### Changed
+- Scanner, architecture classification, session layer metadata, context budgets, Spec Kit stage gates, handoff limits, MCP action tables and managed-path lists now load from `.config`.
+- Bundled configuration must be deployed alongside `SKILL.md` and `scripts/`; no search through other repositories or user-home fallbacks.
+- Per-project `context-policy.json` can no longer remove the bundled high-risk classification patterns.
+- Stable protocol invariants (Git root identity, source containment, secure file access, session ID format, Spec Kit implement gate and MCP capability limits) remain enforced in code.
+
+### Migration
+- Copy `.config/` into each installed `.agents/skills/spec-to-code/` folder before upgrading scripts. Finish any active session using its original installed version before replacement.
+
+
 ## [0.6.3] - 2026-11-12
 
 ### Security

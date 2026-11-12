@@ -13,6 +13,7 @@
 ├── .agents/
 │   ├── skills/spec-to-code/
 │   │   ├── SKILL.md
+│   │   ├── .config/                  # required versioned JSON policy tables
 │   │   ├── scripts/speckit_bridge.py
 │   │   ├── scripts/session_guard.py
 │   │   ├── scripts/context_router.py

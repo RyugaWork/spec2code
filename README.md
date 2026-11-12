@@ -34,7 +34,7 @@ python .agents/skills/spec-to-code/scripts/context_router.py --root . --task-id 
 ## Tests
 
 ```sh
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests -t tests -v
 ```
 
 ## Safety

@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+coverage/
+dist/
+build/
+*.egg-info/
+.venv/
+.env
+.env.*
+.agents/state/
+.handoffs/.details/
+.DS_Store

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "default_mode": "balanced",
+  "budgets": {
+    "minimal": 500,
+    "balanced": 1300,
+    "deep": 3300
+  },
+  "max_source_paths": {
+    "minimal": 3,
+    "balanced": 8,
+    "deep": 16
+  },
+  "max_function_docs": {
+    "minimal": 2,
+    "balanced": 5,
+    "deep": 12
+  },
+  "max_neighbor_hops": {
+    "minimal": 0,
+    "balanced": 1,
+    "deep": 2
+  }
+}

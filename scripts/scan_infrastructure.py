@@ -92,6 +92,12 @@ def tracked_candidate(rel: Path) -> bool:
     if parts[0] == '.github':
         return len(parts) >= 3 and parts[1] == 'workflows' and rel.suffix.lower() in {'.yml', '.yaml'}
     if parts[0] in SOURCE_ROOTS:
+        # Generated architecture documents use dot-prefixed Markdown names.
+        # On case-insensitive filesystems, a source root such as 'api' also
+        # resolves to the generated 'API' directory. Never attribute our own
+        # architecture indexes to project source changes.
+        if name.startswith('.') and rel.suffix.lower() == '.md':
+            return False
         return rel.suffix.lower() in CODE_EXTS or name in {'Dockerfile', 'Makefile', '.gitignore'}
     return False
 

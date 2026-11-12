@@ -205,7 +205,8 @@ def load(name: str) -> dict:
     if name not in CONFIG_NAMES:
         raise RuntimeError('CONFIG_INVALID: unknown configuration section')
     skill_root = Path(__file__).absolute().parent.parent
-    if skill_root != skill_root.resolve() or skill_root.is_symlink():
+    if any(p.is_symlink() or (hasattr(p, 'is_junction') and p.is_junction())
+           for p in (skill_root, *skill_root.parents)):
         raise RuntimeError('CONFIG_INVALID: symlinked skill package root')
     config_dir = skill_root / '.config'
     source = config_dir / (name + '.json')

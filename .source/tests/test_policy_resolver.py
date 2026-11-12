@@ -119,6 +119,32 @@ class PolicyResolverTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             governance_schema.validate_config("workflow", cfg)
 
+    def test_scoped_policy_is_enforced_even_without_category_keyword(self):
+        policy = self.doc("src/security.md")
+        policy["applies_to_prefixes"] = ["src/"]
+        self.host_map([policy])
+        result = self.resolve("Update utility", "implement", ("src/feature.py",))
+        self.assertEqual(result["policy_status"], "BLOCKED")
+        self.assertIn("POLICY_REQUIRED_MISSING:src/security.md",
+                      result["blocking_reasons"])
+
+    def test_unrelated_directory_policy_is_not_assumed_authoritative(self):
+        policy = self.doc("src/security.md")
+        policy["applies_to_prefixes"] = ["src/auth/"]
+        self.host_map([policy])
+        result = self.resolve("Fix authentication", "read", ("src/feature.py",))
+        self.assertNotIn("src/security.md",
+                         [item["path"] for item in result["selected_documents"]])
+        self.assertEqual(result["policy_status"], "NEEDS_REVIEW")
+
+    def test_policy_map_duplicate_json_keys_are_rejected(self):
+        dest = self.root / ".agents" / "policy-map.json"
+        dest.parent.mkdir(exist_ok=True)
+        dest.write_text('{"schema_version":1,"documents":[],"documents":[]}',
+                        encoding="utf-8")
+        with self.assertRaisesRegex(RuntimeError, "POLICY_MAP_MALFORMED"):
+            self.resolve()
+
 
 if __name__ == "__main__":
     unittest.main()

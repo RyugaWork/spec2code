@@ -9,3 +9,11 @@
 - Git commits use Conventional Commits 1.0.0. Do not commit, push, merge, rebase or force-push without appropriate authorization.
 - Generated `.agents/state/`, `.handoffs/` pending files, secrets and test caches must not be committed.
 - A context pack is **path-only**, not source/spec text; never claim a static scan proves runtime behavior or project-specific requirements.
+
+## Continuous Scope policy (0.6.3)
+
+- Treat `path_guard.py`, `scope_io.py`, and `mcp_boundary.py` as security-critical; never bypass their boundary functions to make tests pass.
+- All CLI/MCP entrypoints validate a single explicit Git checkout and do not switch workspace on failure.
+- MCP read actions must remain side-effect free. Allow write actions only through server-owned capability configuration and exact Session ID.
+- Local `session.json` contains host-specific checkout identity; never publish runtime state from a private application repository.
+- A static path check cannot fully protect against hostile concurrent filesystem mutation; use OS isolation for untrusted clients.

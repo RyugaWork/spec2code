@@ -17,6 +17,7 @@ from typing import Any
 
 import scan_infrastructure as infra
 import path_guard as guard
+import scope_io
 
 LAYER_DIRS = {
     'governance': 'Governance',
@@ -121,7 +122,8 @@ def extract_symbols(root: Path, path: str, layer: str, fingerprint: str, cached:
     if p.stat().st_size > MAX_SOURCE_BYTES or infra.is_sensitive(p.name) or p.is_symlink():
         result['source_status'] = 'metadata_only'
         return result
-    source = p.read_text(encoding='utf-8', errors='replace')
+    import scope_io
+    source = scope_io.read_bytes(root, p, max_bytes=MAX_SOURCE_BYTES).decode('utf-8', errors='replace')
     functions = []
     imports = []
     if p.suffix.lower() == '.cs':
@@ -207,7 +209,7 @@ def guarded_write(root: Path, path: Path, content: str) -> None:
     if path.exists():
         if not path.is_file():
             raise RuntimeError(f'Architecture document path occupied: {path}')
-        old = path.read_text(encoding='utf-8')
+        old = scope_io.read_bytes(root, path, max_bytes=1024*1024).decode('utf-8')
         if not old.startswith(GENERATED):
             raise RuntimeError(f'Refusing to overwrite non-managed architecture document: {path}')
         if old == content:
@@ -394,7 +396,7 @@ def publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
             if a.is_symlink():
                 raise RuntimeError(f'Refusing architecture symlink: {a}')
             a=a.parent
-        if p.exists() and (not p.is_file() or not p.read_text(encoding='utf-8').startswith(GENERATED)):
+        if p.exists() and (not p.is_file() or not scope_io.read_bytes(root, p, max_bytes=1024*1024).decode('utf-8').startswith(GENERATED)):
             raise RuntimeError(f'Non-managed architecture path collision: {p}')
     for p, content in planned:
         guarded_write(root,p,content)
@@ -428,7 +430,7 @@ def annotate_recorded_change(root: Path, paths: list[str], note: str, requiremen
                 target=guard.check_path(root,info['document'])
                 if not target.is_file() or target.is_symlink():
                     raise RuntimeError(f'Missing/unsafe function doc for annotation: {target}')
-                prior=target.read_text(encoding='utf-8')
+                prior=scope_io.read_bytes(root, target, max_bytes=1024*1024).decode('utf-8')
                 if not prior.startswith(GENERATED):
                     raise RuntimeError(f'Refusing non-managed function annotation: {target}')
                 statement=f'- Last change summary: Recorded by session `{session_id}` for requirement `{safe_req}`: {safe_note} (declared authorship, not semantic proof).'

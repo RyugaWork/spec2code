@@ -100,3 +100,32 @@ def validate_root(root_input: str | Path) -> Path:
     for relative in MANAGED_PATHS:
         check_path(raw, relative)
     return raw
+
+
+def capture_scope(root_input: str | Path) -> dict:
+    """Bind a coding session to a physical checkout and its Git administrative dir.
+
+    The Git dir is observed for identity only; application operations never enter it.
+    """
+    root = validate_root(root_input)
+    stat = root.stat()
+    try:
+        result = subprocess.run(['git', 'rev-parse', '--absolute-git-dir'], cwd=root,
+                                capture_output=True, text=True, timeout=6,
+                                check=False, env=git_env())
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise RuntimeError('SCOPE_VIOLATION: cannot identify Git worktree') from exc
+    if result.returncode or not result.stdout.strip():
+        raise RuntimeError('SCOPE_VIOLATION: cannot identify Git worktree')
+    return {'schema': 1, 'root': str(root), 'device': stat.st_dev,
+            'inode': stat.st_ino, 'git_dir': str(Path(result.stdout.strip()).resolve())}
+
+
+def assert_scope(root_input: str | Path, expected: dict | None) -> Path:
+    """Re-check physical checkout identity before each session operation."""
+    if not isinstance(expected, dict) or expected.get('schema') != 1:
+        raise RuntimeError('SCOPE_VIOLATION: session has no trusted repository binding; finish with original version')
+    actual = capture_scope(root_input)
+    if actual != expected:
+        raise RuntimeError('SCOPE_VIOLATION: session repository binding changed; no operation performed')
+    return Path(actual['root'])

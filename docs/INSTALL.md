@@ -1,4 +1,4 @@
-# Install Spec2Code v0.6.2 in any Git project
+# Install Spec2Code v0.6.3 in any Git project
 
 This is a **portable skill + local Python core**, not an installer that can rewrite projects without review.
 
@@ -47,3 +47,7 @@ python -m unittest discover -s tests -v
 ```
 
 Regression tests use disposable local repositories. The target project's own build and acceptance tests remain mandatory before code changes are reported as verified.
+
+## Path-bound sessions
+
+From v0.6.3 onward, an ACTIVE session is tied to the exact physical Git worktree. Complete and merge old-version sessions using the original skill before upgrading. See [Continuous Scope Enforcement](CONTINUOUS_SCOPE_ENFORCEMENT.md).

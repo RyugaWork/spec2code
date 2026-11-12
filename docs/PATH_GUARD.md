@@ -1,4 +1,4 @@
-# Path Guard — Spec2Code v0.6.2
+# Path Guard — Spec2Code v0.6.3
 
 ## Security boundary
 
@@ -45,3 +45,7 @@ python -m unittest discover -s tests -v
 ```
 
 Tests cover all CLI entrypoints on non-Git roots, nested roots, root/sensitive path symlinks, `..`, Windows drives and UNC paths, injected Git environment, untrusted cache document paths, nested Git checkouts, and legitimate `git worktree` behavior.
+
+## Continuous enforcement (v0.6.3)
+
+See [CONTINUOUS_SCOPE_ENFORCEMENT.md](CONTINUOUS_SCOPE_ENFORCEMENT.md) for checkout/session identity, directory-relative IO, HEAD invalidation, and the MCP fixed-workspace gate. This is event-boundary checking, **not** an always-on watcher.

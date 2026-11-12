@@ -9,6 +9,7 @@ import unittest
 ROOT_SCRIPTS=Path(__file__).resolve().parents[1]/'scripts'
 sys.path.insert(0,str(ROOT_SCRIPTS))
 import context_router as router
+import path_guard as guard
 
 
 class AdaptiveModeTests(unittest.TestCase):
@@ -30,7 +31,7 @@ class AdaptiveModeTests(unittest.TestCase):
         self.git('add','.')
         self.git('commit','-qm','chore: baseline')
         head=self.git('rev-parse','HEAD')
-        self.write_json('.agents/state/session.json',{'id':'S2C-TEST','status':'ACTIVE', 'last_seen_head':head,'outside_paths':[]})
+        self.write_json('.agents/state/session.json',{'id':'S2C-TEST','status':'ACTIVE', 'last_seen_head':head,'outside_paths':[], 'repository_binding': guard.capture_scope(self.root)})
         self.write_json('.agents/state/infrastructure.json',{'git':{'head':head[:12]},'files':{p:{'sha256':'test'} for p in self.paths}})
         self.write_json('.agents/state/system-graph.json', {'nodes':[{'id':i} for i in ['presentation','api','application','security','quality']],
            'edges':[{'from':'presentation','to':'api'},{'from':'api','to':'application'},{'from':'api','to':'security'}, {'from':'quality','to':'api'}]})

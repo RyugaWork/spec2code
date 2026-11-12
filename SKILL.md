@@ -3,7 +3,7 @@ name: spec-to-code
 description: Run a repository-independent, evidence-based spec-to-code workflow with optional official GitHub Spec Kit integration. Use for coding sessions, requirement-to-task traceability, architecture graph routing, external Git drift checks, incremental minimal/balanced/deep context selection, and session-scoped change handoffs. Do not use as permission to approve business rules, change Git history, or deploy.
 ---
 
-# Spec2Code v0.6.2 — Universal + Spec Kit Bridge
+# Spec2Code v0.6.3 — Universal + Spec Kit Bridge
 
 The target repository's `AGENTS.md`, approved requirements, security policies and Git workflow take precedence. Do not assume ASP.NET Core, React, a `.source/` directory, or any business domain. This skill **does not automatically install Spec Kit**, create commits, modify business requirements, or execute unapproved coding actions.
 
@@ -69,3 +69,9 @@ python .agents/skills/spec-to-code/scripts/session_guard.py --root . merge --ses
 ## Quality gates
 
 Resolve approved requirement → affected nodes → plan/tasks → minimal scoped edits → tests/verification → registered changes → finish/handoff. Report `PASS`, `FAIL`, `BLOCKED` and `NOT RUN` accurately. Use `references/spec-to-code-workflow.md` only for complex features; `references/session-lifecycle.md` for drift and recovery; `references/adaptive-modes.md` to customize the routing policy. Do not indiscriminately load all references or the full Git history.
+
+## Continuous scope (v0.6.3)
+
+Each new session binds its exact canonical Git checkout root, filesystem identity and Git admin directory. Session `status`, `checkpoint`, `record`, `finish`, architecture inspection, and context routing must re-check this binding. If the binding differs, fail closed with `SCOPE_VIOLATION`; do not silently reinitialize or auto-migrate an ACTIVE earlier-version session. Incoming Git HEAD changes invalidate prior context packs at checkpoint; MCP write actions (other than checkpoint) require fresh HEAD.
+
+All file reads/writes use Path Guard; `scope_io.py` anchors file operations to directory handles with no-follow protections on supported POSIX platforms. On Windows, checks are repeated but OS-level race freedom is **not** guaranteed; use a trusted local workspace and filesystem permissions. The `mcp_boundary.py` module is **only** a future-MCP authorization gate, not a running MCP server. See `docs/CONTINUOUS_SCOPE_ENFORCEMENT.md` in the source repository. Never treat path checks as authorization to modify a repository.

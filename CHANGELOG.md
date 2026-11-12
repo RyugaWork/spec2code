@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.3] - 2026-11-12
+
+### Security
+- Bind ACTIVE sessions to physical Git checkout identity and reject session reuse from a different worktree.
+- Check boundaries at each command and each file access, with POSIX directory-anchored/no-follow reads, writes, append and verified unlink.
+- Invalidate cached context packs on changed commit or selected tracked files at checkpoint.
+- Add MCP-ready fixed-workspace authorization gate with read-only default and server-controlled write capability; no remote MCP transport.
+- Add continuous-scope adversarial regression tests.
+
+### Migration
+- ACTIVE sessions created with an earlier version lack the new binding. Complete them with the original version before upgrading.
+- POSIX path operations are hardened; Windows retains repeated checks but cannot promise race-free enforcement without OS isolation.
+
 ## [0.6.2] - 2026-11-12
 
 ### Security

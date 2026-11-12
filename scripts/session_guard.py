@@ -25,6 +25,7 @@ import scan_infrastructure as infra
 import architecture_tree as arch
 import handoff_store as handoffs
 import path_guard as guard
+import scope_io
 
 SESSION_FILE = Path('.agents/state/session.json')
 SESSION_EVENTS = Path('.agents/state/sessions.jsonl')
@@ -217,7 +218,7 @@ def render_matrix(changed: set[str], graph: dict) -> str:
 
 def write_if_changed(root: Path, path: Path, data: str) -> None:
     guard.check_path(root, path)
-    if path.is_file() and path.read_text(encoding='utf-8') == data:
+    if path.is_file() and scope_io.read_bytes(root, path, max_bytes=24*1024*1024).decode('utf-8') == data:
         return
     infra.atomic_text(path, data, root=root)
 
@@ -250,20 +251,15 @@ def persist_scan(root: Path, manifest: dict, *, changed: set[str]) -> None:
     arch.publish(root, manifest, graph, changed)
 
 
-def append_log(path: Path, header: str, body: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open('a', encoding='utf-8') as stream:
-        if stream.tell() == 0:
-            stream.write('# ' + header + '\n\n')
-        stream.write(body.rstrip() + '\n\n')
+def append_log(path: Path, header: str, body: str, *, root: Path) -> None:
+    if not guard.check_path(root, path).is_file():
+        scope_io.atomic_text(root, path, '# ' + header + '\n\n')
+    scope_io.append_text(root, path, body.rstrip() + '\n\n')
 
 
 def append_jsonl(root: Path, path: Path, event: dict) -> None:
     """JSON Lines must contain ONLY valid JSON records; no Markdown headers."""
-    guard.check_path(root, path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open('a', encoding='utf-8') as stream:
-        stream.write(json.dumps(event, ensure_ascii=False, sort_keys=True) + '\n')
+    scope_io.append_text(root, path, json.dumps(event, ensure_ascii=False, sort_keys=True) + '\n')
 
 
 def read_state(root: Path) -> dict | None:
@@ -312,6 +308,9 @@ def event_text(session_id: str, kind: str, changes: list[dict], shas: list[str],
 
 def inspect(root: Path, layer: str | None) -> int:
     root = guard.validate_root(root)
+    current_session = read_state(root)
+    if current_session and current_session.get('status') == 'ACTIVE':
+        guard.assert_scope(root, current_session.get('repository_binding'))
     if layer:
         layer = next((k for k, label in arch.LAYER_DIRS.items() if label.lower() == layer.lower()), layer.lower())
     graph = infra.read_json(root / GRAPH_FILE, root=root)
@@ -338,6 +337,7 @@ def run_start(root: Path, *, verify: bool = False) -> int:
     root = guard.validate_root(root)
     old_session = read_state(root)
     if old_session and old_session['status'] == 'ACTIVE':
+        guard.assert_scope(root, old_session.get('repository_binding'))
         raise RuntimeError('ACTIVE_SESSION_EXISTS: finish or resolve before starting another session')
     head = ensure_git_root(root)
     prev = infra.read_json(root / infra.MANIFEST, root=root)
@@ -356,6 +356,7 @@ def run_start(root: Path, *, verify: bool = False) -> int:
                               'differences since previous completed snapshot'))
     persist_scan(root, current, changed=changed_layers)
     state = {'schema_version': SCHEMA, 'id': session_id, 'status': 'ACTIVE',
+             'repository_binding': guard.capture_scope(root),
              'started_at': infra.iso_now(), 'start_head': head, 'last_seen_head': head,
              'start_files': current['files'], 'last_seen_files': current['files'],
              'recorded_fingerprints': {}, 'recorded_paths': [],
@@ -372,7 +373,9 @@ def run_start(root: Path, *, verify: bool = False) -> int:
 
 
 def refresh(root: Path, state: dict, *, print_result: bool = True, verify: bool = False) -> tuple[dict, list[dict], list[str]]:
+    guard.assert_scope(root, state.get('repository_binding'))
     head = ensure_git_root(root)
+    old_head = state['last_seen_head']
     before = {'files': state['last_seen_files']}
     current, changes = collect(root, infra.read_json(root / infra.MANIFEST, root=root), head, verify=verify)
     # Scan manifest can be different from session last_seen_files after manual external scan.
@@ -389,6 +392,13 @@ def refresh(root: Path, state: dict, *, print_result: bool = True, verify: bool 
     state['outside_paths'] = sorted(set(state['outside_paths']) | ext_paths)
     state['last_seen_files'] = current['files']
     state['last_seen_head'] = head
+    # A context pack is valid only for its observed source/commit snapshot.
+    # Invalidate its known-managed file at checkpoint; never silently trust it.
+    pack = guard.check_path(root, '.agents/state/context-pack.json')
+    if (local_delta or old_head != head) and pack.is_file():
+        from hashlib import sha256
+        digest = sha256(scope_io.read_bytes(root, pack, max_bytes=4*1024*1024)).hexdigest()
+        scope_io.unlink_verified(root, pack, digest)
     persist_scan(root, current, changed={layer_for_path(x['path']) for x in local_delta})
     save_state(root, state)
     if print_result:
@@ -403,6 +413,8 @@ def refresh(root: Path, state: dict, *, print_result: bool = True, verify: bool 
 def run_checkpoint(root: Path, *, verify: bool = False) -> int:
     root = guard.validate_root(root)
     state = read_state(root)
+    if state and state.get('status') == 'ACTIVE':
+        guard.assert_scope(root, state.get('repository_binding'))
     if not state or state['status'] != 'ACTIVE':
         raise RuntimeError('No active session to checkpoint')
     refresh(root, state, verify=verify)
@@ -412,6 +424,8 @@ def run_checkpoint(root: Path, *, verify: bool = False) -> int:
 def run_record(root: Path, paths: list[str], note: str, requirement: str) -> int:
     root = guard.validate_root(root)
     state = read_state(root)
+    if state and state.get('status') == 'ACTIVE':
+        guard.assert_scope(root, state.get('repository_binding'))
     if not state or state['status'] != 'ACTIVE':
         raise RuntimeError('No active session to record')
     if not note.strip():
@@ -459,6 +473,8 @@ def run_record(root: Path, paths: list[str], note: str, requirement: str) -> int
 def run_finish(root: Path) -> int:
     root = guard.validate_root(root)
     state = read_state(root)
+    if state and state.get('status') == 'ACTIVE':
+        guard.assert_scope(root, state.get('repository_binding'))
     if not state or state['status'] != 'ACTIVE':
         raise RuntimeError('No active session to finish')
     current, _, ext_shas = refresh(root, state, print_result=False)
@@ -522,6 +538,8 @@ def main() -> int:
             print('HANDOFF_MERGE | ' + args.session_id + ' | ' + result['message'] + ' | archived=' + str(result['merged']) + ' | removed=' + str(result['removed']))
             return 0
         s = read_state(root)
+        if s and s.get('status') == 'ACTIVE':
+            guard.assert_scope(root, s.get('repository_binding'))
         print('SESSION | ' + (f'{s["id"]} | {s["status"]}' if s else 'NONE'))
         print('HEAD | ' + (git(root, 'rev-parse', '--short=12', 'HEAD', check=False) or 'unverified'))
         return 0

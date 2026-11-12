@@ -140,12 +140,10 @@ def all_files(root: Path) -> list[Path]:
     return sorted(set(result), key=path_normal)
 
 
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open('rb') as f:
-        for chunk in iter(lambda: f.read(1024 * 128), b''):
-            h.update(chunk)
-    return h.hexdigest()
+def sha256_file(path: Path, *, root: Path) -> str:
+    # Files above MAX_SIZE_HASH are metadata-only; bounded anchored read.
+    import scope_io
+    return hashlib.sha256(scope_io.read_bytes(root, path, max_bytes=MAX_SIZE_HASH)).hexdigest()
 
 
 def describe_file(root: Path, rel: Path, old: dict | None, verify: bool) -> dict:
@@ -165,7 +163,7 @@ def describe_file(root: Path, rel: Path, old: dict | None, verify: bool) -> dict
     if st.st_size > MAX_SIZE_HASH:
         out['digest_status'] = 'metadata-only:large'
     else:
-        out['sha256'] = sha256_file(p)
+        out['sha256'] = sha256_file(p, root=root)
     return out
 
 
@@ -192,18 +190,20 @@ def read_json(path: Path, *, root: Path) -> dict | None:
     if not path.is_file():
         return None
     try:
-        obj = json.loads(path.read_text(encoding='utf-8'))
+        import scope_io
+        obj = json.loads(scope_io.read_bytes(root, path, max_bytes=24 * 1024 * 1024).decode('utf-8'))
         return obj if isinstance(obj, dict) else None
     except (OSError, json.JSONDecodeError):
         raise RuntimeError(f'Invalid inventory at {path}; no overwrite was performed')
 
 
-def safe_text(path: Path, max_bytes: int = 131072) -> str | None:
+def safe_text(path: Path, max_bytes: int = 131072, *, root: Path) -> str | None:
     # No arbitrary source reading: used only on known, explicitly allowed manifest names.
     try:
         if path.stat().st_size > max_bytes or is_sensitive(path.name):
             return None
-        return path.read_text(encoding='utf-8', errors='replace')
+        import scope_io
+        return scope_io.read_bytes(root, path, max_bytes=max_bytes).decode('utf-8', errors='replace')
     except OSError:
         return None
 
@@ -232,7 +232,7 @@ def extract_facts(root: Path, files: dict, old: dict | None) -> dict:
                 and fingerprint(old_files[path]) == fingerprint(details)):
             out[path] = old_facts[path]
             continue
-        data = safe_text(root / path)
+        data = safe_text(root / path, root=root)
         if data is None:
             continue
         if name == 'package.json':
@@ -460,18 +460,9 @@ def render_event(now: str, changes: list[dict], previous: dict | None,
 
 
 def atomic_text(path: Path, content: str, *, root: Path) -> None:
-    guard.check_path(root, path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    guard.check_path(root, path)
-    with tempfile.NamedTemporaryFile('w', encoding='utf-8', dir=path.parent,
-                                     prefix='.infra-', suffix='.tmp', delete=False) as f:
-        tmp = Path(f.name)
-        f.write(content)
-    try:
-        guard.check_path(root, path)
-        os.replace(tmp, path)
-    finally:
-        tmp.unlink(missing_ok=True)
+    """Use directory-anchored, no-follow atomic replacement where supported."""
+    import scope_io
+    scope_io.atomic_text(root, path, content)
 
 
 def runtime_probe(root: Path) -> dict:

@@ -14,6 +14,7 @@ from contextlib import contextmanager
 
 import scan_infrastructure as infra
 import path_guard as guard
+import scope_io
 
 HANDOFF_DIR=Path('.handoffs')
 DETAIL_DIR=HANDOFF_DIR/'.details'  # Owner typo `.detials` normalized.
@@ -63,15 +64,14 @@ def append_event(root: Path, sid: str, kind: str, body: str) -> None:
     refuse_symlink(root,p)
     p.parent.mkdir(parents=True,exist_ok=True)
     if p.is_file():
-        existing=p.read_text(encoding='utf-8')
+        existing=scope_io.read_bytes(root, p, max_bytes=MAX_BYTES).decode('utf-8')
         if not existing.startswith(header(sid,kind)):
             raise RuntimeError(f'Pending log header mismatch: {p}')
         if len(existing.encode('utf-8'))>MAX_BYTES:
             raise RuntimeError('Pending log too large; manual handoff required')
     else:
         infra.atomic_text(p,header(sid,kind)+'\n', root=root)
-    with p.open('a',encoding='utf-8') as stream:
-        stream.write(body.rstrip()+'\n\n')
+    scope_io.append_text(root, p, body.rstrip()+'\n\n')
 
 
 @contextmanager
@@ -88,7 +88,8 @@ def merge_lock(root: Path):
             f.write('Spec2Code handoff merge lock. Do not remove during an active merge.\n')
         yield
     finally:
-        p.unlink(missing_ok=True)
+        if p.exists():
+            scope_io.unlink_verified(root, p, hashlib.sha256(scope_io.read_bytes(root, p, max_bytes=4096)).hexdigest())
 
 
 def is_finished(root: Path, sid: str) -> bool:
@@ -96,14 +97,14 @@ def is_finished(root: Path, sid: str) -> bool:
     if not p.is_file():
         return False
     import json
-    with p.open(encoding='utf-8') as f:
-        for line in f:
-            try:
-                e=json.loads(line)
-            except json.JSONDecodeError:
-                raise RuntimeError('Session audit ledger is invalid; manual recovery required')
-            if e.get('session_id')==sid and e.get('event')=='FINISH':
-                return True
+    lines = scope_io.read_bytes(root, p, max_bytes=MAX_LEDGER).decode('utf-8').splitlines()
+    for line in lines:
+        try:
+            e=json.loads(line)
+        except json.JSONDecodeError:
+            raise RuntimeError('Session audit ledger is invalid; manual recovery required')
+        if e.get('session_id')==sid and e.get('event')=='FINISH':
+            return True
     return False
 
 
@@ -156,12 +157,15 @@ def quick_summary(ledger: str) -> str:
 def merge(root: Path, sid: str) -> dict:
     root=guard.validate_root(root)
     validate_session(sid)
+    state = infra.read_json(root / '.agents/state/session.json', root=root)
+    if state and state.get('id') == sid and state.get('repository_binding'):
+        guard.assert_scope(root, state['repository_binding'])
     if not is_finished(root,sid):
         raise RuntimeError('Handoff merge requires a FINISH event for exact Session ID')
     with merge_lock(root):
         p=guard.check_path(root, BUILDNOTES)
         refuse_symlink(root,p)
-        existing=p.read_text(encoding='utf-8') if p.is_file() else ''
+        existing=scope_io.read_bytes(root, p, max_bytes=MAX_LEDGER).decode('utf-8') if p.is_file() else ''
         if existing and not existing.startswith(HEAD):
             raise RuntimeError('Non-managed buildnotes: refusing overwrite')
         ledger=split_ledger(existing) if existing else '\n'
@@ -170,7 +174,7 @@ def merge(root: Path, sid: str) -> dict:
             f=guard.check_path(root, path_for(root,kind,sid))
             refuse_symlink(root,f)
             if f.is_file():
-                raw=f.read_bytes()
+                raw=scope_io.read_bytes(root, f, max_bytes=MAX_BYTES)
                 if len(raw)>MAX_BYTES:
                     raise RuntimeError('Pending log exceeds safety cap: '+str(f))
                 try:
@@ -195,15 +199,16 @@ def merge(root: Path, sid: str) -> dict:
         if new!=existing:
             infra.atomic_text(p,new, root=root)
         # Re-read persisted data before unlinking any exact filename.
-        persisted=p.read_text(encoding='utf-8')
+        persisted=scope_io.read_bytes(root, p, max_bytes=MAX_LEDGER).decode('utf-8')
         if not persisted.startswith(HEAD):
             raise RuntimeError('Buildnotes post-write verification failed')
         removed=0
         for kind,f,raw,mark,content in pending:
             if mark not in persisted or content.rstrip() not in persisted:
                 raise RuntimeError('Handoff evidence not found; refusing pending-log deletion')
-            if f.is_symlink() or f.read_bytes()!=raw:
+            if f.is_symlink() or scope_io.read_bytes(root, f, max_bytes=MAX_BYTES)!=raw:
                 raise RuntimeError('Pending log changed since merge; refusing deletion: '+str(f))
-            f.unlink()  # Exact, hash-verified, session-scoped file only; never glob/rmtree.
+            scope_io.unlink_verified(root, f, hashlib.sha256(raw).hexdigest())
+            # Exact, hash-verified, session-scoped file only; never glob/rmtree.
             removed+=1
         return {'merged':written,'removed':removed,'message':'VERIFIED_MERGED_AND_REMOVED'}

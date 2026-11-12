@@ -171,6 +171,7 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
     session = read_json(root, root / SESSION)
     if session.get('status') != 'ACTIVE' or not session.get('id'):
         raise RuntimeError('ACTIVE_SESSION_REQUIRED: run session_guard.py start first')
+    guard.assert_scope(root, session.get('repository_binding'))
     manifest = read_json(root, root / infra.MANIFEST)
     graph = read_json(root, root / GRAPH)
     symbols = read_json(root, root / SYMBOLS)
@@ -263,6 +264,9 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
         'session_id': session['id'],
         'task_id': task_id,
         'git_head': current_head,
+        'workspace_fingerprint': hashlib.sha256(
+            json.dumps(session['repository_binding'], sort_keys=True).encode('utf-8')
+        ).hexdigest()[:16],
         'request_mode': requested,
         'effective_mode': effective,
         'routing_status': 'NEEDS_EXPLICIT_PATH' if missing else ('METADATA_ONLY' if not readable else ('TRUNCATED' if truncated else 'READY')),

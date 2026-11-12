@@ -15,6 +15,7 @@ import re
 import shutil
 import sys
 import path_guard as guard
+import scope_io
 
 ARTIFACTS = ('spec.md', 'plan.md', 'tasks.md')
 STAGES = ('status', 'specify', 'plan', 'tasks', 'analyze', 'implement', 'converge')
@@ -81,7 +82,7 @@ def discover(root: Path, stage: str = 'status') -> dict:
         if pointer.stat().st_size > MAX_POINTER_BYTES:
             raise RuntimeError('FEATURE_POINTER_TOO_LARGE')
         try:
-            data = json.loads(pointer.read_text(encoding='utf-8'))
+            data = json.loads(scope_io.read_bytes(root, pointer, max_bytes=MAX_POINTER_BYTES).decode('utf-8'))
         except (UnicodeError, json.JSONDecodeError) as exc:
             raise RuntimeError('INVALID_FEATURE_POINTER_JSON') from exc
         if not isinstance(data, dict):
@@ -107,7 +108,7 @@ def discover(root: Path, stage: str = 'status') -> dict:
         size = path.stat().st_size
         if size > MAX_ARTIFACT_BYTES:
             raise RuntimeError('SPEC_KIT_ARTIFACT_TOO_LARGE')
-        data = path.read_bytes()
+        data = scope_io.read_bytes(root, path, max_bytes=MAX_ARTIFACT_BYTES)
         infos[name] = {'exists': True, 'path': path.relative_to(root).as_posix(),
                        'sha256': hashlib.sha256(data).hexdigest(), 'size': size}
         if name == 'tasks.md':

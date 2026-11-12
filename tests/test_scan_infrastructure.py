@@ -37,7 +37,7 @@ class InventorySafetyTests(unittest.TestCase):
             f = root / '.source/backend/Sample.Api/Program.cs'
             f.parent.mkdir(parents=True)
             f.write_text('builder.Services.AddIdentityCore<User>();')
-            inventory = {f.relative_to(root).as_posix(): {'sha256': infra.sha256_file(f), 'size': f.stat().st_size}}
+            inventory = {f.relative_to(root).as_posix(): {'sha256': infra.sha256_file(f, root=root), 'size': f.stat().st_size}}
             facts = infra.extract_facts(root, inventory, None)
             self.assertIn('AddIdentityCore', facts[f.relative_to(root).as_posix()]['startup_signals'])
 

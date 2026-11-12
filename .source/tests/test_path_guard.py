@@ -46,6 +46,50 @@ class RepositoryBoundaryTests(unittest.TestCase):
         return subprocess.run([sys.executable, str(SCRIPTS / script), '--root', str(root), *args],
                               text=True, capture_output=True, env=e, timeout=25)
 
+    @unittest.skipUnless(os.name == 'nt', 'Windows canonical alias coverage')
+    def test_windows_case_variant_preserves_scope_identity(self):
+        # Windows 8.3/case spelling differences must not be confused with a link.
+        alternate = Path(str(self.repo).swapcase())
+        if not alternate.is_dir():
+            self.skipTest('Filesystem is case-sensitive')
+        self.assertEqual(path_guard.validate_root(alternate), alternate)
+        self.assertEqual(path_guard.capture_scope(self.repo),
+                         path_guard.capture_scope(alternate))
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows short-name coverage')
+    def test_windows_8dot3_alias_preserves_scope_identity(self):
+        import ctypes
+        buf = ctypes.create_unicode_buffer(32768)
+        kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+        get_short = kernel.GetShortPathNameW
+        get_short.argtypes = [ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint32]
+        get_short.restype = ctypes.c_uint32
+        count = get_short(str(self.repo), buf, len(buf))
+        if not count or count >= len(buf) or str(self.repo).casefold() == buf.value.casefold():
+            self.skipTest('8.3 names are not available for this temp directory')
+        alias = Path(buf.value)
+        self.assertEqual(path_guard.validate_root(alias), alias)
+        self.assertEqual(path_guard.capture_scope(self.repo),
+                         path_guard.capture_scope(alias))
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows junction coverage')
+    def test_windows_junction_root_and_source_escape_denied(self):
+        alias = Path(self.tmp.name) / 'junction-alias'
+        created = subprocess.run(['cmd', '/c', 'mklink', '/J', str(alias), str(self.repo)],
+                                 capture_output=True, text=True, timeout=15)
+        if created.returncode:
+            self.skipTest('Junction creation unavailable in this test environment')
+        with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):
+            path_guard.validate_root(alias)
+        link = self.repo / 'src' / 'junction'
+        created = subprocess.run(['cmd', '/c', 'mklink', '/J', str(link), str(self.outside)],
+                                 capture_output=True, text=True, timeout=15)
+        if created.returncode:
+            self.skipTest('Source junction creation unavailable')
+        with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):
+            path_guard.check_path(self.repo, 'src/junction/keep.txt')
+        self.assertEqual((self.outside / 'keep.txt').read_text(), 'DO-NOT-TOUCH')
+
     def test_exact_root_succeeds_and_subfolder_is_blocked(self):
         self.assertEqual(path_guard.validate_root(self.repo), self.repo)
         with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):

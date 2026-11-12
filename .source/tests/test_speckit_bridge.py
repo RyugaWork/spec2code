@@ -75,7 +75,10 @@ class SpecKitBridgeTests(unittest.TestCase):
     def test_symlinked_feature_pointer_rejected(self):
         self.write('external.json', '{"feature_directory":"specs/001-data"}')
         (self.root / '.specify').mkdir(exist_ok=True)
-        (self.root / '.specify/feature.json').symlink_to(self.root / 'external.json')
+        try:
+            (self.root / '.specify/feature.json').symlink_to(self.root / 'external.json')
+        except (OSError, NotImplementedError):
+            self.skipTest('Filesystem cannot create symlinks')
         with self.assertRaisesRegex(RuntimeError, 'UNSAFE_FEATURE_POINTER'):
             bridge.discover(self.root)
 

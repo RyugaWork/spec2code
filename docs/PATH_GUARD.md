@@ -49,3 +49,9 @@ Tests cover all CLI entrypoints on non-Git roots, nested roots, root/sensitive p
 ## Continuous enforcement (v0.6.3)
 
 See [CONTINUOUS_SCOPE_ENFORCEMENT.md](CONTINUOUS_SCOPE_ENFORCEMENT.md) for checkout/session identity, directory-relative IO, HEAD invalidation, and the MCP fixed-workspace gate. This is event-boundary checking, **not** an always-on watcher.
+
+## Windows path alias correction (v0.7.0)
+
+Windows 8.3 short-name paths and different casing can refer to the same physical Git worktree without being filesystem links. Root verification now detects actual symlink/junction ancestors, while comparing canonical resolved roots when validating the Git worktree and installed skill ownership. Session scope stores a normalized physical root path to avoid false drift between path spellings.
+
+The containment boundary **still blocks** linked/junction ancestors and any path resolving outside the checkout. POSIX anchored file operations and Windows fallback have different TOCTOU guarantees; passing Windows CI does not establish race-free file writes or permission to operate on untrusted paths. Migration of previously persisted session bindings is not automatic.

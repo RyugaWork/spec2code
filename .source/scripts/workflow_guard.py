@@ -48,6 +48,8 @@ class WorkflowRequest:
     session_id: str | None = None
     evidence_refs: tuple[str, ...] = ()
     reason: str = ""
+    task: str = ""
+    paths: tuple[str, ...] = ()
 
 
 def _json_bytes(value: dict) -> bytes:
@@ -69,6 +71,13 @@ def _input(req: WorkflowRequest) -> Path:
     if not isinstance(req.reason, str) or len(req.reason) > 200 or any(
             ord(ch) < 32 or ord(ch) == 127 for ch in req.reason):
         raise RuntimeError("WF_INVALID_REASON")
+    if not isinstance(req.task, str) or len(req.task) > 2000:
+        raise RuntimeError("WF_INVALID_TASK_SCOPE")
+    if not isinstance(req.paths, tuple) or len(req.paths) > 48:
+        raise RuntimeError("WF_INVALID_TASK_SCOPE")
+    for rel in req.paths:
+        schema.safe_path(rel, suffixes=())
+        path_guard.check_path(root, rel)
     if len(req.evidence_refs) > LIMITS["max_evidence_refs"]:
         raise RuntimeError("WF_EVIDENCE_LIMIT")
     for rel in req.evidence_refs:
@@ -109,22 +118,39 @@ def _session(root: Path, req: WorkflowRequest, active: bool) -> tuple[dict, str]
     return session, fingerprint
 
 
-def _source_snapshot(root: Path) -> str:
-    tracked = ("AGENTS.md", ".agents/policy-map.json", ".agents/state/context-pack.json")
+def _scope_digest(req: WorkflowRequest) -> str:
+    """Bind every workflow event to the same task description and source paths."""
+    return hashlib.sha256(_json_bytes({
+        "task": req.task, "paths": sorted(set(req.paths))
+    })).hexdigest()
+
+
+def _source_snapshot(root: Path, req: WorkflowRequest) -> str:
+    """Digest consulted policy files; missing references are part of the snapshot."""
+    route = policy_resolver.resolve(policy_resolver.PolicyRequest(
+        root, req.task_id, req.task or "Unspecified task",
+        req.paths, "implement"))
+    refs = {"AGENTS.md", ".agents/policy-map.json",
+            ".agents/state/context-pack.json"}
+    refs.update(item["path"] for item in route["root_agents"])
+    refs.update(item["path"] for item in route["selected_documents"])
+    refs.update(item["path"] for item in route["candidate_documents"])
     result = []
-    for rel in tracked:
+    for rel in sorted(refs):
         path = path_guard.check_path(root, rel)
         if path.is_symlink():
             raise RuntimeError("WF_INPUT_INVALIDATED")
         if not path.is_file():
             result.append((rel, None))
             continue
-        st = path.stat()
-        if st.st_size > 4 * 1024 * 1024:
+        if path.stat().st_size > 4 * 1024 * 1024:
             raise RuntimeError("WF_INPUT_INVALIDATED")
         result.append((rel, hashlib.sha256(
             scope_io.read_bytes(root, path, max_bytes=4 * 1024 * 1024)).hexdigest()))
-    return hashlib.sha256(_json_bytes({"files": result})).hexdigest()
+    return hashlib.sha256(_json_bytes({
+        "scope": _scope_digest(req), "files": result,
+        "missing": route["blocking_reasons"] + route["review_reasons"]
+    })).hexdigest()
 
 
 def _events(root: Path) -> list[dict]:
@@ -171,10 +197,14 @@ def _replay(events: list[dict]) -> dict | None:
             first["from_status"] != "PENDING" or first["to_status"] != "IN_PROGRESS"):
         raise RuntimeError("EVENT_LOG_CORRUPT")
     task, session = first["task_id"], first["session_id"]
+    scope = first.get("scope_sha256")
+    if not isinstance(scope, str) or not re.fullmatch(r"[0-9a-f]{64}", scope):
+        raise RuntimeError("EVENT_LOG_CORRUPT")
     phase, status = "DISCOVER", "IN_PROGRESS"
     completed, invalidated = set(), set()
     for event in events[1:]:
         if (event.get("task_id") != task or event.get("session_id") != session or
+                event.get("scope_sha256") != scope or
                 event.get("from_status") != status or status == "COMPLETE"):
             raise RuntimeError("EVENT_LOG_CORRUPT")
         action, target, new_status = event["action"], event["phase"], event["to_status"]
@@ -192,7 +222,7 @@ def _replay(events: list[dict]) -> dict | None:
             phase, status = target, new_status
             invalidated.discard(phase)
         elif action == "INVALIDATE":
-            if new_status != "INVALIDATED":
+            if target != phase or new_status != "INVALIDATED":
                 raise RuntimeError("EVENT_LOG_CORRUPT")
             phase, status = target, new_status
             invalidated.update(schema.PHASES[schema.PHASES.index(phase):])
@@ -215,6 +245,7 @@ def _replay(events: list[dict]) -> dict | None:
             "last_sequence": len(events),
             "context_snapshot_sha256": events[-1]["source_snapshot"],
             "binding_fingerprint": events[-1]["binding_fingerprint"],
+            "scope_sha256": scope,
             "approval_state": "UNKNOWN", "release_authorized": False}
 
 
@@ -245,9 +276,11 @@ def evaluate(req: WorkflowRequest) -> dict:
             review.append("GT-006")
         else:
             blocking.append("GT-006")
+    if not req.task and phase in ("IMPLEMENT", "VERIFY", "HANDOFF_REVIEW"):
+        blocking.append("WF_TASK_SCOPE_REQUIRED")
     try:
         policy = policy_resolver.resolve(policy_resolver.PolicyRequest(
-            root, req.task_id, "Review project governance", (),
+            root, req.task_id, req.task or "Unspecified task", req.paths,
             "implement" if phase in ("IMPLEMENT", "VERIFY", "HANDOFF_REVIEW") else "plan"))
         if policy["policy_status"] == "BLOCKED":
             blocking.append("GT-002")
@@ -262,7 +295,9 @@ def evaluate(req: WorkflowRequest) -> dict:
         if session and (current["session_id"] != session["id"] or
                         current["binding_fingerprint"] != binding):
             blocking.append("WORKFLOW_SESSION_MISMATCH")
-        if current["context_snapshot_sha256"] != _source_snapshot(root):
+        if current.get("scope_sha256") != _scope_digest(req):
+            blocking.append("WF_TASK_SCOPE_MISMATCH")
+        if current["context_snapshot_sha256"] != _source_snapshot(root, req):
             blocking.append("GT-014")
         if current["phase_status"] == "INVALIDATED":
             blocking.append("GT-014")
@@ -356,6 +391,8 @@ def transition(req: WorkflowRequest, *,
         elif current is None:
             raise RuntimeError("WF_NOT_STARTED")
         elif req.operation == "invalidate":
+            if req.phase != current["current_phase"]:
+                raise RuntimeError("WF_ILLEGAL_TRANSITION")
             if current["phase_status"] == "COMPLETE":
                 raise RuntimeError("WF_ALREADY_CLOSED")
             action, target, to_status = "INVALIDATE", req.phase, "INVALIDATED"
@@ -368,7 +405,8 @@ def transition(req: WorkflowRequest, *,
                 raise RuntimeError("WF_ILLEGAL_TRANSITION")
             if not backward and not resume:
                 decision = evaluate(WorkflowRequest(root, req.task_id, current["current_phase"],
-                                                    "evaluate", session["id"]))
+                                                    "evaluate", session["id"],
+                                                    task=req.task, paths=req.paths))
                 if decision["gate_status"] == "BLOCKED":
                     raise RuntimeError("WF_EXIT_GATE_BLOCKED")
                 if decision["gate_status"] == "NEEDS_REVIEW":
@@ -394,7 +432,8 @@ def transition(req: WorkflowRequest, *,
                   "from_status": current["phase_status"] if current else "PENDING",
                   "to_status": to_status,
                   "observed_at": datetime.now(timezone.utc).isoformat(),
-                  "source_snapshot": _source_snapshot(root),
+                  "source_snapshot": _source_snapshot(root, req),
+                  "scope_sha256": _scope_digest(req),
                   "binding_fingerprint": binding,
                   "evidence_refs": list(req.evidence_refs),
                   "reason_codes": ["INPUT_INVALIDATED" if action == "INVALIDATE" else "EXPLICIT_TRANSITION"],
@@ -417,6 +456,8 @@ def main(argv=None) -> int:
     for action in ("status", "evaluate", "begin", "advance", "invalidate", "reconcile", "close"):
         p = sub.add_parser(action)
         p.add_argument("--task-id", required=True)
+        p.add_argument("--task", default="", help="Actual task description; required for implementation gates")
+        p.add_argument("--paths", nargs="*", default=[], help="Repository-relative affected source paths")
         if action in ("evaluate", "invalidate"):
             p.add_argument("--phase", choices=schema.PHASES, default="DISCOVER")
         if action == "advance":
@@ -432,7 +473,7 @@ def main(argv=None) -> int:
     req = WorkflowRequest(Path(args.root), args.task_id, phase, args.operation,
                           getattr(args, "session_id", None),
                           tuple(getattr(args, "evidence_ref", ())),
-                          getattr(args, "reason", ""))
+                          getattr(args, "reason", ""), args.task, tuple(args.paths))
     try:
         result = (evaluate(req) if args.operation in ("status", "evaluate")
                   else transition(req))

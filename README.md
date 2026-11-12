@@ -2,10 +2,11 @@
 
 **Universal, infrastructure-aware agent skill with official GitHub Spec Kit integration.**
 
-Version: **0.6.1** (development branch). Use with Python 3.10+ and Git. Core scanning and routing require no hosted AI API. Official Spec Kit is optional and installed separately (Python 3.11+ for its CLI).
+Version: **0.6.2** (development branch). Use with Python 3.10+ and Git. Core scanning and routing require no hosted AI API. Official Spec Kit is optional and installed separately (Python 3.11+ for its CLI).
 
 ## Capabilities
 
+- Path Guard: exact Git worktree-root validation, symlink/path traversal protection, nested-repo exclusion, and safe state/handoff boundaries. See [Path Guard](docs/PATH_GUARD.md).
 - Multi-repository support: conventional `src/`, `app/`, `backend/`, `frontend/`, `web/`, `packages/`, `.source/`, test and monorepo layouts; no fixed framework, project namespace or business domain.
 - Spec Kit bridge: detects active feature from `.specify/feature.json` / explicit environment override, validates `spec.md`, `plan.md`, `tasks.md`, returns bounded artifact fingerprints and task IDs without duplicate text or modifying Spec Kit files.
 - Session ID, local Git drift detection, provenance-aware `visualChange`/`specChange` logs and exact-session verified handoff merging.
@@ -36,7 +37,7 @@ python -m unittest discover -s tests -v
 
 No auto-fetch, commit, push, shell delegation, feature approval, remote MCP server, credential ingestion or silent deletion of application files. Spec2Code generates architecture docs and local state in the **target checkout**, not in this portable source repository. `visualChange` is for outside-session changes only. A `README` or `.gitkeep` scaffold is never proof of implemented runtime code.
 
-`v0.6.1` changes session prefixes and document management markers. Finish and merge any ACTIVE earlier-version session with its original version before upgrading; do not force-delete existing state.
+`v0.6.2` changes session prefixes and document management markers. Finish and merge any ACTIVE earlier-version session with its original version before upgrading; do not force-delete existing state.
 
 ## References
 

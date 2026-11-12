@@ -19,6 +19,7 @@ import sys
 import architecture_tree as arch
 import scan_infrastructure as infra
 import speckit_bridge
+import path_guard as guard
 
 POLICY = Path('.agents/state/context-policy.json')
 PACK = Path('.agents/state/context-pack.json')
@@ -49,8 +50,8 @@ DEFAULT_POLICY = {
 }
 
 
-def read_json(path: Path) -> dict:
-    obj = infra.read_json(path)
+def read_json(root: Path, path: Path) -> dict:
+    obj = infra.read_json(path, root=root)
     if not isinstance(obj, dict):
         raise RuntimeError(f'Missing or invalid state: {path}')
     return obj
@@ -60,7 +61,7 @@ def load_policy(root: Path) -> dict:
     path = root / POLICY
     if not path.exists():
         return DEFAULT_POLICY
-    custom = read_json(path)
+    custom = read_json(root, path)
     if custom.get('schema_version') != 1:
         raise RuntimeError('context-policy.json schema mismatch; do not silently replace')
     allowed = set(DEFAULT_POLICY)
@@ -88,9 +89,7 @@ def safe_rel(root: Path, raw: str) -> str:
     parts = PurePosixPath(value).parts
     if '..' in parts or any(x in ('.', '') for x in parts):
         raise RuntimeError('Unsafe path traversal')
-    target = root.joinpath(*parts)
-    if target.is_symlink() or not target.resolve().is_relative_to(root):
-        raise RuntimeError('Unsafe symlink/path escape')
+    guard.check_path(root, value)
     return PurePosixPath(*parts).as_posix()
 
 
@@ -164,17 +163,18 @@ def layer_neighborhood(start: set[str], graph: dict, hops: int) -> list[str]:
 
 def route(root: Path, task_id: str, task: str, raw_paths: list[str],
           fn: str, requested: str, limit: int, speckit_stage: str = 'status') -> dict:
+    root = guard.validate_root(root)
     task_id = safe_id(task_id)
     if len(task) > 2000 or not task.strip():
         raise RuntimeError('Task description must be non-empty and <= 2000 characters')
     policy = load_policy(root)
-    session = read_json(root / SESSION)
+    session = read_json(root, root / SESSION)
     if session.get('status') != 'ACTIVE' or not session.get('id'):
         raise RuntimeError('ACTIVE_SESSION_REQUIRED: run session_guard.py start first')
-    manifest = read_json(root / infra.MANIFEST)
-    graph = read_json(root / GRAPH)
-    symbols = read_json(root / SYMBOLS)
-    docs = read_json(root / DOC_STATE)
+    manifest = read_json(root, root / infra.MANIFEST)
+    graph = read_json(root, root / GRAPH)
+    symbols = read_json(root, root / SYMBOLS)
+    docs = read_json(root, root / DOC_STATE)
     paths_by_manifest = set(manifest.get('files', {}))
     # Require a fresh local HEAD, never contact remote.
     import session_guard as sg
@@ -208,6 +208,8 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
                 best = matches[0][0]
                 paths = [p for score,p in matches if score == best][:8]
     paths = sorted(set(paths))
+    for path in paths:
+        guard.check_path(root, path)  # May originate from untrusted cached manifest.
     # A new unstaged edit doesn't move HEAD. Compare stat metadata for the exact
     # selected files, not all source bytes, to reject stale in-session routing.
     for path in paths:
@@ -248,13 +250,13 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
     for key,item in sorted(doc_state.items()):
         if key.split('#',1)[0] in selected_set:
             p = item.get('document','')
-            if p and (root / p).is_file():
+            if p and guard.check_path(root, p).is_file():
                 if fn and fn.lower() not in key.lower():
                     continue
                 function_docs.append(p)
     function_docs = function_docs[:policy['max_function_docs'][effective]]
     comps = {str(PurePosixPath(p).parent / arch.SUMMARY_NAME) for p in function_docs}
-    component_docs = sorted(p for p in comps if (root / p).is_file())
+    component_docs = sorted(p for p in comps if guard.check_path(root, p).is_file())
     missing = (len(paths) == 0)
     pack = {
         'schema_version': 1,
@@ -285,7 +287,7 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
     # Spec Kit artifacts are referenced by path/hash only; no duplicated spec body.
     pack['spec_kit'] = speckit_bridge.discover(root, speckit_stage)
     # Do not include task free text in machine file; it could contain PII/secrets.
-    infra.atomic_text(root / PACK, json.dumps(pack, ensure_ascii=False, indent=2) + '\n')
+    infra.atomic_text(root / PACK, json.dumps(pack, ensure_ascii=False, indent=2) + '\n', root=root)
     return pack
 
 

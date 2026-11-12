@@ -1,4 +1,4 @@
-# Install Spec2Code v0.6.1 in any Git project
+# Install Spec2Code v0.6.2 in any Git project
 
 This is a **portable skill + local Python core**, not an installer that can rewrite projects without review.
 
@@ -6,6 +6,7 @@ This is a **portable skill + local Python core**, not an installer that can rewr
 
 - Python 3.10+ for core scripts; local Git.
 - Optional: official GitHub Spec Kit's `specify-cli` (currently Python 3.11+), installed separately. See `integrations/speckit/README.md`.
+- An exact, non-bare Git worktree root. Spec2Code v0.6.2 rejects non-repo roots, nested working directories, root aliases and symlinked runtime paths. See [Path Guard](PATH_GUARD.md).
 - A clean or reviewable working tree. Check for existing `.agents/skills/spec-to-code`, `.agents/state` and `.handoffs` before installing. Never overwrite an ACTIVE session.
 
 ## Install

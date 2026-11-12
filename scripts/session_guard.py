@@ -24,6 +24,7 @@ import uuid
 import scan_infrastructure as infra
 import architecture_tree as arch
 import handoff_store as handoffs
+import path_guard as guard
 
 SESSION_FILE = Path('.agents/state/session.json')
 SESSION_EVENTS = Path('.agents/state/sessions.jsonl')
@@ -55,7 +56,7 @@ DEPENDENCIES = {k: deps for k, _, deps in LAYER_DEFS}
 def git(root: Path, *argv: str, check: bool = True) -> str | None:
     try:
         p = subprocess.run(['git', *argv], cwd=root, text=True, capture_output=True,
-                           timeout=8, check=False)
+                           timeout=8, check=False, env=guard.git_env())
     except (OSError, subprocess.TimeoutExpired):
         if check:
             raise RuntimeError(f'Git command unavailable: {argv[0]}')
@@ -214,10 +215,11 @@ def render_matrix(changed: set[str], graph: dict) -> str:
     return '\n'.join(lines + ['', 'Review only score 2–3 dependent layers unless task scope requires deeper analysis.', ''])
 
 
-def write_if_changed(path: Path, data: str) -> None:
+def write_if_changed(root: Path, path: Path, data: str) -> None:
+    guard.check_path(root, path)
     if path.is_file() and path.read_text(encoding='utf-8') == data:
         return
-    infra.atomic_text(path, data)
+    infra.atomic_text(path, data, root=root)
 
 
 def collect(root: Path, old: dict | None, head: str, verify: bool = False) -> tuple[dict, list[dict]]:
@@ -238,12 +240,12 @@ def collect(root: Path, old: dict | None, head: str, verify: bool = False) -> tu
 
 
 def persist_scan(root: Path, manifest: dict, *, changed: set[str]) -> None:
-    write_if_changed(root / infra.MANIFEST, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
-    write_if_changed(root / infra.INDEX, infra.render_index(manifest))
+    write_if_changed(root, root / infra.MANIFEST, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
+    write_if_changed(root, root / infra.INDEX, infra.render_index(manifest))
     graph = graph_for(root, manifest)
-    write_if_changed(root / GRAPH_FILE, json.dumps(graph, ensure_ascii=False, indent=2) + '\n')
-    write_if_changed(root / SUMMARY_FILE, render_summary(graph, changed=changed))
-    write_if_changed(root / MATRIX_FILE, render_matrix(changed, graph))
+    write_if_changed(root, root / GRAPH_FILE, json.dumps(graph, ensure_ascii=False, indent=2) + '\n')
+    write_if_changed(root, root / SUMMARY_FILE, render_summary(graph, changed=changed))
+    write_if_changed(root, root / MATRIX_FILE, render_matrix(changed, graph))
     # Materialize layer -> controller/component -> function summaries; no changes to actual source.
     arch.publish(root, manifest, graph, changed)
 
@@ -256,19 +258,20 @@ def append_log(path: Path, header: str, body: str) -> None:
         stream.write(body.rstrip() + '\n\n')
 
 
-def append_jsonl(path: Path, event: dict) -> None:
+def append_jsonl(root: Path, path: Path, event: dict) -> None:
     """JSON Lines must contain ONLY valid JSON records; no Markdown headers."""
+    guard.check_path(root, path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('a', encoding='utf-8') as stream:
         stream.write(json.dumps(event, ensure_ascii=False, sort_keys=True) + '\n')
 
 
 def read_state(root: Path) -> dict | None:
-    return infra.read_json(root / SESSION_FILE)
+    return infra.read_json(root / SESSION_FILE, root=root)
 
 
 def save_state(root: Path, state: dict) -> None:
-    infra.atomic_text(root / SESSION_FILE, json.dumps(state, ensure_ascii=False, indent=2) + '\n')
+    infra.atomic_text(root / SESSION_FILE, json.dumps(state, ensure_ascii=False, indent=2) + '\n', root=root)
 
 
 def commit_delta(root: Path, previous: str, current: str, own_session: str | None) -> dict:
@@ -308,9 +311,10 @@ def event_text(session_id: str, kind: str, changes: list[dict], shas: list[str],
 
 
 def inspect(root: Path, layer: str | None) -> int:
+    root = guard.validate_root(root)
     if layer:
         layer = next((k for k, label in arch.LAYER_DIRS.items() if label.lower() == layer.lower()), layer.lower())
-    graph = infra.read_json(root / GRAPH_FILE)
+    graph = infra.read_json(root / GRAPH_FILE, root=root)
     if graph is None:
         raise RuntimeError('No graph snapshot. Run start first')
     if layer:
@@ -331,11 +335,12 @@ def inspect(root: Path, layer: str | None) -> int:
 
 
 def run_start(root: Path, *, verify: bool = False) -> int:
+    root = guard.validate_root(root)
     old_session = read_state(root)
     if old_session and old_session['status'] == 'ACTIVE':
         raise RuntimeError('ACTIVE_SESSION_EXISTS: finish or resolve before starting another session')
     head = ensure_git_root(root)
-    prev = infra.read_json(root / infra.MANIFEST)
+    prev = infra.read_json(root / infra.MANIFEST, root=root)
     if prev and prev.get('schema_version') != infra.SCHEMA:
         raise RuntimeError('Snapshot schema mismatch; preserve and migrate before proceeding')
     current, changes = collect(root, prev, head, verify=verify)
@@ -356,7 +361,7 @@ def run_start(root: Path, *, verify: bool = False) -> int:
              'recorded_fingerprints': {}, 'recorded_paths': [],
              'outside_paths': [], 'startup_external_paths': sorted({c['path'] for c in changes} | commit_info['outside_paths']), 'record_count': 0}
     save_state(root, state)
-    append_jsonl(root / SESSION_EVENTS,
+    append_jsonl(root, root / SESSION_EVENTS,
                  {'event': 'START', 'session_id': session_id, 'at': state['started_at'],
                   'head': head, 'external_commits': len(commit_info['outside_commits']),
                   'out_of_session_delta': len(changes)})
@@ -369,7 +374,7 @@ def run_start(root: Path, *, verify: bool = False) -> int:
 def refresh(root: Path, state: dict, *, print_result: bool = True, verify: bool = False) -> tuple[dict, list[dict], list[str]]:
     head = ensure_git_root(root)
     before = {'files': state['last_seen_files']}
-    current, changes = collect(root, infra.read_json(root / infra.MANIFEST), head, verify=verify)
+    current, changes = collect(root, infra.read_json(root / infra.MANIFEST, root=root), head, verify=verify)
     # Scan manifest can be different from session last_seen_files after manual external scan.
     local_delta = files_diff(before['files'], current['files'])
     git_delta = commit_delta(root, state['last_seen_head'], head, own_session=state['id'])
@@ -396,6 +401,7 @@ def refresh(root: Path, state: dict, *, print_result: bool = True, verify: bool 
 
 
 def run_checkpoint(root: Path, *, verify: bool = False) -> int:
+    root = guard.validate_root(root)
     state = read_state(root)
     if not state or state['status'] != 'ACTIVE':
         raise RuntimeError('No active session to checkpoint')
@@ -404,6 +410,7 @@ def run_checkpoint(root: Path, *, verify: bool = False) -> int:
 
 
 def run_record(root: Path, paths: list[str], note: str, requirement: str) -> int:
+    root = guard.validate_root(root)
     state = read_state(root)
     if not state or state['status'] != 'ACTIVE':
         raise RuntimeError('No active session to record')
@@ -415,10 +422,12 @@ def run_record(root: Path, paths: list[str], note: str, requirement: str) -> int
     previous_recorded = state['recorded_fingerprints']
     valid = []
     for text in paths:
-        p = Path(text)
-        if p.is_absolute() or '..' in p.parts:
-            raise RuntimeError('Invalid path outside repository: ' + text)
-        key = p.as_posix()
+        # Every user-provided record path must stay within this checkout.
+        if Path(text).is_absolute():
+            raise RuntimeError('PATH_GUARD_BLOCKED: --paths must be repository-relative')
+        safe = guard.check_path(root, text)
+        key = safe.relative_to(root).as_posix()
+        p = Path(key)
         if not infra.tracked_candidate(p):
             raise RuntimeError('File is not an authorized source/config candidate: ' + key)
         if baselines.get(key) == now.get(key):
@@ -448,6 +457,7 @@ def run_record(root: Path, paths: list[str], note: str, requirement: str) -> int
 
 
 def run_finish(root: Path) -> int:
+    root = guard.validate_root(root)
     state = read_state(root)
     if not state or state['status'] != 'ACTIVE':
         raise RuntimeError('No active session to finish')
@@ -470,7 +480,7 @@ def run_finish(root: Path) -> int:
     for key in ('start_files', 'last_seen_files', 'recorded_fingerprints'):
         state.pop(key, None)
     save_state(root, state)
-    append_jsonl(root / SESSION_EVENTS,
+    append_jsonl(root, root / SESSION_EVENTS,
                  {'event': 'FINISH', 'session_id': state['id'],
                   'at': state['finished_at'], 'head': state['last_seen_head'],
                   'path_count': len(session_delta), 'record_count': state['record_count']})
@@ -495,11 +505,8 @@ def main() -> int:
     i = sub.add_parser('inspect')
     i.add_argument('--layer', help='Internal key (api/presentation) or folder label (API/Present)')
     args = p.parse_args()
-    root = Path(args.root).resolve()
-    if not root.is_dir():
-        print('SESSION_FAILED | missing repository root', file=sys.stderr)
-        return 2
     try:
+        root = guard.validate_root(args.root)
         if args.action == 'start':
             return run_start(root, verify=args.verify)
         if args.action == 'checkpoint':

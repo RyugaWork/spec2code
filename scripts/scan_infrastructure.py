@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import path_guard as guard
 import sys
 import tempfile
 from typing import Any
@@ -116,10 +117,14 @@ def all_files(root: Path) -> list[Path]:
     result = []
     for top in SCAN_ROOTS:
         base = root / top
-        if not base.is_dir() or base.is_symlink():
+        if not base.is_dir() or base.is_symlink() or (base / '.git').exists():
             continue
         # os.walk never follows symlinked directories.
         for directory, dirs, files in os.walk(base, followlinks=False):
+            # Nested Git checkout/submodule belongs to another repository.
+            if Path(directory) != base and (Path(directory) / '.git').exists():
+                dirs[:] = []
+                continue
             dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS and
                              not (Path(directory) / d).is_symlink())
             for f in sorted(files):
@@ -174,7 +179,7 @@ def repo_git(root: Path) -> dict:
     def run(*args):
         try:
             p = subprocess.run(['git', *args], cwd=root, timeout=3,
-                               capture_output=True, text=True, check=False)
+                               capture_output=True, text=True, check=False, env=guard.git_env())
             return p.stdout.strip() if p.returncode == 0 else None
         except (OSError, subprocess.TimeoutExpired):
             return None
@@ -182,7 +187,8 @@ def repo_git(root: Path) -> dict:
             'head': run('rev-parse', '--short=12', 'HEAD')}
 
 
-def read_json(path: Path) -> dict | None:
+def read_json(path: Path, *, root: Path) -> dict | None:
+    guard.check_path(root, path)
     if not path.is_file():
         return None
     try:
@@ -452,13 +458,16 @@ def render_event(now: str, changes: list[dict], previous: dict | None,
     return '\n'.join(lines)
 
 
-def atomic_text(path: Path, content: str) -> None:
+def atomic_text(path: Path, content: str, *, root: Path) -> None:
+    guard.check_path(root, path)
     path.parent.mkdir(parents=True, exist_ok=True)
+    guard.check_path(root, path)
     with tempfile.NamedTemporaryFile('w', encoding='utf-8', dir=path.parent,
                                      prefix='.infra-', suffix='.tmp', delete=False) as f:
         tmp = Path(f.name)
         f.write(content)
     try:
+        guard.check_path(root, path)
         os.replace(tmp, path)
     finally:
         tmp.unlink(missing_ok=True)
@@ -481,10 +490,8 @@ def runtime_probe(root: Path) -> dict:
 
 
 def run(args) -> int:
-    root = Path(args.root).resolve()
-    if not root.is_dir():
-        raise RuntimeError('Repository root does not exist')
-    old = read_json(root / MANIFEST)
+    root = guard.validate_root(args.root)
+    old = read_json(root / MANIFEST, root=root)
     if old is not None and old.get('status') != 'UNINITIALIZED' and old.get('schema_version') != SCHEMA:
         raise RuntimeError('Inventory schema mismatch; migration required, no overwrite')
     initial = old is None or old.get('status') == 'UNINITIALIZED'
@@ -515,8 +522,8 @@ def run(args) -> int:
         if not args.dry_run:
             # This standalone scan NEVER writes visualChange.md: attribution to
             # external sessions is owned exclusively by session_guard.py.
-            atomic_text(root / MANIFEST, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
-            atomic_text(root / INDEX, render_index(manifest))
+            atomic_text(root / MANIFEST, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', root=root)
+            atomic_text(root / INDEX, render_index(manifest), root=root)
         result_status = 'BASELINE' if initial else ('CHANGED' if changes or structural_change else 'CONTEXT_CHANGED')
         print(result_status + ' | files=' + str(len(files)) +
               ' | delta=' + str(len(changes)) + (' | DRY_RUN' if args.dry_run else ''))
@@ -531,7 +538,7 @@ def run(args) -> int:
         r = runtime_probe(root)
         if not args.dry_run:
             # Intentionally private, machine-dependent and ignored by the source scanner.
-            atomic_text(root / STATES_DIR / '.runtime-status.json', json.dumps(r, indent=2) + '\n')
+            atomic_text(root / STATES_DIR / '.runtime-status.json', json.dumps(r, indent=2) + '\n', root=root)
         print('RUNTIME | local tooling checked (not a deployment status check)')
     return 0
 

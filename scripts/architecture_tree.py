@@ -16,6 +16,7 @@ import os
 from typing import Any
 
 import scan_infrastructure as infra
+import path_guard as guard
 
 LAYER_DIRS = {
     'governance': 'Governance',
@@ -197,7 +198,8 @@ def evidence_graph(root: Path, manifest: dict, graph: dict, old_cache: dict) -> 
     return components, symbols
 
 
-def guarded_write(path: Path, content: str) -> None:
+def guarded_write(root: Path, path: Path, content: str) -> None:
+    guard.check_path(root, path)
     if path.is_symlink():
         raise RuntimeError(f'Refusing symlinked architecture file: {path}')
     if path.exists():
@@ -213,7 +215,7 @@ def guarded_write(path: Path, content: str) -> None:
         if parent.is_symlink():
             raise RuntimeError(f'Refusing symlinked architecture directory: {parent}')
         parent = parent.parent
-    infra.atomic_text(path, content)
+    infra.atomic_text(path, content, root=root)
 
 
 def graph_distance(src: str, target: str, edges: list[dict]) -> int | None:
@@ -351,9 +353,10 @@ def render_function(c: dict, fn: dict, version: int, change: str) -> str:
 
 
 def publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
-    old_symbols = infra.read_json(root / SYMBOL_CACHE) or {}
+    root = guard.validate_root(root)
+    old_symbols = infra.read_json(root / SYMBOL_CACHE, root=root) or {}
     components, symbols = evidence_graph(root,manifest,graph,old_symbols)
-    old_state = infra.read_json(root / STATE_FILE) or {'schema_version': VERSION, 'functions':{}}
+    old_state = infra.read_json(root / STATE_FILE, root=root) or {'schema_version': VERSION, 'functions':{}}
     if old_state.get('schema_version') != VERSION:
         raise RuntimeError('Architecture version mismatch; manual migration required')
     old_functions=old_state.get('functions',{})
@@ -392,20 +395,21 @@ def publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
         if p.exists() and (not p.is_file() or not p.read_text(encoding='utf-8').startswith(GENERATED)):
             raise RuntimeError(f'Non-managed architecture path collision: {p}')
     for p, content in planned:
-        guarded_write(p,content)
-    infra.atomic_text(root / SYMBOL_CACHE, json.dumps(symbols,ensure_ascii=False,indent=2)+'\n') if symbols!=old_symbols else None
+        guarded_write(root,p,content)
+    infra.atomic_text(root / SYMBOL_CACHE, json.dumps(symbols,ensure_ascii=False,indent=2)+'\n', root=root) if symbols!=old_symbols else None
     new_state={'schema_version':VERSION,'functions':funcs_new,'notes_by_path':old_notes,
                'component_count':len(components),'function_count':sum(len(c['functions']) for c in components.values()),
                'generated_paths':[str(p.relative_to(root).as_posix()) for p,_ in planned]}
     if new_state!=old_state:
-        infra.atomic_text(root / STATE_FILE,json.dumps(new_state,ensure_ascii=False,indent=2)+'\n')
+        infra.atomic_text(root / STATE_FILE,json.dumps(new_state,ensure_ascii=False,indent=2)+'\n', root=root)
     return {'components':len(components),'functions':new_state['function_count'],'documents':len(planned)}
 
 
 def annotate_recorded_change(root: Path, paths: list[str], note: str, requirement: str,
                              session_id: str, current_files: dict) -> None:
     """Annotate the latest *registered* change; do not assert inferred semantics."""
-    state=infra.read_json(root/STATE_FILE)
+    root = guard.validate_root(root)
+    state=infra.read_json(root/STATE_FILE, root=root)
     if not state:
         raise RuntimeError('Missing architecture-docs state for change annotation')
     infos=state.setdefault('notes_by_path',{})
@@ -419,7 +423,7 @@ def annotate_recorded_change(root: Path, paths: list[str], note: str, requiremen
         infos[path]={'fingerprint':fp,'session':session_id,'requirement':safe_req,'note':safe_note}
         for key,info in state['functions'].items():
             if key.startswith(path+'#') and info.get('fingerprint')==fp:
-                target=root/info['document']
+                target=guard.check_path(root,info['document'])
                 if not target.is_file() or target.is_symlink():
                     raise RuntimeError(f'Missing/unsafe function doc for annotation: {target}')
                 prior=target.read_text(encoding='utf-8')
@@ -427,5 +431,5 @@ def annotate_recorded_change(root: Path, paths: list[str], note: str, requiremen
                     raise RuntimeError(f'Refusing non-managed function annotation: {target}')
                 statement=f'- Last change summary: Recorded by session `{session_id}` for requirement `{safe_req}`: {safe_note} (declared authorship, not semantic proof).'
                 revised=re.sub(r'^- Last change summary: .*$',lambda m:statement,prior,count=1,flags=re.M)
-                guarded_write(target,revised)
-    infra.atomic_text(root/STATE_FILE,json.dumps(state,ensure_ascii=False,indent=2)+'\n')
+                guarded_write(root,target,revised)
+    infra.atomic_text(root/STATE_FILE,json.dumps(state,ensure_ascii=False,indent=2)+'\n', root=root)

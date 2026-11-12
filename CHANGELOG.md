@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.2] - 2026-11-12
+
+### Security
+- Add shared `path_guard.py` to enforce exact Git worktree roots before all CLI actions, including read-only/status/merge calls.
+- Reject absolute foreign paths, `..`, UNC/drive paths, symlinked managed paths, and unsafe cache-derived document locations.
+- Scrub inherited Git environment overrides during root verification, drift tracking, and inventory Git queries.
+- Exclude nested Git checkout/submodule content from repository scanning.
+- Guard programmatic session, graph, context, Spec Kit and handoff entrypoints ahead of future MCP integration.
+
+### Verification
+- Add adversarial path tests for non-Git roots, symlinks, environment overrides, cache traversal and Git worktrees.
+- Preserve existing v0.6.1 session, architecture and handoff behavior within a valid checkout.
+
+
 ## [0.6.1] - 2026-11-12
 
 ### Added

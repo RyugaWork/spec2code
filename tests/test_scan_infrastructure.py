@@ -26,8 +26,8 @@ class InventorySafetyTests(unittest.TestCase):
             (root / 'AGENTS.md').write_text('# Example\n')
             p = subprocess.run([sys.executable, str(SCRIPTS / 'scan_infrastructure.py'),
                                 '--root', str(root)], text=True, capture_output=True)
-            self.assertEqual(p.returncode, 0, p.stderr)
-            self.assertIn('DIRECT_SCAN_READ_ONLY', p.stdout)
+            self.assertNotEqual(p.returncode, 0)
+            self.assertIn('PATH_GUARD_BLOCKED', p.stderr)
             self.assertFalse((root / '.agents/state/infrastructure.json').exists())
             self.assertFalse((root / 'visualChange.md').exists())
 

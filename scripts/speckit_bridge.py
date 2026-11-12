@@ -14,6 +14,7 @@ from pathlib import Path
 import re
 import shutil
 import sys
+import path_guard as guard
 
 ARTIFACTS = ('spec.md', 'plan.md', 'tasks.md')
 STAGES = ('status', 'specify', 'plan', 'tasks', 'analyze', 'implement', 'converge')
@@ -62,7 +63,7 @@ def _feature_path(root: Path, value: str) -> Path:
 def discover(root: Path, stage: str = 'status') -> dict:
     if stage not in STAGES:
         raise RuntimeError('UNKNOWN_SPECKIT_STAGE')
-    root = root.resolve()
+    root = guard.validate_root(root)
     if not (root / '.specify').is_dir():
         if stage != 'status':
             raise RuntimeError('SPEC_KIT_NOT_INITIALIZED')

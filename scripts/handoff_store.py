@@ -13,6 +13,7 @@ import re
 from contextlib import contextmanager
 
 import scan_infrastructure as infra
+import path_guard as guard
 
 HANDOFF_DIR=Path('.handoffs')
 DETAIL_DIR=HANDOFF_DIR/'.details'  # Owner typo `.detials` normalized.
@@ -56,7 +57,9 @@ def refuse_symlink(root: Path, path: Path) -> None:
 
 
 def append_event(root: Path, sid: str, kind: str, body: str) -> None:
+    root=guard.validate_root(root)
     p=path_for(root, kind, sid)
+    guard.check_path(root, p)
     refuse_symlink(root,p)
     p.parent.mkdir(parents=True,exist_ok=True)
     if p.is_file():
@@ -66,18 +69,18 @@ def append_event(root: Path, sid: str, kind: str, body: str) -> None:
         if len(existing.encode('utf-8'))>MAX_BYTES:
             raise RuntimeError('Pending log too large; manual handoff required')
     else:
-        infra.atomic_text(p,header(sid,kind)+'\n')
+        infra.atomic_text(p,header(sid,kind)+'\n', root=root)
     with p.open('a',encoding='utf-8') as stream:
         stream.write(body.rstrip()+'\n\n')
 
 
 @contextmanager
 def merge_lock(root: Path):
-    p=root/LOCK
+    p=guard.check_path(root, LOCK)
     refuse_symlink(root,p)
     p.parent.mkdir(parents=True,exist_ok=True)
     try:
-        fd=os.open(p,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
+        fd=os.open(p,os.O_CREAT|os.O_EXCL|os.O_WRONLY|getattr(os,'O_NOFOLLOW',0),0o600)
     except FileExistsError:
         raise RuntimeError('Handoff merge already in progress or stale lock present; do not auto-remove lock')
     try:
@@ -89,7 +92,7 @@ def merge_lock(root: Path):
 
 
 def is_finished(root: Path, sid: str) -> bool:
-    p=root/Path('.agents/state/sessions.jsonl')
+    p=guard.check_path(root, '.agents/state/sessions.jsonl')
     if not p.is_file():
         return False
     import json
@@ -151,11 +154,12 @@ def quick_summary(ledger: str) -> str:
 
 
 def merge(root: Path, sid: str) -> dict:
+    root=guard.validate_root(root)
     validate_session(sid)
     if not is_finished(root,sid):
         raise RuntimeError('Handoff merge requires a FINISH event for exact Session ID')
     with merge_lock(root):
-        p=root/BUILDNOTES
+        p=guard.check_path(root, BUILDNOTES)
         refuse_symlink(root,p)
         existing=p.read_text(encoding='utf-8') if p.is_file() else ''
         if existing and not existing.startswith(HEAD):
@@ -163,7 +167,7 @@ def merge(root: Path, sid: str) -> dict:
         ledger=split_ledger(existing) if existing else '\n'
         pending=[]
         for kind in ('visualChange','specChange'):
-            f=path_for(root,kind,sid)
+            f=guard.check_path(root, path_for(root,kind,sid))
             refuse_symlink(root,f)
             if f.is_file():
                 raw=f.read_bytes()
@@ -189,7 +193,7 @@ def merge(root: Path, sid: str) -> dict:
             raise RuntimeError('Buildnotes cap exceeded; archive explicitly before merging')
         new=HEAD+'\n# Spec2Code Build Notes Handoff\n\n'+quick_summary(ledger)+LEDGER+ledger
         if new!=existing:
-            infra.atomic_text(p,new)
+            infra.atomic_text(p,new, root=root)
         # Re-read persisted data before unlinking any exact filename.
         persisted=p.read_text(encoding='utf-8')
         if not persisted.startswith(HEAD):

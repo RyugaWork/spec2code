@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT_SCRIPTS=Path(__file__).resolve().parents[1]/'scripts'
 sys.path.insert(0,str(ROOT_SCRIPTS))
@@ -136,6 +137,33 @@ class AdaptiveModeTests(unittest.TestCase):
     def test_path_traversal_is_rejected(self):
         with self.assertRaisesRegex(RuntimeError,'Unsafe path'):
             router.route(self.root,'TASK-7','Update status',['../secrets.txt'],'','auto',0)
+
+    def test_review_required_policy_cannot_be_reported_routing_ready(self):
+        pack = router.route(self.root, 'TASK-POLICY', 'Fix authentication',
+                            [self.paths[1]], '', 'deep', 0)
+        self.assertEqual(pack['governance']['status'], 'NEEDS_REVIEW')
+        self.assertEqual(pack['routing_status'], 'NEEDS_REVIEW')
+
+    def test_blocked_policy_preserves_previous_context_pack(self):
+        marker = '{"original": "preserve"}\\n'
+        dest = self.root / router.PACK
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(marker, encoding='utf-8')
+        self.write_json('.agents/policy-map.json', {
+            'schema_version': 1,
+            'documents': [{
+                'category': 'security', 'path': 'missing-security.md',
+                'canonical': True, 'required_for': ['implement'],
+                'applies_to_prefixes': ['.source/backend/'],
+                'reason': 'required for authentication'
+            }]
+        })
+        with patch.object(router.speckit_bridge, 'discover',
+                          return_value={'status': 'NOT_INITIALIZED'}):
+            with self.assertRaisesRegex(RuntimeError, 'GOVERNANCE_BLOCKED'):
+                router.route(self.root, 'TASK-SECURITY', 'Fix authentication',
+                             [self.paths[1]], '', 'deep', 0, 'implement')
+        self.assertEqual(dest.read_text(encoding='utf-8'), marker)
 
 
 if __name__=='__main__':

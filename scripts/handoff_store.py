@@ -67,7 +67,7 @@ def append_event(root: Path, sid: str, kind: str, body: str) -> None:
     refuse_symlink(root,p)
     p.parent.mkdir(parents=True,exist_ok=True)
     if p.is_file():
-        existing=scope_io.read_bytes(root, p, max_bytes=MAX_BYTES).decode('utf-8')
+        existing=scope_io.read_bytes(root, p, max_bytes=MAX_BYTES).decode('utf-8').replace('\r\n', '\n')
         if not existing.startswith(header(sid,kind)):
             raise RuntimeError(f'Pending log header mismatch: {p}')
         if len(existing.encode('utf-8'))>MAX_BYTES:
@@ -168,7 +168,7 @@ def merge(root: Path, sid: str) -> dict:
     with merge_lock(root):
         p=guard.check_path(root, BUILDNOTES)
         refuse_symlink(root,p)
-        existing=scope_io.read_bytes(root, p, max_bytes=MAX_LEDGER).decode('utf-8') if p.is_file() else ''
+        existing=scope_io.read_bytes(root, p, max_bytes=MAX_LEDGER).decode('utf-8').replace('\r\n', '\n') if p.is_file() else ''
         if existing and not existing.startswith(HEAD):
             raise RuntimeError('Non-managed buildnotes: refusing overwrite')
         ledger=split_ledger(existing) if existing else '\n'
@@ -181,7 +181,7 @@ def merge(root: Path, sid: str) -> dict:
                 if len(raw)>MAX_BYTES:
                     raise RuntimeError('Pending log exceeds safety cap: '+str(f))
                 try:
-                    content=raw.decode('utf-8')
+                    content=raw.decode('utf-8').replace('\r\n', '\n')
                 except UnicodeDecodeError:
                     raise RuntimeError('Invalid UTF-8 in pending log: '+str(f))
                 if not content.startswith(header(sid,kind)):
@@ -202,7 +202,7 @@ def merge(root: Path, sid: str) -> dict:
         if new!=existing:
             infra.atomic_text(p,new, root=root)
         # Re-read persisted data before unlinking any exact filename.
-        persisted=scope_io.read_bytes(root, p, max_bytes=MAX_LEDGER).decode('utf-8')
+        persisted=scope_io.read_bytes(root, p, max_bytes=MAX_LEDGER).decode('utf-8').replace('\r\n', '\n')
         if not persisted.startswith(HEAD):
             raise RuntimeError('Buildnotes post-write verification failed')
         removed=0

@@ -42,8 +42,9 @@ class WorkflowGuardTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
-    def request(self, phase="DISCOVER", action="status"):
-        return workflow_guard.WorkflowRequest(self.root, "T001", phase, action)
+    def request(self, phase="DISCOVER", action="status", task="", paths=()):
+        return workflow_guard.WorkflowRequest(
+            self.root, "T001", phase, action, task=task, paths=tuple(paths))
 
     def start(self):
         self.assertEqual(session_guard.run_start(self.root), 0)
@@ -102,6 +103,55 @@ class WorkflowGuardTests(unittest.TestCase):
         result = workflow_guard.evaluate(self.request())
         self.assertEqual(result["gate_status"], "BLOCKED")
         self.assertIn("GT-014", result["blocking_gates"])
+
+    def test_missing_scoped_security_policy_blocks_gate(self):
+        self.start()
+        policy_map = self.root / ".agents" / "policy-map.json"
+        policy = json.loads(policy_map.read_text(encoding="utf-8"))
+        policy["documents"].append({
+            "category": "security", "path": "missing-security.md",
+            "canonical": True, "required_for": ["implement"],
+            "applies_to_prefixes": ["src/"], "reason": "Security policy required"
+        })
+        policy_map.write_text(json.dumps(policy), encoding="utf-8")
+        scope = {"task": "Fix authentication", "paths": ("src/main.py",)}
+        workflow_guard.transition(self.request(action="begin", **scope))
+        decision = workflow_guard.evaluate(self.request("IMPLEMENT", "evaluate", **scope))
+        self.assertEqual(decision["gate_status"], "BLOCKED")
+        self.assertIn("GT-002", decision["blocking_gates"])
+
+    def test_nested_agents_change_invalidates_workflow(self):
+        nested = self.root / "src" / "AGENTS.md"
+        nested.write_text("# Before\\n", encoding="utf-8")
+        self.start()
+        scope = {"task": "Update utility", "paths": ("src/main.py",)}
+        workflow_guard.transition(self.request(action="begin", **scope))
+        nested.write_text("# After\\n", encoding="utf-8")
+        decision = workflow_guard.evaluate(self.request("DISCOVER", "evaluate", **scope))
+        self.assertEqual(decision["gate_status"], "BLOCKED")
+        self.assertIn("GT-014", decision["blocking_gates"])
+
+    def test_task_scope_change_cannot_reuse_workflow_approval(self):
+        self.start()
+        scope = {"task": "Update utility", "paths": ("src/main.py",)}
+        workflow_guard.transition(self.request(action="begin", **scope))
+        decision = workflow_guard.evaluate(self.request(
+            "DISCOVER", "evaluate", task="Change authentication", paths=("src/main.py",)))
+        self.assertEqual(decision["gate_status"], "BLOCKED")
+        self.assertIn("WF_TASK_SCOPE_MISMATCH", decision["blocking_gates"])
+
+    def test_invalidate_unrelated_phase_is_rejected(self):
+        self.start()
+        workflow_guard.transition(self.request(action="begin"))
+        with self.assertRaisesRegex(RuntimeError, "WF_ILLEGAL_TRANSITION"):
+            workflow_guard.transition(self.request("VERIFY", "invalidate"))
+
+    def test_missing_task_description_blocks_implementation(self):
+        self.start()
+        workflow_guard.transition(self.request(action="begin"))
+        decision = workflow_guard.evaluate(self.request("IMPLEMENT", "evaluate"))
+        self.assertEqual(decision["gate_status"], "BLOCKED")
+        self.assertIn("WF_TASK_SCOPE_REQUIRED", decision["blocking_gates"])
 
 
 if __name__ == "__main__":

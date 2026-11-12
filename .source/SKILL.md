@@ -100,3 +100,16 @@ python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . evaluate -
 ```
 
 Host ownership, Scope IO/Path Guard, session binding, and exact-session handoff remain mandatory.
+
+## PLAN-080.1 task-scoped governance gates
+
+Always supply the real task description and affected repository-relative source paths to Policy Resolver, Context Router, and Workflow Guard. Do not submit generic placeholder text for implementation gates:
+
+```sh
+python .agents/skills/spec-to-code/scripts/policy_resolver.py --root . --task-id T001 --task "Fix authentication" --paths src/auth.py --operation implement --format json
+python .agents/skills/spec-to-code/scripts/context_router.py --root . --task-id T001 --task "Fix authentication" --paths src/auth.py --speckit-stage implement
+python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . begin --task-id T001 --task "Fix authentication" --paths src/auth.py
+python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . evaluate --task-id T001 --phase DISCOVER --task "Fix authentication" --paths src/auth.py
+```
+
+Use actual paths, not these illustrative filenames. Subsequent Workflow Guard evaluations/transitions must retain the same task and affected paths. Only a task-scope SHA-256, not the raw description, is written to the workflow journal. Changing any selected policy file, nested AGENTS reference, map or context pack invalidates the snapshot. Policy BLOCKED prevents new context pack publication; NEEDS_REVIEW produces a non-ready routing result (CLI exit code 3). Review is not automatic approval: the CLI cannot supply trusted review assertions, tests or deployment authorization.

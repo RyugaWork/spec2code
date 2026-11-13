@@ -4,6 +4,66 @@
 **Status:** DESIGN_DRAFT / IMPLEMENTATION_NOT_AUTHORIZED  
 **Scope:** Existing S2C repository only. Project-wide source authority remains [S2C master](../../.agents/.spec.md); this plan is a feature refinement and does not supersede A/P1–P9, A.1, B or B.1.
 
+
+## Summary
+
+Use the **official Spec Kit feature-level document workflow** to develop S2C itself. Web/GitHub mode maintains native-compatible Markdown, while a separately installed native Codex/Codespaces host may run upstream skills after safety preflight. The S2C global BRD/AGENTS/RTM/risk model remains authoritative. Research compares official versions and security deltas, but no upstream CLI was installed in the current offline terminal.
+
+## Technical Context
+
+| Template field | Existing observed or proposed value |
+| --- | --- |
+| Language / version | S2C source: Python and Markdown; disposable runner Python 3.13.5 observed; official upstream `v1.2.6` declares Python>=3.11; no version has been approved for the actual host |
+| Dependencies | Existing S2C read-only bridge, Path Guard/Scope IO and GitHub connector; optional upstream `specify-cli` only after owner-reviewed install |
+| Storage | Versioned Markdown artifacts in Git, selected pointer JSON; no new database or remote agent server |
+| Testing | Existing source tests `.source/tests/test_speckit_bridge.py` (not rerun), 24 planned feature acceptance cases, future official native prerequisite tests |
+| Platform | GitHub Web; pilot intended Codex/Codespaces/Linux/Windows; actual OS/OneDrive/junction support remains unverified |
+| Risk | RM-001..005 OPEN/P0; `--force` collision SK-R01, version SK-R04, privilege and source drift |
+| Performance and scale | No owner-approved token/latency/SLO values; no performance promises |
+| Project scope | S2C development repo and this one active Spec Kit feature only; host repositories remain independently owned |
+
+## Constitution Check (draft, not formal A.1)
+
+| Principle | Planned design evidence | Remaining gate |
+| --- | --- | --- |
+| I Evidence first | Exact Git/Google revisions, no fabricated CLI/worker/test outcome | Real host tests and independent source review |
+| II Single requirement authority | Master S2C SRS + 12 explicit RTM links | Authoritative stakeholder ratification |
+| III Least privilege | Read-only bridge and provider boundary contract | Existing critical Path Guard/host risks OPEN |
+| IV A→A.1→B→B.1 | Separate decision state in docs and runbook | Real A.1 signature and B permission |
+| V Negative verification | 24 proposed P/N feature cases, collision and STOP tests | Tests NOT_RUN |
+| VI Portable mature stack | Web mode available; official version candidates compared | CLI version/OS/agent owner acceptance |
+| VII Honest collaboration | Same-model review cannot sign gate; handoffs preserve status | Real independent reviewer |
+
+**Constitution Check outcome:** `DESIGN_PRESENT / RATIFICATION_UNKNOWN / A1_NOT_RUN`, not PASS.
+
+## Project Structure — source ownership map
+
+~~~text
+AGENTS.md                       # S2C development agent policy
+.agents/.spec.md                # canonical S2C BRD/SRS
+.agents/.traceMatrix.md         # bidirectional requirement ownership
+.specify/feature.json           # official-style active feature pointer
+.specify/memory/constitution.md # feature process constitution (DRAFT)
+specs/001-s2c-speckit-integration/
+  spec.md                       # feature-level requirements
+  plan.md                       # this plan
+  research.md                   # upstream/maturity/alternatives
+  data-model.md                 # logical artifacts and state
+  contracts/web-native-interface.md
+  tasks.md
+  quickstart.md
+  checklists/requirements.md
+  checklists/integrationAcceptance.md
+.source/scripts/speckit_bridge.py   # actual read-only source adapter
+.source/.config/speckit.json        # current source config
+~~~
+
+**Not generated:** `.specify/scripts/` and `.agents/skills/speckit-*/` are absent until official native init actually runs in an authorized checkout.
+
+## Complexity Tracking
+
+The preferred architecture deliberately avoids new code/runtime/CI/MCP/agent-daemon complexity in this stage. Rationale: no approved host benchmark or operational constraints justify it, the existing bridge already reads official feature manifests, and changing a security-critical runtime before A.1 would be unsafe. A future B design must document any deviations, compatibility tests, migration and rollback.
+
 ## 1. Architectural decisions and constraints
 
 - **DEV-01 — Two operational surfaces:** Web/GitHub connector mode uses Markdown + authenticated GitHub read/write; native local agent mode uses upstream official `specify` CLI and agent skills after a separate reviewed installation. A static Web-mode artifact is not proof a CLI step ran.

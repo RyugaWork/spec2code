@@ -23,3 +23,11 @@
 - [ ] CI/host security/QA test plan and source-bound evidence owner documented before B.1.
 
 **Result:** READY_FOR_DESIGN_REVIEW_ONLY until the boxes are actually checked with recorded evidence. This file is a checklist, not a test-result registry.
+
+## PLAN-094 — Requirements-quality evidence queue
+
+The official upstream [Spec Kit v1.2.6 specification template](https://github.com/github/spec-kit/blob/v1.2.6/templates/spec-template.md) expects User Scenarios & Testing, Requirements, Success Criteria and Assumptions. The [plan template](https://github.com/github/spec-kit/blob/v1.2.6/templates/plan-template.md) expects technical context, Constitution Check, project structure and complexity tracking. The feature docs now explicitly include these sections, while preserving the S2C global authority boundary.
+
+**Pending evidence to evaluate checkboxes:** confirm the final Git SHA includes 12 exact SKI-FR rows in RTM, 24 matching P/N acceptance cases, 15 unique tasks, complete links, stakeholder/host permission and a real independent A.1. This checklist intentionally remains unchecked: source writing and its author's self-inspection do not constitute independent quality approval or executed security tests.
+
+**Related artifacts:** [research](../research.md), [logical model](../data-model.md), [Web/Native contract](../contracts/web-native-interface.md), [quickstart](../quickstart.md), [acceptance cases](integrationAcceptance.md).

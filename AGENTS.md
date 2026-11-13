@@ -1,6 +1,6 @@
 # AGENTS.md — Spec2Code agent operating contract (v0.8.0 candidate)
 
-> **CURRENT WORKSTREAM — PLAN-089: staged SRS, interface and acceptance design toward independent A.1.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
+> **CURRENT WORKSTREAM — PLAN-092: Spec Kit Markdown integration for S2C itself, with existing A.1/B gates preserved.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
 
 > Applies to **development of this repository**, not automatically to projects where the portable skill is installed. The v0.8.0 governance/workflow work is a **candidate**, not a stable release. Instructions guide a human-supervised ChatGPT/Codex agent; they do not themselves enforce filesystem containment or grant permissions.
 

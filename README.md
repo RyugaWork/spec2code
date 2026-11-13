@@ -1,5 +1,8 @@
 # Spec2Code v0.7.0
 
+> **Current baseline: PLAN-087 / BRD v1.2.** Start with [the unified BRD, architecture and M0–M5 implementation plan](.agents/.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
+
+
 Infrastructure-aware, universal Spec-to-Code agent skill with optional read-only upstream GitHub Spec Kit bridge.
 
 **Status:** repository layout migration candidate; prior Windows/security risks remain open. Requires Python 3.10+ and Git. Spec Kit CLI is separate.

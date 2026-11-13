@@ -1,6 +1,6 @@
 # AGENTS.md — Spec2Code agent operating contract (v0.8.0 candidate)
 
-> **CURRENT AUTHORIZED WORKSTREAM — PLAN-084: Planning & Specification.** First use the [nine-stage planning lifecycle](.agents/.workflow/planningSpecificationWorkflow.md) and [SRS authoring plan](.agents/.documents/systemSpecificationPlan.md). Research, requirements, feature design, risk scoring/review and design handoff are **not** authorization to implement runtime behavior, run host migrations or fix code. The [five-stage workflow specification](.agents/.workflow/workflowSpecification.md) describes **later implementation**.
+> **CURRENT AUTHORIZED WORKSTREAM — PLAN-087: BRD and implementation-plan consolidation.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
 
 > Applies to **development of this repository**, not automatically to projects where the portable skill is installed. The v0.8.0 governance/workflow work is a **candidate**, not a stable release. Instructions guide a human-supervised ChatGPT/Codex agent; they do not themselves enforce filesystem containment or grant permissions.
 
@@ -8,7 +8,7 @@
 
 Spec2Code (S2C) is a project-independent **Markdown-guided agent skill backed by optional local Python guards**. It discovers a bounded view of the repository, routes relevant evidence and records implementation-session provenance. The official GitHub Spec Kit remains an **optional separate process**; S2C never vendors, impersonates or silently runs it.
 
-Start with `.agents/.spec.md`, `.agents/.features.md`, `.agents/.plans.md`, `.agents/.risk.md`, `.agents/.checklist.md` and the task-relevant sections of `.source/SKILL.md`. For detailed behavior use:
+Start with `.agents/.spec.md` as the unified BRD/architecture/implementation baseline, then `.agents/.traceMatrix.md` and current task/risk records. Supporting documents elaborate this baseline. For detailed behavior use:
 
 | Task | Read next | Owner / guard |
 | --- | --- | --- |
@@ -98,3 +98,11 @@ This policy applies to **both development of S2C source and code in an integrate
 **User Override:** if the requester explicitly names a version/edition/database or structure, do **not** silently substitute the default. Record `OVR-ID`, exact S2C/host scope, request, support/maturity/compatibility risks, alternatives, migration/test plan and required approvals. A supported but newly GA major can be accepted **as a design preference** after transparent risk review; a preview/EOL/insecure version needs additional compensating controls and may be BLOCKED. A user preference never bypasses host AGENTS, Path Guard, secrets/data safety, actual write authorization or independent release approval. **Design override does not mean permission to modify code.**
 
 Current 2026-11 examples: .NET 10 LTS is the conservative new-project candidate, .NET 11 is newly GA so not an automatic default but can be explicitly user-selected within scope; .NET 8 is EOL and legacy-only with an exception. PowerShell, Python and SQL must use their **own current vendor/engine support facts**, not .NET's version table. Integrate into A/P3–P8, A.1, later B/B.1, RTM `S2C-NFR-008/009`, risk register and handoff. This is an **Agent/Markdown contract**, not a new enforcement path in Python.
+
+## 12. Unified documentation and execution discipline — PLAN-087
+
+[The master baseline](.agents/.spec.md) owns BR-001..016, component boundaries, lifecycle, M0..M5 and T087-01..10. Google BRD and Git must share version and BR IDs; reconcile drift before dependent implementation. Do not create another parallel BRD/SRS or copy the full specification into handoffs. Preserve existing technical IDs and historical evidence.
+
+Every material iteration updates affected AC/design/task, RTM and risks, with BEFORE/action/AFTER evidence. Select the highest relevant open risk within authorization; design mitigation never closes a runtime risk. Seven business stages and nine A planning steps do not expand the five runtime phases. A.1 follows complete design and risk treatment; B.1 follows implementation/internal verification. Native pause/resume remains unimplemented.
+
+Keep document ownership explicit; no host/upstream artifact consolidation or destructive cleanup. Worker responsibilities can be sequential; actual delegation requires capability and authorization. Missing independent signoff prevents approval claims, not independently authorized documentation work.

@@ -71,3 +71,7 @@ python .source/scripts/speckit_bridge.py --root . --stage analyze
 The bridge's **static** `READY` only proves that required native artifacts exist, not that `specify init`, Analyze, Implement, regression tests or approval occurred. This bootstrap does not introduce a new JSON API or alter the existing bridge. For host installs the existing `.agents/skills/spec-to-code/scripts/` path still applies.
 
 **Upstream compatibility note:** the official Constitution is `.specify/memory/constitution.md`, not `.specify/constitution.md`. In all modes feature files remain upstream-owned; S2C only maintains cross-references and gates.
+
+### PLAN-093 — Actual native setup status
+
+[SK-03 pinned official CLI pilot plan](../../../.agents/.documents/specKitNativePilot.md) documents the real environment blocker and safe disposable checkout commands. The CLI `specify` was absent and the attempted offline `uvx` execution failed because no Git dependency could be fetched; therefore no claimed upstream `specify init`, generated skills/scripts, or native prerequisite test. Candidate `v1.2.6` is for **owner-reviewed disposable testing only**, not a universal supported default. Official latest security changes and actual host compatibility must be assessed before adoption.

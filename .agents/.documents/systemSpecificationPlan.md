@@ -47,3 +47,9 @@ Current status: `SPEC_PLAN_COMPLETE_AS_DRAFT`; full SRS authorship, host evidenc
 ## 5. A.1 validation after the SRS has been drafted
 
 SRS-01..12 and the system RTM must undergo the [A.1 Design Validation](../.workflow/validationSpecification.md) against `A1-VAL-01..09`: authority, requirement clarity, traceability, feature flows, architecture, security/integration/migration, risk management and handoff. Prepare a [review report](../.workflow/validationReportTemplate.md) identifying source revisions and failed/blocked criteria. A.1 cannot PASS simply because 12 chapters were listed; chapters are still draft, and several P0 risks remain open. On FAIL return to the relevant SRS section and planning step, not to Python code. Current result: `A1_NOT_RUN`.
+
+## 6. PLAN-086: support baseline and explicit-request exception requirements
+
+SRS-05/06/07/10/11 shall cover `S2C-NFR-008` (supported mature mainstream technology/structure selection) and `S2C-NFR-009` (explicit user override with scope, risk, evidence and separate authority). Apply to **S2C's own source/tooling plus integrated host source**, including Python versions and wheels, PowerShell edition/module lifecycles, SQL **engine/dialect/driver/migration** support, .NET and other stacks. Use [policy](technologyVersionPolicy.md), [assessment](technologyAssessmentTemplate.md) and [override record](technologyOverrideTemplate.md). No global hardcoded version list is normative; source evidence must be refreshed per proposal.
+
+A supported newly GA stable major may be a user-designated choice when the user explicitly asks; an EOL/preview/high-risk choice needs documented extra security/host approval and may remain BLOCKED. Conservative defaults must not silently override an explicit user requirement. No request for a version alone authorizes changing Python, PowerShell, SQL, host dependencies or data. A.1 and B.1 review gates are NOT RUN; this is a specification plan only.

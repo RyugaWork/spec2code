@@ -10,7 +10,9 @@
 
 S2C currently has a read-only `.source/scripts/speckit_bridge.py` and JSON stage prerequisites, but its development repository does not yet provide active native Spec Kit feature artifacts. ChatGPT Web must be able to maintain Markdown artifacts through an authorized GitHub connection, while native Codex/Copilot/Codespaces can later run upstream official Spec Kit skills/scripts. Both modes must share **one** feature pointer and artifact set without duplicating BRD/SRS authority or claiming unperformed execution.
 
-## User stories and independently observable acceptance
+## User Scenarios & Testing *(mandatory)*
+
+This feature has four explicit stories US-01..04 with positive/negative paths above. The canonical 24-case [feature acceptance catalogue](checklists/integrationAcceptance.md) maps each SKI-FR-001..012 requirement to `SKI-TC-xxx-P` and `SKI-TC-xxx-N`. Exact procedures, fixture partitions, observable expected outcomes and required evidence are recorded there; **execution remains NOT_RUN**. No new software capability is claimed by writing its test design.
 
 ### US-01 — Browser-based specification authoring (Priority P1)
 As a S2C maintainer using ChatGPT Web, I can identify the selected feature, inspect the root constitution and write/review its `spec.md`, `plan.md` and `tasks.md` through GitHub. I can resume in another authorized agent host from the same Git revision.
@@ -32,7 +34,11 @@ As a project owner, I can trace active Spec Kit feature requirements to S2C BR/R
 
 **Acceptance:** RTM records feature/requirement/task/test mapping or explicit unmapped gap. Missing A.1, changed constitution/policy/source, unsafe host pointer, and unapproved agent code actions block the affected implementation; historical evidence remains intact.
 
-## Functional requirements
+## Requirements *(mandatory)*
+
+The functional requirements SKI-FR-001..012 above are refinements of S2C master BRD/SRS, not owner-approved replacements. [RTM Section L](../../.agents/.traceMatrix.md) maintains **12 separate explicit requirement rows**, each linking global BR/S2C-REQ, tasks, risks and two planned acceptance cases. A missing/duplicate ID, unapproved host permission or incomplete provenance is a requirement-quality failure, not a PASS.
+
+### Functional Requirements
 
 | ID | Draft requirement and testable acceptance |
 | --- | --- |
@@ -48,6 +54,17 @@ As a project owner, I can trace active Spec Kit feature requirements to S2C BR/R
 | SKI-FR-010 | Keep A.1 and B.1 independent from Spec Kit Analyze and Converge, and keep test execution distinct from planned test cases |
 | SKI-FR-011 | Permit Spec Kit absence for a standalone host S2C run; adapter status must report NOT_INITIALIZED/NO_ACTIVE_FEATURE honestly |
 | SKI-FR-012 | Do not create an extra Git branch per Spec Kit feature by default; use explicitly selected feature directory, keep branch-management optional |
+
+### Key Entities
+
+- `FeatureSelection`: exact selected feature directory from `.specify/feature.json`, independent of Git branch.
+- `SourceSnapshot`: Git SHA, Constitution/AGENTS revision and optional provider-specific Google BRD revision, all independently identified.
+- `FeatureArtifact`: project Constitution and feature spec/plan/tasks, each with ownership, update status and source hash.
+- `FeatureTask`: stable `T001..T015`, actual documentation completion versus pending native/approval/code work.
+- `AcceptanceCase`: `SKI-TC-001-P/N..012-P/N`, expected observable outcome and actual evidence state.
+- `NativePilot`: reviewed CLI version, disposable worktree, before/after inventory, generated assets and observed exit codes.
+
+See [logical data model](data-model.md); **no new runtime entity, database or API is implemented**.
 
 ## Nonfunctional constraints
 
@@ -67,30 +84,6 @@ As a project owner, I can trace active Spec Kit feature requirements to S2C BR/R
 6. A developer requests implementation before actual A.1 approval; the agent produces a blocked handoff instead.
 7. Spec Kit not installed or feature unselected on a host; S2C standalone mode remains available.
 
-## Acceptance and evidence status
-
-- **DESIGNED:** native feature files and repo-side governance/trace mapping.
-- **NOT_RUN:** actual upstream CLI initialization, native skill execution, installed-host tests, Python security/regression suite, A.1/B.1 and release.
-- **Owner decision pending:** accepted baseline, supported CLI release, candidate host environment and official native agent integration.
-
-## User Scenarios & Testing — Spec Kit template alignment
-
-This feature has four explicit stories US-01..04 with positive/negative paths above. The canonical 24-case [feature acceptance catalogue](checklists/integrationAcceptance.md) maps each SKI-FR-001..012 requirement to `SKI-TC-xxx-P` and `SKI-TC-xxx-N`. Exact procedures, fixture partitions, observable expected outcomes and required evidence are recorded there; **execution remains NOT_RUN**. No new software capability is claimed by writing its test design.
-
-## Requirements — ownership and traceability
-
-The functional requirements SKI-FR-001..012 above are refinements of S2C master BRD/SRS, not owner-approved replacements. [RTM Section L](../../.agents/.traceMatrix.md) maintains **12 separate explicit requirement rows**, each linking global BR/S2C-REQ, tasks, risks and two planned acceptance cases. A missing/duplicate ID, unapproved host permission or incomplete provenance is a requirement-quality failure, not a PASS.
-
-### Key Entities
-
-- `FeatureSelection`: exact selected feature directory from `.specify/feature.json`, independent of Git branch.
-- `SourceSnapshot`: Git SHA, Constitution/AGENTS revision and optional provider-specific Google BRD revision, all independently identified.
-- `FeatureArtifact`: project Constitution and feature spec/plan/tasks, each with ownership, update status and source hash.
-- `FeatureTask`: stable `T001..T015`, actual documentation completion versus pending native/approval/code work.
-- `AcceptanceCase`: `SKI-TC-001-P/N..012-P/N`, expected observable outcome and actual evidence state.
-- `NativePilot`: reviewed CLI version, disposable worktree, before/after inventory, generated assets and observed exit codes.
-
-See [logical data model](data-model.md); **no new runtime entity, database or API is implemented**.
 
 ## Success Criteria *(mandatory)*
 
@@ -115,3 +108,9 @@ These are functional completeness targets, not arbitrary performance SLOs. Laten
 4. Exact business/security reviewer identity, OS matrix, NFR thresholds and acceptable migration path are `UNKNOWN`; no synthetic approval or test result can resolve them.
 
 **Supporting technical artifacts:** [research](research.md), [plan](plan.md), [model](data-model.md), [interface](contracts/web-native-interface.md), [quickstart](quickstart.md), [requirement checklist](checklists/requirements.md) and [acceptance cases](checklists/integrationAcceptance.md).
+
+## Acceptance and evidence status
+
+- **DESIGNED:** native feature files and repo-side governance/trace mapping.
+- **NOT_RUN:** actual upstream CLI initialization, native skill execution, installed-host tests, Python security/regression suite, A.1/B.1 and release.
+- **Owner decision pending:** accepted baseline, supported CLI release, candidate host environment and official native agent integration.

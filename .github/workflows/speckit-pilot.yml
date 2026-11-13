@@ -1,0 +1,73 @@
+name: Spec Kit native pilot
+
+on:
+  push:
+    branches: [docs/plan-089-a1-readiness]
+    paths: [.github/workflows/speckit-pilot.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  sk03:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SPECKIT_SOURCE: git+https://github.com/github/spec-kit.git@9eacc24ffe47eadf035a3af601e4dabfb15b8fde
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+      - name: Run SK-03 in a disposable worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          unset SPECIFY_FEATURE_DIRECTORY SPECIFY_FEATURE
+          export SPECIFY_FEATURE_NO_PERSIST=1
+          python --version
+          git --version
+          git diff --quiet HEAD
+          test -z "$(git status --porcelain)"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+
+          pilot_parent="$(mktemp -d "$RUNNER_TEMP/speckit-pilot.XXXXXXXX")"
+          git worktree add --detach "$pilot_parent/repo" "$GITHUB_SHA"
+          python -m venv "$pilot_parent/cli"
+          "$pilot_parent/cli/bin/python" -m pip install "specify-cli @ $SPECKIT_SOURCE"
+          specify="$pilot_parent/cli/bin/specify"
+          cd "$pilot_parent/repo"
+
+          protected=(AGENTS.md .specify/feature.json .specify/memory/constitution.md)
+          sha256sum "${protected[@]}" > "$pilot_parent/protected.sha256"
+          python -B .source/scripts/speckit_bridge.py --root . --stage status
+          "$specify" version
+
+          # Capture the diff even if init exits unsuccessfully.
+          init_status=0
+          "$specify" init --here --force --non-interactive --integration codex \
+            --script py --ignore-agent-tools || init_status=$?
+          git status --short --untracked-files=all
+          git diff --name-status HEAD
+          sha256sum --check "$pilot_parent/protected.sha256"
+          test "$init_status" -eq 0
+          git diff --quiet HEAD
+
+          test -f .agents/skills/speckit-specify/SKILL.md
+          shopt -s nullglob
+          checks=(.specify/scripts/python/check[-_]prerequisites.py)
+          test "${#checks[@]}" -eq 1
+          test -f "${checks[0]}"
+          git ls-files --others --exclude-standard -z | sort -z > "$pilot_parent/generated-paths"
+          xargs -0 -r sha256sum < "$pilot_parent/generated-paths" > "$pilot_parent/generated.sha256"
+          python -B "${checks[0]}" --json --require-tasks --include-tasks
+          python -B .source/scripts/speckit_bridge.py --root . --stage status
+          sha256sum --check "$pilot_parent/protected.sha256"
+          sha256sum --check --quiet "$pilot_parent/generated.sha256"
+          git diff --quiet HEAD
+          git ls-files --others --exclude-standard -z | sort -z | cmp "$pilot_parent/generated-paths" -
+
+          cd "$GITHUB_WORKSPACE"
+          test -z "$(git status --porcelain)"

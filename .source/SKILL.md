@@ -3,7 +3,7 @@ name: spec-to-code
 description: Run a repository-independent, evidence-based spec-to-code workflow with optional official GitHub Spec Kit integration. Use for coding sessions, requirement-to-task traceability, architecture graph routing, external Git drift checks, incremental minimal/balanced/deep context selection, and session-scoped change handoffs. Do not use as permission to approve business rules, change Git history, or deploy.
 ---
 
-# Spec2Code v0.7.0 — Universal + Spec Kit Bridge
+# Spec2Code v0.8.0 candidate — Universal + Spec Kit Bridge
 
 The bundled `.config/*.json` files next to `SKILL.md` and `scripts/` in the installed skill are required; a missing or malformed config blocks execution. See `docs/CONFIGURATION.md` in the source repository.
 
@@ -95,8 +95,8 @@ Read required host policies independently of token budgets. Resolver READY means
 Workflow Guard is read-only by default and records explicit authorized stage transitions; it cannot run code, Spec Kit stages, Git operations or tests:
 
 ```sh
-python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . status --task-id T001
-python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . evaluate --task-id T001 --phase DISCOVER
+python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . status --task-id T001 --task "Actual scoped task" --paths src/observed.py
+python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . evaluate --task-id T001 --phase DISCOVER --task "Actual scoped task" --paths src/observed.py
 ```
 
 Host ownership, Scope IO/Path Guard, session binding, and exact-session handoff remain mandatory.
@@ -113,3 +113,11 @@ python .agents/skills/spec-to-code/scripts/workflow_guard.py --root . evaluate -
 ```
 
 Use actual paths, not these illustrative filenames. Subsequent Workflow Guard evaluations/transitions must retain the same task and affected paths. Only a task-scope SHA-256, not the raw description, is written to the workflow journal. Changing any selected policy file, nested AGENTS reference, map or context pack invalidates the snapshot. Policy BLOCKED prevents new context pack publication; NEEDS_REVIEW produces a non-ready routing result (CLI exit code 3). Review is not automatic approval: the CLI cannot supply trusted review assertions, tests or deployment authorization.
+
+## PLAN-081 — portable agent decision contract (v0.8.0 candidate)
+
+This skill is invoked by a **human-directed agent**: `read/review`, `specify/plan`, `implement/verify` and `delivery` are different authorization scopes. For read-only questions, do not create a write session solely to perform an inspection. When permitted to implement, check the exact host checkout, real task and actual affected paths; `READY` from the Policy Resolver/Spec Kit bridge/Context Router proves only the stated preflight facts, never business approval, execution of tests or permission to edit. Preserve the host's root/nested AGENTS, canonical requirements and security contracts; do not inject this source repository's development AGENTS into a target.
+
+Use the **native installed Spec Kit agent skills** when present (constitution, specify, optional clarify/checklist, plan, tasks, optional analyze, implement, converge); their commands are not shell commands and the S2C bridge is read-only. If no Spec Kit exists, use the host's own reviewed specification without trying to bootstrap it silently.
+
+**Known PR #7 blockers:** Workflow Guard currently loses scope at CLOSE, misroutes VERIFY/HANDOFF policy operations, lacks source/Spec Kit artifact fingerprints and has a scope-free `status` regression. Do not claim five-stage completion or independent approval from it. If diagnosing an existing scoped task, supply matching `--task` and `--paths` even for `status` until the CLI defect is repaired; this is a workaround, not a fix. The 2026-11 v0.8 candidate has unresolved Windows filesystem races and legacy migration acceptance. See the source repository's PLAN-081/PR #7 before treating it as release-ready.

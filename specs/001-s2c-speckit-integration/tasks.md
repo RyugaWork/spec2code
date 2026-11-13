@@ -48,3 +48,9 @@ Record `feature_directory`, exact current Git SHA, completed task checkboxes wit
 - **Prepared runbook:** [SK-03 native pilot and acceptance matrix](../../.agents/.documents/specKitNativePilot.md) defines a disposable detached Git worktree, exact `--integration codex --script py` invocation, artifact hashes, candidate security review and per-case outcome evidence.
 - **Current task statuses:** T006 = RESEARCHED / OWNER_SELECTION_PENDING, still unchecked. T007–T009 = NATIVE_NOT_RUN (network/runner unavailable), still unchecked. T010–T015 = independent review/code/host tests NOT_RUN/NOT_AUTHORIZED.
 - **Next safe action:** run the official pinned tool in a network-enabled authorized disposable Codespaces/Codex checkout, preserve the generated diff, then obtain actual owner authorization to adopt any artifacts. No new branch or CI workflow.
+
+## PLAN-094 — Spec Kit template-completeness continuation (no new task IDs)
+
+T003/T004/T005 documentation and preflight scope now also includes the standard Spec Kit feature supporting artifacts: [research](research.md), [logical data model](data-model.md), [Web/Native interface contract](contracts/web-native-interface.md), [quickstart](quickstart.md) and [24-case acceptance design](checklists/integrationAcceptance.md). The feature [specification](spec.md) includes explicit success criteria and assumptions, and [plan](plan.md) includes technical context, Constitution Check, project structure and complexity rationale. Master RTM Section L uses **12 exact SKI-FR IDs** with corresponding 24 exact test IDs instead of slash shorthand.
+
+**Important:** T001..T005 remain marked completed as *documentation bootstrap* tasks only. This authoring extension is not an observed native CLI execution or independent A.1. All existing T006..T015 remain unchecked, and none of the 24 feature acceptance cases is reported PASS. Future static Git tree/source checks may report `STATIC_INSPECTED` with exact source SHA separately.

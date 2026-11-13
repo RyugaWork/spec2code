@@ -62,3 +62,14 @@ T003/T004/T005 documentation and preflight scope now also includes the standard 
 **Observed documentary crosswalk:** 12 unique SKI-FR rows in `spec.md`, 12 explicit mapping rows in master RTM Section L, 24 distinct planned P/N IDs in the feature acceptance catalogue, 15 unique T IDs in the task register and zero unresolved referenced global BR/REQ/NFR IDs. Global critical security/authority risks remain OPEN. Google BRD is a stakeholder-level summary, **not a byte-identical source SRS**, and its update is not signoff. `T010` check means this one source-revision pair was mapped at **draft** level only; recheck on source drift and obtain real owner/independent review under T011. No native CLI/host test was executed and no version/OS decision granted.
 
 **Current tasks:** 6 documentation/reconciliation tasks `T001..T005, T010` recorded done; native T006..T009 remain unchecked, independent T011 unchecked, explicit B T012 unchecked, source/host/release T013..T015 unchecked. Do not collapse these statuses into an invented release gate.
+
+
+## PLAN-095 — Native implement safety separation (do NOT execute whole queue)
+
+The official Spec Kit task format is `[ID] [P?] [Story]`; task IDs remain stable and every T001–T015 row now includes its `[USn]` association. These records form a **mixed governance/document/toolchain/approval/code backlog**, **not** an executable `$speckit-implement` queue. Adding a story tag does not authorize runtime execution or represent story-based implementation completion.
+
+**Ownership:** T001–T005 and T010 = Markdown/document review; T006–T009 = external native operator/owner decisions; T011 = independent A.1 reviewer; T012 = explicit B authorization owner; T013 = B-authorized source developer if separately permitted; T014 = host QA; T015 = independent B.1/release owner. T011, T012 and T015 must never be auto-checked by an implementing agent.
+
+Upstream `implement` can offer a continuation prompt when requirements checklists are incomplete. An answer of 'yes' to that prompt is **not** a substitute for independent S2C A.1, separate B scope, runtime Path Guard or host policy. Refer to [native execution safety gate](../../.agents/.workflow/specKitNativeExecutionGate.md); it is a **documentation policy**, not a deployed CLI interception hook.
+
+**Current gate:** `A1_NOT_RUN`, `B_NOT_AUTHORIZED`, `NATIVE_NOT_INSTALLED`. Do not run `$speckit-implement` or `$speckit-converge` on the mixed queue. For a future implementation, derive a separately reviewed executable coding subset with stable IDs, dependency/test mapping and explicit allowed files; preserve the original task and gate evidence.

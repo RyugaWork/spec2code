@@ -1,6 +1,6 @@
 # AGENTS.md — Spec2Code agent operating contract (v0.8.0 candidate)
 
-> **CURRENT WORKSTREAM — PLAN-092: Spec Kit Markdown integration for S2C itself, with existing A.1/B gates preserved.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
+> **CURRENT WORKSTREAM — PLAN-095: Spec Kit Web/Native safety and task execution-gate design for S2C itself, with A.1/B/B.1 unapproved.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
 
 > Applies to **development of this repository**, not automatically to projects where the portable skill is installed. The v0.8.0 governance/workflow work is a **candidate**, not a stable release. Instructions guide a human-supervised ChatGPT/Codex agent; they do not themselves enforce filesystem containment or grant permissions.
 
@@ -162,3 +162,9 @@ The 12 feature requirements `SKI-FR-001..012` map to 24 distinct planned cases `
 The feature `tasks.md` is a **mixed governance/document/operator/approval/code backlog**. T011 (independent A.1), T012 (B authorization) and T015 (independent B.1/release) must never be checked by the coding agent itself. T013 is only a candidate executable source task under signed A.1, B scope, Path Guard and tested host controls. `converge` may expand a task list; new tasks still require approved scope.
 
 **Enforcement limitation:** This paragraph and its safety-gate document are procedural instructions only. No deployed upstream interception hook or new runtime Path Guard was installed here. When the actual agent/host cannot enforce them, do not invoke a mutating stage; STOP and record missing controls. ChatGPT Web may use its GitHub connector to draft or inspect authorized Markdown, but cannot claim native CLI/agent-skill execution.
+
+## 19. PLAN-095 — Web/GitHub Spec Kit staged operation
+
+For tasks using ChatGPT Web, follow [Spec Kit Web/GitHub Workflow](.agents/.workflow/specKitWebWorkflow.md). It defines **document-only** versions of Constitution, Specify, Clarify, Checklist, Plan, Tasks and static Analyze. These are provider-authorized Markdown edits/reviews, never claims that the official upstream agent skills ran. Preserve exact branch HEAD and provider revision, and record every sequential GitHub file commit; multi-file Contents API edits are **not atomic**. On partial failure, record `PARTIAL_PERSISTENCE`, not a fabricated successful stage.
+
+Before any native source mutation, follow [Spec Kit Native Execution Gate](.agents/.workflow/specKitNativeExecutionGate.md): current A.1 and separate B permission are mandatory, even if an upstream checklist prompt offers to continue. No official CLI/skill interception is installed by this Markdown rule. These two documents do not relax root/host AGENTS, Path Guard, owner signoff or release authority.

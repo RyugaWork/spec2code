@@ -20,3 +20,7 @@
 5. Retain original RM scores and independent B.1/merge/release gates; preserve old PLAN-090..095 audit history.
 
 **STOP:** Only documentation and GitHub-derived audit artifacts persist on the existing branch. Need a network-capable authorized S2C checkout for test execution, and owner decisions for behavior. On RESUME refresh exact branch SHA, feature pointer, Google BRD revision, Constitution/AGENTS and task/approval state. No S2C Workflow Guard session was opened or closed.
+
+## Google stakeholder BRD synchronization — PLAN-096
+
+Google document Draft v1.5 Section 29 PLAN-096 write was acknowledged at revision `AHj4eMQycYOWQYT6-mcVjhQmPGir1feAQGWFCb7vsty3qYxuHkGwlvFgIoUdV3BpKzjCvsKDHqrWhEjXZcv-7T6iopIxGYqY3-KYcqbvsw`, linked to Git source audit commit `663d0440db321ea99942711f6bcba9a64d1583fa`. This **does not mean an independent stakeholder readback, approval or A.1**. The next Git commit recording this link advances HEAD; refresh before relying on source IDs.

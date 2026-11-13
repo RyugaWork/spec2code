@@ -73,3 +73,7 @@ The official Spec Kit task format is `[ID] [P?] [Story]`; task IDs remain stable
 Upstream `implement` can offer a continuation prompt when requirements checklists are incomplete. An answer of 'yes' to that prompt is **not** a substitute for independent S2C A.1, separate B scope, runtime Path Guard or host policy. Refer to [native execution safety gate](../../.agents/.workflow/specKitNativeExecutionGate.md); it is a **documentation policy**, not a deployed CLI interception hook.
 
 **Current gate:** `A1_NOT_RUN`, `B_NOT_AUTHORIZED`, `NATIVE_NOT_INSTALLED`. Do not run `$speckit-implement` or `$speckit-converge` on the mixed queue. For a future implementation, derive a separately reviewed executable coding subset with stable IDs, dependency/test mapping and explicit allowed files; preserve the original task and gate evidence.
+
+### PLAN-095 — User story label crosswalk
+
+Upstream task tokens `[US1]`, `[US2]`, `[US3]`, `[US4]` refer respectively to stable feature story headings `US-01`, `US-02`, `US-03`, `US-04` in `spec.md`. The bracketed syntax is a **task classification label**, not a permission to execute; Tnnn prefixes remain unchanged and 6 documentary task checkboxes retain their source-bound state. See [Web-mode source evidence](../../.agents/.documents/specKitWebModeEvidence095.md) for the actual S2C bridge-regex compatibility inspection.

@@ -36,3 +36,12 @@
 | RM-... | | | | | |
 
 A handoff author must not claim a durable file exists unless the exact location was verified. For chat-only handoff write `NOT_PERSISTED`; never fabricate host approvals or present a design mitigation as a successfully executed runtime fix.
+
+## A.1 validation checkpoint
+
+- A.1 validation report ID and exact document revision (or `A1_NOT_RUN`):
+- Outstanding A1-VAL-01..09 checks, failure owner and affected A stage(s):
+- Actual independent design reviewer and decision (or `NOT_REVIEWED`):
+- Implementation authorization: `NOT_AUTHORIZED` unless explicitly granted for a reviewed revision.
+
+A handoff at P9 is **input** to [A.1](validationSpecification.md), not automatic design approval. Keep separate [validation report](validationReportTemplate.md) and never promote `READY_FOR_REVIEW` to `APPROVED_FOR_IMPLEMENTATION` without the owner's actual decision.

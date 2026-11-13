@@ -43,3 +43,7 @@
 A SRS is only `READY_FOR_REVIEW` when its 12 chapters are supplied with evidence or explicit `UNKNOWN/BLOCKED` disposition, every active feature has RTM trace, all security/data/OS ownership gates are enumerated, high-priority designs have alternatives and failure cases, and a scored matrix/handoff exists. It becomes `APPROVED_FOR_IMPLEMENTATION` **only** after the responsible human/host approves a revision and treats mandatory P0/P1 risk as blocking or explicitly accepts it.
 
 Current status: `SPEC_PLAN_COMPLETE_AS_DRAFT`; full SRS authorship, host evidence and approval remain open. **No runtime source edits** authorized by this plan.
+
+## 5. A.1 validation after the SRS has been drafted
+
+SRS-01..12 and the system RTM must undergo the [A.1 Design Validation](../.workflow/validationSpecification.md) against `A1-VAL-01..09`: authority, requirement clarity, traceability, feature flows, architecture, security/integration/migration, risk management and handoff. Prepare a [review report](../.workflow/validationReportTemplate.md) identifying source revisions and failed/blocked criteria. A.1 cannot PASS simply because 12 chapters were listed; chapters are still draft, and several P0 risks remain open. On FAIL return to the relevant SRS section and planning step, not to Python code. Current result: `A1_NOT_RUN`.

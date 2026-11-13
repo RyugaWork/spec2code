@@ -46,3 +46,7 @@ If the agent cannot access a local worktree, say so. A remote GitHub file review
 ## PLAN-084 planning-only role allocation
 
 During P1–P9, the coordinator frames scope and planned deliverables; research analyst maintains `SRC-ID` provenance; requirement analyst prepares AC/RTM; designer creates feature/architecture decision cards; risk analyst discovers and scores scenarios; independent reviewer can request changes; handoff custodian records stage evidence. **These are sequential human-supervised responsibilities, not live workers.** The implementation engineer and test executor are future-phase roles and must not begin coding or testing merely because a design decision was drafted. See the [planning workflow](planningSpecificationWorkflow.md), [research](../.documents/researchRegister.md), [feature design](../.documents/featureDesign.md) and [risk matrix](../.riskMatrix.md).
+
+## PLAN-085 validation responsibilities
+
+A.1 is checked by a **design/requirements reviewer** independent of the design author wherever external signoff is required; B.1 uses real test/host/security and stakeholder evidence rather than only the implementation author's self-report. The interactive agent may gather sources, prefill a [validation report](validationReportTemplate.md) and map gaps to the [RTM](../.traceMatrix.md); it cannot self-certify approval or fabricate a test runner. Failures reopen the affected prior lifecycle, and both validators preserve the source revision and risk scores. See [gate specification](validationSpecification.md).

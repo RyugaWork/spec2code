@@ -17,3 +17,7 @@ Do not mark a task closed from `workflow_guard.py` on PR #7: its CLOSE scope, ph
 ## STOP evidence is not delivery evidence
 
 A STOP handoff summarizes **partial** work and may leave a local session ACTIVE. It must identify current phase, source revision, actual modified paths, pending ACs, evidence freshness, author/ownership uncertainty, risk and a verified persistence flag. It does not turn incomplete tests into PASS or waive independent approval. Do not call `session_guard finish/merge` or Workflow Guard `close` as a STOP implementation. See the [specification](workflowSpecification.md), [STOP protocol](stopAndHandoff.md), [handoff template](../../.source/references/stop-handoff-template.md) and [RTM](../.traceMatrix.md).
+
+## PLAN-085 independent validation loops
+
+The [validation specification](validationSpecification.md) separates **A.1 design validation** (requirements authority, RTM, design, safety, risk and handoff consistency) from **B.1 system acceptance validation** (actual approved behavior, integration, adversarial security, migration/recovery, user/host acceptance on an exact implementation SHA). The [validation report template](validationReportTemplate.md) tracks PASS/FAIL/BLOCKED/NOT_RUN/N/A per criterion and an independent reviewer. A.1 FAIL blocks B; B.1 FAIL blocks release and returns to B or A when design changes. Current planning-stage document checks and existing Python CI are **not** A.1/B.1 outcomes. No change to machine stage enum or runtime test behavior.

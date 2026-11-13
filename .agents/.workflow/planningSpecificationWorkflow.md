@@ -73,3 +73,14 @@ Do not label a design activity PASS because existing 124 Python tests passed. Te
 PLAN-084 starts with F01–F37 and seven NFR rows already drafted; these do not mean every requirement is approved. Existing five-stage `workflow_guard.py` lacks native PAUSED/RESUME and has open P0/P1 findings in parent PR #7. Windows OneDrive/TOCTOU, host migration and independent approval are OPEN. This design pass prioritizes those gaps in the matrix; it does not fix them.
 
 Related: [plan](../.plans.md), [research](../.documents/researchRegister.md), [feature design](../.documents/featureDesign.md), [risk assessment](../.riskMatrix.md), [RTM](../.traceMatrix.md), [handoff folder](../.handoffs/).
+
+## 9. A.1 Design Validation — mandatory boundary after P9
+
+**Do not enter B from P9 directly.** After A/P1–P9, the separate [A.1 validation process](validationSpecification.md) reviews authoritative requirement sources and approvals, measurable ACs, bidirectional RTM, feature/architecture/STOP designs, security/OS/migration responsibilities, scored P0/P1 risk and handoff completeness. Its [report](validationReportTemplate.md) must record `A1-VAL-01..09` check outcomes with actual evidence/reviewer and a separate implementation authorization decision.
+
+- `A1_PASS` means applicable design checks passed **at an exact document revision**; implementation remains blocked without an actual authorized owner decision `APPROVED_FOR_IMPLEMENTATION`.
+- `A1_FAIL` returns to the affected design stage(s), from P2–P9 as appropriate. Update the SRS, RTM, design alternatives, risk priority and handoff; rerun impacted A.1 checks, retaining previous failures.
+- `A1_BLOCKED` covers absent source authority, missing approval/evidence, unresolved mandatory P0/P1 or unavailable reviewer; provide a design handoff and stop. `A1_NOT_RUN` is the current state.
+- On material source/Spec Kit/host policy changes after A.1 review, invalidate affected A.1 evidence rather than carrying an old PASS forward.
+
+The end-to-end lifecycle is **A → A.1 (validate) → explicit approval → B → B.1 (validate) → explicit release approval**, with risk-based feedback loops. B and B.1 do not become active during PLAN-085. See [B.1 acceptance](validationSpecification.md#3-b1--system-and-acceptance-validation) for the later system validation contract.

@@ -49,3 +49,7 @@ If the process crashed before a confirmed write, report `INTERRUPTED_UNKNOWN`. R
 ## Why this is separate from the runtime journal
 
 The current workflow configuration has no `PAUSED` enum and `workflow_guard.py` has no STOP/RESUME action. `session_guard.py checkpoint` updates local session metadata; `finish` marks CLOSED and `merge` archives/deletes exact pending logs. Thus STOP must **not** be mapped to these actions or `invalidate` just to force a pause state. A future implemented pause requires explicit schema, transition and backward-compatibility review plus tests; until then only an **agent-reported** STOP outcome can be claimed.
+
+## PLAN-085 STOP during validation
+
+The [A.1/B.1 validation loops](validationSpecification.md) can be stopped without converting a half-completed check to PASS. A stopped A.1 report preserves design/source revisions, checks performed, reviewer availability, risk and the exact A stage to revisit; a stopped B.1 report preserves implementation/artifact SHA, test environment, failing/untested cases and next B/A owner. Use the [validation report template](validationReportTemplate.md), mark `BLOCKED` or `NOT_RUN` as applicable and write a non-overwriting, verified handoff or `NOT_PERSISTED` in chat. Neither validation stop maps to machine Workflow Guard `close`, `session_guard finish` or an invented PAUSED value.

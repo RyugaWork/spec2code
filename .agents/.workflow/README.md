@@ -53,3 +53,7 @@ These agent documents guide ChatGPT/Codex interactions and do not implement miss
 - [SRS authoring plan](../.documents/systemSpecificationPlan.md), [research register](../.documents/researchRegister.md), [feature design catalogue](../.documents/featureDesign.md), [system RTM](../.traceMatrix.md): evidence and design inputs, including gaps.
 - [Scored risk matrix](../.riskMatrix.md) and [risk register](../.risk.md): after every design pass reprioritize and mitigate the largest unresolved risk in documentation; no runtime patch.
 - [Design handoff template](designHandoffTemplate.md): preserve exact document revisions, decisions, risks and next stage. Future [implementation workflow](workflowSpecification.md) remains separate and does not start automatically when this document is opened.
+
+## PLAN-085 — validation boundaries
+
+Overall process: **A (P1–P9 planning) → [A.1](validationSpecification.md) (design validation) → separately authorized B (implementation) → [B.1](validationSpecification.md) (system and stakeholder acceptance) → separately authorized release**. A.1 and B.1 have their own [validation report](validationReportTemplate.md) and explicit FAIL/BLOCKED feedback into the impacted previous lifecycle. Current status: **A active, A.1 NOT RUN, B NOT AUTHORIZED, B.1 NOT RUN**. A green CI run or RTM link audit does not constitute A.1 or B.1 PASS.

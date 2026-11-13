@@ -128,3 +128,12 @@ Use [master SRS-01..12 and interface contracts](.agents/.spec.md) as the sole re
 A document author may perform **self-consistency preflight** but must label it `PREFLIGHT_ONLY`, not `A1_PASS`. A named real reviewer may sign only exact source revisions; never invent independent agent votes, green tests, version compatibility, budget results, or approval. Where host facts are absent, keep `UNKNOWN/BLOCKED` while continuing independent safe documentation tasks.
 
 There are 42 **planned** acceptance scenario identifiers (`TC-S2C-BR001..021-P/N`), not 42 automated tests. Every test execution claim must have command/procedure, exact SHA, platform and original result; RTM evidence remains `NOT_RUN` until then. A PR merge is not an A.1 or B.1 signoff. The current worker planner, orchestration service, native STOP/RESUME and reviewed host output namespace are not implemented by documenting them.
+
+
+## 15. PLAN-091 review-remediation and independent validation discipline
+
+[PLAN-090 technical preflight](https://github.com/RyugaWork/spec2code/blob/docs/plan-090-a1-review-findings/.agents/.handoffs/plan-090-a1-preflight-review.md) identified ten evidence-linked defects on the PLAN-089 pinned SHA. Continue remediation **in the latest existing PLAN-089 branch** and preserve the original report unchanged; do not open redundant branches or rewrite pre-fix review evidence.
+
+The [canonical master Section 18](.agents/.spec.md) owns proposed review lifecycle, manifest/finding/synthesis contracts, error states, budget constraints and `DEC-091-01..10` owner decisions. [Testing & Delivery](.agents/.workflow/testingAndDelivery.md) owns exact positive/negative case definitions; [RTM Section K](.agents/.traceMatrix.md) only maps findings to requirements, decisions, risk and test IDs. No new duplicate BRD, SRS, test catalogue or silently authoritative worker config is permitted.
+
+**Security and authority continue to override writing progress:** no auto-A.1 PASS; no worker review synthesis can waive a P0, provide independent human signature or authorize host writes. Only an actual, accountable reviewer can independently validate `A1-VAL-01..09` at the exact post-fix revision. Absent approved host/OS support, worker cost/quorum, repository integration target or business requirement owner, record `UNKNOWN/BLOCKED` and produce a durable safe handoff. The 42 test cases are still `DESIGNED/NOT_RUN`; do not claim test execution from enriched prose. Source-code and host-risk changes remain B-phase work requiring separate authorization.

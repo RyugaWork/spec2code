@@ -8,7 +8,7 @@
 
 ## Problem and goals
 
-S2C currently has a read-only `.source/scripts/speckit_bridge.py` and JSON stage prerequisites, but its development repository does not yet provide active native Spec Kit feature artifacts. ChatGPT Web must be able to maintain Markdown artifacts through an authorized GitHub connection, while native Codex/Copilot/Codespaces can later run upstream official Spec Kit skills/scripts. Both modes must share **one** feature pointer and artifact set without duplicating BRD/SRS authority or claiming unperformed execution.
+S2C already has a read-only `.source/scripts/speckit_bridge.py` and JSON stage prerequisites. Before PLAN-092, the development repository lacked an active native-compatible feature; PLAN-092/094 now provides its Markdown artifacts, but official CLI scripts/agent skills remain uninstalled and untested. ChatGPT Web must be able to maintain Markdown artifacts through an authorized GitHub connection, while native Codex/Copilot/Codespaces can later run upstream official Spec Kit skills/scripts. Both modes must share **one** feature pointer and artifact set without duplicating BRD/SRS authority or claiming unperformed execution.
 
 ## User Scenarios & Testing *(mandatory)*
 

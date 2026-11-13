@@ -1,6 +1,6 @@
 # Spec2Code — System Specification Authoring Plan (PLAN-084)
 
-> **Current baseline: PLAN-088 / unified BRD v1.3 (PLAN-087 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](../.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
+> **Current baseline: PLAN-089 / unified BRD and SRS v1.4 (PLAN-087/088 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](../.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
 
 
 > **Draft plan**, not an approved System Requirements Specification and not permission to implement. The existing `.agents/.spec.md` is a partial acceptance contract. This plan tracks acceptance and review of the 12 SRS chapters now consolidated into [the master Section 15](../.spec.md); it does not create a competing SRS or change source code.

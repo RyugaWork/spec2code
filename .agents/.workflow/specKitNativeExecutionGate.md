@@ -65,3 +65,12 @@ Test descriptions are not test results. Cases require a permitted real agent/hos
 ## 6. Current decision and next step
 
 At source HEAD on initial design date, **A.1 NOT_RUN, B NOT_AUTHORIZED, native CLI NOT_INSTALLED**, thus native `implement` and `converge` must not be invoked. User-approved future native pilot may test `specify init` in a **disposable** worktree without granting product code-write permission. Submit this gate design for independent A.1, then approve a real host enforcement mechanism if needed during B/M1. Preserve [feature tasks](../../specs/001-s2c-speckit-integration/tasks.md), [native runbook](../.documents/specKitNativePilot.md) and [PLAN-094 handoff](../.handoffs/plan-094-speckit-feature-completeness-handoff.md).
+
+
+## PLAN-097 — Native upstream environment guard (design-only)
+
+Source review of upstream `common.py` (v1.2.6 and v1.4.0) identifies two independent hazards: `SPECIFY_FEATURE_DIRECTORY` can select an **absolute feature directory** without S2C Path Guard, and path lookup can **persist `.specify/feature.json`** unless `SPECIFY_FEATURE_NO_PERSIST=1`. Upstream `setup_plan.py` is a mutating command that can create/write under the selected feature directory. See [PLAN-097 audit](../.documents/specKitUpstreamEnvAudit097.md).
+
+**Operating requirement, not deployed software:** Native runner must validate repo/feature against root, deny symlinks/junctions/traversal/external path and sanitize its inherited environment before invoking upstream commands. For read-only operations clear `SPECIFY_FEATURE_DIRECTORY` and `SPECIFY_FEATURE` and set `SPECIFY_FEATURE_NO_PERSIST=1`, then compare pointer hash and full relevant path inventory. This only addresses pointer persistence and feature selection: permissioned stage commands may still write other paths. Refuse `setup_plan`, `tasks`, `implement` and `converge` unless explicit owner-scoped tool/phase permissions and actual host controls exist.
+
+**Gate scenarios:** `SK97-NEG-01..05` are designed, all NOT_RUN. This Markdown rule cannot intercept native OS file operations; do not advertise it as tested confinement, independent A.1 or B authorization.

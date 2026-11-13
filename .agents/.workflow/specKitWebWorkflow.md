@@ -57,3 +57,10 @@ Store under the existing `.agents/.handoffs/` area without deleting unrelated hi
 ## 6. Native transition requires real host evidence
 
 The native [SK-03 pilot](../.documents/specKitNativePilot.md) requires a reviewed upstream CLI release, an authorized disposable worktree, code/skill collision checks and actual `specify version`/init/prerequisite outputs. The [execution gate](specKitNativeExecutionGate.md) explicitly prohibits using an upstream checklist continuation prompt to bypass A.1/B. If no real local runtime exists, leave native status `NOT_RUN`; continue only document-safe actions.
+
+
+## PLAN-097 — Web/Native feature selection is not a shared security primitive
+
+ChatGPT Web uses the **GitHub connector and selected in-repository `.specify/feature.json`** subject to actual provider scope. Official upstream native `common.py` also supports `SPECIFY_FEATURE_DIRECTORY` and may write the pointer by default; it does not inherit S2C `path_guard.py` when called separately. **Web mode may not infer native safety from GitHub path validation.**
+
+On transfer to a native executor, re-check current source SHA, host policy, active feature/override and real checkout root. Require safe environment handling: unset untrusted `SPECIFY_FEATURE_DIRECTORY`/`SPECIFY_FEATURE`, set `SPECIFY_FEATURE_NO_PERSIST=1` for read-only stages, hash pointer before/after and do not run write-producing upstream scripts without B-scoped authorization. See [PLAN-097 upstream audit](../.documents/specKitUpstreamEnvAudit097.md). No such native executor ran in this plan.

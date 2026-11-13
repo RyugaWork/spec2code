@@ -41,3 +41,10 @@ See [SKI-TC catalogue](../checklists/integrationAcceptance.md), especially cases
 The [native S2C execution safety gate](../../../.agents/.workflow/specKitNativeExecutionGate.md) distinguishes document operations, official CLI installation, source-code implementation, host QA and owner approvals. The current T001..T015 register is mixed; it must not be submitted wholesale to `$speckit-implement`. A continuation answer of “yes” to the upstream incomplete-checklist prompt never grants A.1, B permission, host Path Guard or B.1.
 
 The gate exists **as Markdown guidance only**, not as a deployed runtime hook. Fail closed when a selected coding agent cannot apply host/S2C policies at the point of write, when a source/revision drifts or when `converge` proposes a task outside explicit authorization.
+
+
+## PLAN-097 — Native environment contract (not implemented)
+
+When transferring from a GitHub Web-selected feature to a real Spec Kit CLI process, **do not pass raw user or inherited environment values** for `SPECIFY_FEATURE_DIRECTORY` or `SPECIFY_FEATURE`. Upstream `get_feature_paths` (v1.2.6 and v1.4.0) resolves absolute feature directories and may persist the feature pointer; it does not call S2C's Path Guard. Native read-only preflight requires real root/feature containment verification, clean environment, `SPECIFY_FEATURE_NO_PERSIST=1`, pointer hash and no-write inventory. Native write commands such as `setup_plan.py` require an explicit scoped executor and approved disposable worktree.
+
+The no-persist setting protects only feature-pointer persistence; the **OS filesystem boundary and authority gate** remain separate. See [source audit](../../../.agents/.documents/specKitUpstreamEnvAudit097.md) and `SK97-NEG-01..05`. All are DESIGN_NOT_RUN.

@@ -64,3 +64,18 @@ These four proposed cases are **additional to**, not substitutes for, the origin
 | `SK96-NEG-04` | `SKI-FR-006`, `SKI-FR-007` | Duplicate `T001` across story labels | Duplicate reported, never silently counted as two unique tasks | NOT_RUN |
 
 **Supporting smoke only:** Python stdlib demonstrates last JSON duplicate key wins, a zero-byte file is still `is_file()`, and regex matches duplicate task IDs. This did **not** invoke S2C's real bridge or establish a negative-test PASS. All original 4/24 Web/static PASS remain source-pinned; no native security acceptance, A.1, B or B.1 approval.
+
+
+## PLAN-097 — Native upstream environment and pointer-persistence tests (all NOT_RUN)
+
+Five additional cases from [v1.2.6/v1.4.0 upstream source review](../../../.agents/.documents/specKitUpstreamEnvAudit097.md); not part of the original 24-case feature denominator or four PLAN-096 bridge negatives:
+
+| Case | Negative partition / operation | Expected controlled result | Status |
+| --- | --- | --- | --- |
+| `SK97-NEG-01` | Absolute out-of-repo `SPECIFY_FEATURE_DIRECTORY` into owned outside sentinel | S2C preflight denies before calling upstream; no outside write | DESIGN_NOT_RUN |
+| `SK97-NEG-02` | Valid in-repo selected feature, no-persist=1, real read-only prerequisite call | Pointer bytes unchanged; exact observed output recorded | DESIGN_NOT_RUN |
+| `SK97-NEG-03` | Different valid feature override without no-persist, ostensibly read-only call | Detect upstream pointer write risk; S2C read-only policy refuses unsafe invocation | DESIGN_NOT_RUN |
+| `SK97-NEG-04` | Symlink/junction ancestor in feature override | Deny before native script; outside sentinel unchanged | DESIGN_NOT_RUN |
+| `SK97-NEG-05` | Owner-authorized detached worktree running `setup_plan.py` | Exact generated artifacts/changed paths constrained to reviewed owned scope | DESIGN_NOT_RUN |
+
+A local S2C guard or GitHub static path check cannot be substituted for actual upstream native-script execution. All five require authorized host and negative evidence; A.1/B/B.1 remain outstanding. Original feature cases remain 4 narrow Web/static PASS, 20 NOT_RUN; SK96-NEG cases remain 4 NOT_RUN.

@@ -120,3 +120,8 @@ Requester / ChatGPT Web / native Codex or Copilot
 **First choose behavior/compatibility:** Strict `specs/<id>` is specified in `SKI-FR-001`, but the existing bridge permits any contained relative directory. Resolve whether host overrides should be allowlisted before changing Python. Establish the distinction between structural file presence and a richer quality gate for emptiness and ID semantics.
 
 **B task plan (currently NOT_AUTHORIZED):** (i) owner approves exact namespace/JSON/content/ID contracts, (ii) independent A.1 binds source and policies, (iii) separately approve guarded `.source/scripts/speckit_bridge.py` or selected config changes, (iv) add `SK96-NEG-01..04` tests without mocks replacing security modules, (v) run existing seven bridge tests plus new negatives and platform-specific adversarial cases with real logs, (vi) B.1 and release separately. Preserve read-only API and no executable Spec Kit trigger. See [negative catalogue](checklists/integrationAcceptance.md).
+
+
+## PLAN-097 — Native source override/persistence review
+
+[Upstream v1.2.6/v1.4.0 source inspection](../../.agents/.documents/specKitUpstreamEnvAudit097.md) confirms feature-directory environment overrides can be absolute, `get_feature_paths` can persist `.specify/feature.json` without NO_PERSIST, and `setup_plan.py` writes under the chosen directory. Native upstream commands do not inherit the S2C bridge's Path Guard. Add strict pre-invocation containment and environment sanitation to any future B-authorized adapter/runner, including before/after pointer and outside sentinel checks. This is a **design requirement, not deployed enforcement**. Five tests `SK97-NEG-01..05` are all NOT_RUN. No feature/task IDs changed, and no product code or CLI changed in PLAN-097.

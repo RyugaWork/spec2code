@@ -1,20 +1,20 @@
 # Acceptance Design — S2C Spec Kit integration (24 planned cases)
 
-> This is a **feature-level test design catalogue** (not implementation or executed testing). Cases `SKI-TC-001-P/N..SKI-TC-012-P/N` map one-to-one to `SKI-FR-001..012`; they supplement, not replace, the master `TC-S2C-BRxxx` and A1/B1 validations. **All 24 execution outcomes are NOT_RUN.** A few related repository structures can be independently inspected statically; the audit report must name precisely what was inspected.
+> This is a **feature-level test design catalogue** (not implementation or executed testing). Cases `SKI-TC-001-P/N..SKI-TC-012-P/N` map one-to-one to `SKI-FR-001..012`; they supplement, not replace, the master `TC-S2C-BRxxx` and A1/B1 validations. **4 scoped Web/Static GitHub positive cases PASS at source SHA `916ed6aa769e1fb9c25d9bd988277275613ae695`; 20 cases NOT_RUN.** See [executed provider evidence](../../../.agents/.documents/specKitWebModeEvidence095.md). These are not native CLI, Python/host security or A.1/B.1 acceptance results. A few related repository structures can be independently inspected statically; the audit report must name precisely what was inspected.
 
 | Case ID | Feature requirement | Preconditions and input partition | Procedure / action | Expected result | Evidence to collect | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| `SKI-TC-001-P` | SKI-FR-001 | In-repo `.specify/feature.json` with valid `specs/001-s2c-speckit-integration` | Parse file and resolve path relative to approved root | Exactly one contained selected feature, not inferred from Git branch | Git SHA, pointer JSON, resolved relative path | DESIGNED/NOT_RUN |
+| `SKI-TC-001-P` | SKI-FR-001 | In-repo `.specify/feature.json` with valid `specs/001-s2c-speckit-integration` | Parse file and resolve path relative to approved root | Exactly one contained selected feature, not inferred from Git branch | Git SHA, pointer JSON, resolved relative path | PASS_STATIC_GITHUB (SHA 916ed6a) |
 | `SKI-TC-001-N` | SKI-FR-001 | Traversal, absolute, symlink/junction or invalid pointer | Attempt guarded S2C stage lookup in authorized disposable host | Refused with safe error; no outside-file IO | Denial, outside sentinel hash, OS | DESIGNED/NOT_RUN |
 | `SKI-TC-002-P` | SKI-FR-002 | Master BRD/AGENTS and feature docs on pinned SHA | Inspect normative ownership and links | Feature refines global BR/REQ; no parallel master | Document ownership map, SHA | DESIGNED/NOT_RUN |
 | `SKI-TC-002-N` | SKI-FR-002 | Feature claims to supersede host AGENTS or approved BRD | Attempt interpret contradictory authority | Conflict reported, no silent authority change | Conflicting exact excerpts and gate state | DESIGNED/NOT_RUN |
-| `SKI-TC-003-P` | SKI-FR-003 | Valid feature directory | Inspect `spec.md`, `plan.md`, `tasks.md`, checklist | All present with stable IDs/provenance | Tree listing, file hashes, ID audit | DESIGNED/NOT_RUN |
+| `SKI-TC-003-P` | SKI-FR-003 | Valid feature directory | Inspect `spec.md`, `plan.md`, `tasks.md`, checklist | All present with stable IDs/provenance | Tree listing, file hashes, ID audit | PASS_STATIC_GITHUB (SHA 916ed6a) |
 | `SKI-TC-003-N` | SKI-FR-003 | Missing or empty required artifact | Run authorized guarded static stage discovery | Required stage blocks or marks INCOMPLETE; no fake ready | Missing path, stage result | DESIGNED/NOT_RUN |
-| `SKI-TC-004-P` | SKI-FR-004 | Authorized GitHub connection and permitted docs | Update a feature Markdown text and record new Git SHA | Only authorized path updated; no CLI execution claim | Commit SHA, change diff, audit | DESIGNED/NOT_RUN |
+| `SKI-TC-004-P` | SKI-FR-004 | Authorized GitHub connection and permitted docs | Update a feature Markdown text and record new Git SHA | Only authorized path updated; no CLI execution claim | Commit SHA, change diff, audit | PASS_WEB_CONNECTOR_WRITE (SHA 916ed6a) |
 | `SKI-TC-004-N` | SKI-FR-004 | Connector absent or write scope denied | Request doc write | Refuse or provide read-only handoff; no invented commit | Host permission result, no-write proof | DESIGNED/NOT_RUN |
 | `SKI-TC-005-P` | SKI-FR-005 | Approved pinned CLI in authorized detached worktree | Run official `specify version` and `specify init`; inspect generated paths | Actual version/output, unchanged protected files or approved diff | CLI log, exit code, original/after SHA, asset list | DESIGNED/NOT_RUN |
 | `SKI-TC-005-N` | SKI-FR-005 | Missing CLI, unsafe old tool, file collision or unauthorized `--force` | Attempt native init gate | STOP/BLOCKED without overwriting source branch | Before/after hashes, refusal log | DESIGNED/NOT_RUN |
-| `SKI-TC-006-P` | SKI-FR-006 | Complete feature requirement/task/AC mapping | Traverse each of 12 IDs forward and backward | Each ID has exactly one explicit RTM mapping row and test IDs | RTM ID set comparison and orphan report | DESIGNED/NOT_RUN |
+| `SKI-TC-006-P` | SKI-FR-006 | Complete feature requirement/task/AC mapping | Traverse each of 12 IDs forward and backward | Each ID has exactly one explicit RTM mapping row and test IDs | RTM ID set comparison and orphan report | PASS_STATIC_GITHUB (SHA 916ed6a) |
 | `SKI-TC-006-N` | SKI-FR-006 | Unknown or duplicated SKI-FR/task | Run trace audit | Duplicate or missing link disclosed and gate not passed | Failure/duplicate IDs | DESIGNED/NOT_RUN |
 | `SKI-TC-007-P` | SKI-FR-007 | Real guarded checkout with active feature and scripts | Run read-only S2C bridge `status`, `plan`, `analyze` | Bounded paths/hashes/task IDs, no content body or writes | Output, file hashes and exit codes | DESIGNED/NOT_RUN |
 | `SKI-TC-007-N` | SKI-FR-007 | Out-of-scope pointer or untrusted artifact with prompt injection | Request guarded bridge access | Reject unsafe pointer; no untrusted instruction execution or secret output | Denial, sentinel and redaction evidence | DESIGNED/NOT_RUN |
@@ -39,3 +39,14 @@ For each actual run capture `caseId`, `SKI-FR`, exact Git SHA, approved feature 
 - Native CLI integration SKI-TC-005/007 and platform-specific negative cases require a real disposable host, correct installer and authority.
 - A.1 and B.1 require actual independent approval; QA test authors cannot self-certify.
 - Cross-reference [master RTM Section L](../../../.agents/.traceMatrix.md), [feature research](../research.md) and [native pilot](../../../.agents/.documents/specKitNativePilot.md).
+
+## PLAN-095 — Actual Web/GitHub scoped case execution and remaining gates
+
+[Reproducible source-bound evidence](../../../.agents/.documents/specKitWebModeEvidence095.md) reports **four** narrow positive cases at `916ed6aa769e1fb9c25d9bd988277275613ae695`:
+
+- `SKI-TC-001-P` — JSON pointer parses and resolves to expected in-repository tracked feature paths (GitHub JSON+tree only).
+- `SKI-TC-003-P` — required tracked artifacts present and 15 unique task IDs match current source config regex.
+- `SKI-TC-004-P` — real authorized GitHub Contents edit of one `quickstart.md` file from `1709037a...` to `916ed6a...`; diff only that file, commit/branch/blob rereads match.
+- `SKI-TC-006-P` — 12 distinct requirement rows map to 12 exact RTM rows and 24 expected unique P/N acceptance IDs, none missing.
+
+**Totals:** 4/24 `PASS` in strictly scoped Web/Static GitHub operation; 20/24 `DESIGNED/NOT_RUN`. All host-negative cases, S2C Python guard tests, official native CLI/skills, independent A.1, explicit B, B.1 and release remain `NOT_RUN`/`NOT_AUTHORIZED`. `SK95-GATE-01..08` are **additional design-only** native approval checks, all `NOT_RUN`. Historical PASS is pinned to the tested SHA and not silently promoted after source/policy drift.

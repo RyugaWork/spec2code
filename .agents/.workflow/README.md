@@ -28,3 +28,12 @@ Workflow Guard evaluates requirements and records user-authorized transitions. I
 - Run `workflow_guard.py begin/evaluate/advance` with identical `--task` and `--paths`. A different description or path set cannot reuse recorded workflow state.
 - Root and nested AGENTS, scoped policy documents, host policy map and context-pack fingerprints are snapshot inputs. Change invalidation requires explicit reconciliation.
 - Workflow Guard never approves a human gate, executes tests, modifies source, pushes Git or certifies Windows TOCTOU resistance. Review requires an independently trusted host decision; CLI stage commands alone cannot self-authorize.
+
+## PLAN-081 agent playbooks and authority
+
+- [Roles](agentRoles.md): coordinator, requirements, architecture/policy, implementation, test, security and handoff responsibilities. These are logical roles; S2C has no daemon or autonomous subagent worker.
+- [Runbook](agentRunbook.md): separate read-only, planning, implementation, verification and delivery actions; scoped context routing, local session lifecycle, optional upstream Spec Kit and fail-closed reporting.
+- [Domain authorities](../.documents/.documentGovernance.md) and [policy routing](../.documents/.policyRouting.md): identify owners and required operation without turning a discovered reference into permission.
+- [Test/delivery gates](testingAndDelivery.md) and [Git rules](../.git.workflow.md): explicit evidence and external acceptance before merge/release.
+
+These agent documents guide ChatGPT/Codex interactions and do not implement missing Workflow Guard controls. PR #7 retains three P0 and one P1 review findings; active Windows TOCTOU, OneDrive and legacy-migration risks are unchanged.

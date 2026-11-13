@@ -67,3 +67,7 @@ A fresh checkout receives generated architecture documents under `s2c/` and exac
 ## PLAN-080 installation additions
 
 Copy the entire new skill bundle (SKILL.md, .config/, scripts/, references/ and integrations/ where applicable). Do not overlay active v0.7 sessions or replace just one script. Preserve host AGENTS, .specify/, specs/, .agents/state and existing handoffs; perform backup and a reviewed migration if version state changes. Missing new configurations fail closed.
+
+## Optional host AGENTS integration (PLAN-081)
+
+Do **not** install this source repository's root `AGENTS.md` into the target. The existing host's root/nested AGENTS and approved requirements remain authoritative. If the host owner wants S2C operating notes, review [AGENTS_PATCH.md](AGENTS_PATCH.md), confirm the actual installed skill path, current Spec Kit integration and host-specific permissions, then add only compatible lines. A `README` example or `READY` bridge result is never permission to edit, commit or deploy. The role/runbook documents under development `.agents/.workflow/` describe human-directed behavior but are not automatically installed host policy.

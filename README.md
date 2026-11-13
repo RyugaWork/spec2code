@@ -48,3 +48,9 @@ Development is occurring on `feat/governance-integration-v0.8.0`; the v0.7.0 lay
 The candidate adds task-scoped, read-only host policy discovery, Policy Resolver references in Context Router, and a non-autonomous five-stage Workflow Guard with event integrity checks. The task description and affected paths must be supplied consistently for implementation gates. Evidence references and hash-chained workflow events never constitute independent authorization. Consult `.agents/.plans.md`, `.agents/.risk.md`, and `.agents/.checklist.md` for outstanding acceptance, security and migration risks.
 
 The real MCP server, automatic code execution, unattended Git mutations, Windows filesystem-race protection, and automatic legacy-data migration are **not** provided by this candidate.
+
+## Agent operating documentation (PLAN-081, v0.8.0 candidate)
+
+The [development AGENTS contract](AGENTS.md) routes ChatGPT/Codex work by **authority, task, phase and allowed action**. The [logical agent roles](.agents/.workflow/agentRoles.md) and [agent runbook](.agents/.workflow/agentRunbook.md) cover requirement analysis, policy review, implementation, verification and exact-session handoff without pretending there is an autonomous multi-agent executor. When installed in another project, this repository's AGENTS is **not** copied as that project's root policy; review the [optional host AGENTS guidance](docs/AGENTS_PATCH.md) instead.
+
+Official Spec Kit commands run through the agent's installed integration. Its `.specify/` and `specs/` are never owned by the S2C bridge. The current v0.8 Workflow Guard has unresolved PR #7 correctness blockers; PLAN-081 instructions do not fix them. No stable release or security clearance is implied by the documentation.

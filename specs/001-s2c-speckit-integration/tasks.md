@@ -40,3 +40,11 @@ T001–T005 (documentation bootstrap) → T006–T009 (approved native pilot) �
 ## STOP / RESUME
 
 Record `feature_directory`, exact current Git SHA, completed task checkboxes with evidence, Google revision, next smallest safe action and known uncertainty. On RESUME re-check `.specify/feature.json` and consulted policy/source; never call runtime `close` merely because writing stopped.
+
+## SK-03 attempted native pilot — evidence register (2026-11-13)
+
+- **Actual research:** upstream `v1.2.6` release and declared Python `>=3.11` support examined; latest `v1.4.0` security-hardening changes reviewed as a warning. Candidate `v1.2.6` is **not owner-approved**.
+- **Actual local tools:** Python 3.13.5, Git 2.47.3 and `uv`; `specify` unavailable. `git ls-remote` could not resolve GitHub and `uvx --offline --from git+https://github.com/github/spec-kit.git@v1.2.6 specify version` failed with exit 1 because the Git dependency was unavailable. `specify init` was **NOT_RUN**.
+- **Prepared runbook:** [SK-03 native pilot and acceptance matrix](../../.agents/.documents/specKitNativePilot.md) defines a disposable detached Git worktree, exact `--integration codex --script py` invocation, artifact hashes, candidate security review and per-case outcome evidence.
+- **Current task statuses:** T006 = RESEARCHED / OWNER_SELECTION_PENDING, still unchecked. T007–T009 = NATIVE_NOT_RUN (network/runner unavailable), still unchecked. T010–T015 = independent review/code/host tests NOT_RUN/NOT_AUTHORIZED.
+- **Next safe action:** run the official pinned tool in a network-enabled authorized disposable Codespaces/Codex checkout, preserve the generated diff, then obtain actual owner authorization to adopt any artifacts. No new branch or CI workflow.

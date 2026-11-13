@@ -12,7 +12,7 @@ S2C already has a read-only `.source/scripts/speckit_bridge.py` and JSON stage p
 
 ## User Scenarios & Testing *(mandatory)*
 
-This feature has four explicit stories US-01..04 with positive/negative paths above. The canonical 24-case [feature acceptance catalogue](checklists/integrationAcceptance.md) maps each SKI-FR-001..012 requirement to `SKI-TC-xxx-P` and `SKI-TC-xxx-N`. Exact procedures, fixture partitions, observable expected outcomes and required evidence are recorded there; **execution remains NOT_RUN**. No new software capability is claimed by writing its test design.
+This feature has four explicit stories US-01..04 with positive/negative paths above. The canonical 24-case [feature acceptance catalogue](checklists/integrationAcceptance.md) maps each SKI-FR-001..012 requirement to `SKI-TC-xxx-P` and `SKI-TC-xxx-N`. Exact procedures, fixture partitions, observable expected outcomes and required evidence are recorded there; **4 positive cases have narrow GitHub Web/static PASS at source SHA `916ed6aa769e1fb9c25d9bd988277275613ae695`, 20 cases remain NOT_RUN**; see [provider test evidence](../../.agents/.documents/specKitWebModeEvidence095.md). No native CLI, host security, independent A.1/B.1 or new software runtime capability is claimed.
 
 ### US-01 — Browser-based specification authoring (Priority P1)
 As a S2C maintainer using ChatGPT Web, I can identify the selected feature, inspect the root constitution and write/review its `spec.md`, `plan.md` and `tasks.md` through GitHub. I can resume in another authorized agent host from the same Git revision.

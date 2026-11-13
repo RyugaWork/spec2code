@@ -38,3 +38,7 @@ After actual native installation, follow the *agent-specific official* Spec Kit 
 - An unowned file will be overwritten: STOP, preserve original contents; require explicit owner scope, backup and reviewed diff.
 
 **Status for this iteration:** documentation and static GitHub preflight can be verified; actual native installed-runner acceptance, independent A.1, B and B.1 remain NOT_RUN / NOT_AUTHORIZED.
+
+## PLAN-095 — Controlled Web-mode GitHub edit evidence
+
+This bounded paragraph was added as a **document-only authorized GitHub connector operation**, to be re-fetched and checked against an exact commit in the [Web-mode execution evidence](../../.agents/.documents/specKitWebModeEvidence095.md). It is **not** evidence that upstream `specify`, any native Spec Kit coding-agent skill, a local Python guard, CI or independent A.1/B.1 verification executed.

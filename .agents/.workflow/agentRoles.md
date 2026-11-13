@@ -54,3 +54,19 @@ A.1 is checked by a **design/requirements reviewer** independent of the design a
 ## PLAN-086 universal version and override responsibility
 
 The architecture/policy analyst evaluates **Python, PowerShell, named SQL engines/drivers/migrations, .NET, CI/tooling and other stacks** for both **S2C source** and **integrated host code** using [technology policy](../.documents/technologyVersionPolicy.md) and [candidate assessment](../.documents/technologyAssessmentTemplate.md). The requirement analyst links `S2C-NFR-008/009` to affected host/system requirements; the risk analyst scores support/novelty/compatibility/override risks. If the requester explicitly selects another supported stable version/structure, the coordinator captures [OVR-ID](../.documents/technologyOverrideTemplate.md) and passes that exact choice to design rather than ignoring it. The authoring agent cannot approve its own exception, bypass security or convert the override into permission to edit files. A.1/B.1 reviewers validate actual evidence when scheduled; both are currently NOT RUN.
+
+
+## PLAN-088 — Domain-adaptive review roles and bounded personalities
+
+The role catalogue supports a **future** multi-agent review service and present-day **explicitly labeled sequential lenses**. A named role/persona is a prompt/checklist responsibility, not a real expert credential, new tool permission or independent signoff.
+
+| Artifact/domain | Expert coverage examples | Required assessment |
+| --- | --- | --- |
+| Software feature/code | Developer, architect, QA/tester, security, SRE/DevOps | Functional correctness, negative cases, architecture, security, deployment compatibility |
+| Data pipeline/model | DA, DE, DS, DB/SQL, data quality/privacy | Lineage, schema/drift, correctness, tests, leakage, reproducibility |
+| BRD/specification/UX | BA/product, domain specialist, QA, UX/accessibility, compliance | Source authority, AC testability, trace, accessibility, privacy/obligations |
+| Mixed artifacts | Union of applicable domains selected from the actual evidence | Mandatory covered risk-specific roles; unsupported competency => GAP/BLOCK |
+
+Review personalities: skeptical (test assumptions), adversarial (find abuse/negative cases), constructive (improve completeness), pragmatic (feasibility/cost), compliance-first (governance/security), exploratory (edge cases). Selection combines expertise fit 35%, task fit 25%, perspective 15%, marginal coverage 15% and budget feasibility 10% **as proposed design defaults**, subject to versioned config and A.1 review. Constraints (mandatory role coverage/security, ownership, permissions, quota) are not traded for score. Worker uniqueness and correlation must be disclosed.
+
+The **Review Coordinator** freezes the policy/source revision, plans n and authenticates constraints; **Reviewer Workers** produce independent source-linked findings without reading each other's draft; the **Synthesis Reviewer** aggregates immutable results while retaining dissent/P0 blockers; the **Human Validator** alone makes A.1/B.1 or approval decisions in the proper gate. No coordinator/workers have been executed from this documented flow. Do not self-grade a simulated reviewer as independent. See [master](../.spec.md#12-weighted-multi-agent-review-requirements-and-design) and [RTM](../.traceMatrix.md#i-plan-088--unified-review-service-requirement-and-evidence-crosswalk-draft).

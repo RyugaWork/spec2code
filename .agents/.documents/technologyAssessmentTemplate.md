@@ -1,35 +1,35 @@
-# Spec2Code — Technology & Architecture Approval Assessment
+# Spec2Code — Technology & Architecture Assessment (all stacks)
 
-> Use during A/P3 research and A/P5–P6 design. **Blank form; NOT approved.** Never fill PASS/APPROVED without verifiable source and actual external reviewer.
+> Use for **S2C development code** or **any integrated host repository** during A/P3–P6. Not a grant to modify either repo. An explicit user selection can replace a conservative default under the [override protocol](technologyVersionPolicy.md#4-user-override--explicit-user-preference-takes-precedence-over-conservative-defaults).
 
 - Assessment ID: `TECH-<unique>`
-- Task / approved host scope:
-- Technology, type (runtime/framework/library/build tooling), proposed **major/minor**:
-- Project structure / architecture proposal:
-- Current host baseline and whether NEW project or EXISTING/LEGACY:
-- Date checked, official vendor support URL and source version:
-- GA/stable release date / elapsed maturity:
-- Current support phase, support end date, expected go-live + required maintenance window:
-- Servicing/security patch policy and proposed supported patch:
-- Adoption evidence source 1 (official ecosystem/tooling or representative production):
-- Adoption evidence source 2 (independent, maintained ecosystem integration/usage):
-- Dependency/SDK/IDE/CI/container/OS compatibility and known breaking changes:
-- Vendor-recommended or widely used structure evidence, and reason this structure fits:
-- Alternatives, including older supported LTS and their security status:
-- New major/preview/EOL/novel structure vetoes? YES/NO and factual reason:
-- Security/operational risk IDs, L×I priority and design mitigation:
-- Requirement/AC/feature/RTM links:
-- Exception requested? scope, owner, compensating controls, expiry and migration path:
-- Agent recommendation: `PROPOSED` / `RECOMMENDED_FOR_REVIEW` / `BLOCKED` / `NEEDS_REVIEW`:
-- Owner decision: `NOT_REVIEWED` / `APPROVED_BY_OWNER` (actual decision source and exact version only):
-- A.1: `NOT_RUN` / real criterion result and report ID:
-- B.1: `NOT_RUN` / real observed runtime validation and report ID:
-- Handoff path/ref / `NOT_PERSISTED`:
+- Scope: `S2C_SOURCE` / `HOST_REPOSITORY` / `BOTH`; exact repository/branch/ref:
+- New project / existing project / legacy migration:
+- Tech category: Python interpreter/package | PowerShell runtime/module | SQL database engine/driver/dialect/migration | .NET | Other:
+- Exact technology product and **major/minor/edition/dialect**:
+- Project structure and owner (existing / proposed):
+- Explicit user preference or default candidate: `DEFAULT` / `USER_OVERRIDE`:
+- Linked override `OVR-ID` (if any):
+- Official vendor support/release URL + checked date and evidence:
+- GA release, servicing history, latest supported security patch, EOL or maintenance horizon:
+- Evidence of production-relevant adoption/tooling and source dates:
+- Dependency matrix: compiler/interpreter/PS edition, SQL engine+driver, OS, CI, containers and deployment:
+- Official/common structure references, alternatives and complexity justification:
+- Security, migration/backups, compatibility, rollback and version pin/update strategy:
+- Scope and impact: actual S2C code/config/tests or host paths **to be proposed, not edited**:
+- Existing baseline to preserve and migration/rollout costs:
+- Risk IDs, L×I, potential residual and responsible owner:
+- Requirement/AC/RTM and plan IDs:
+- Proposal status: `PROPOSED` / `RECOMMENDED_FOR_REVIEW` / `NEEDS_REVIEW` / `BLOCKED`:
+- User owner instruction source and real review decision, if any:
+- A.1 evidence/result: `NOT_RUN` or observed report ID:
+- B.1 evidence/result: `NOT_RUN` or observed report ID:
+- Handoff and provenance:
+ 
+## Candidate comparison
 
-## Comparison (evidence-based)
-
-| Candidate major/structure | Vendor support current? | Mature since GA? | Adoption evidence | Compatible? | Security/operations | Status/rationale |
+| Candidate/structure | Current support & patch | Adoption/maturity evidence | Target compatibility | Risk and migration | Requested by user? | Review state |
 | --- | --- | --- | --- | --- | --- | --- |
-| <version> | <source/date> | <date> | <2 evidence classes> | <evidence> | <risk> | PROPOSED/NEEDS_REVIEW/BLOCKED |
+| <actual engine/runtime version> | <vendor/date> | <dated evidence> | <real target> | <impact> | DEFAULT / OVR-ID | PROPOSED / BLOCKED |
 
-Remember: **newest ≠ approved**, **popular ≠ supported**, **fresh security patch ≠ new immature major**. Record .NET 8 after EOL only as a legacy exception, not a new-project recommendation; .NET 10 LTS is the conservative 2026-11 candidate; .NET 11 is too newly released for default adoption under this policy.
+Rules: Do not hardcode a single default for every stack; `SQL` must name an engine and dialect. Support and adoption evidence must be current. New security patch ≠ new major. Popular old EOL ≠ secure. A user-requested stable newly GA version may bypass the **default maturity preference** with a documented override, not safety permissions or independent host review.

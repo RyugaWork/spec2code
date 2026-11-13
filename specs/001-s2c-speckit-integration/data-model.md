@@ -12,7 +12,7 @@
 | `FeatureSpecification` | `spec.md`, user stories, stable `SKI-FR-001..012`, AC, negative paths | Refines global S2C BR/REQs without becoming a parallel master |
 | `FeaturePlan` | `plan.md`, alternatives, architecture, source risk, dependencies, rollback | Decisions must be traceable and should not silently permit implementation |
 | `FeatureTask` | stable `T001..T015`, description, dependencies, phase, explicit evidence status | Checkbox status represents documented task completion, not executed tests or permission |
-| `AcceptanceCase` | stable `SKI-TC-<FR>-P/N`, preconditions, action, expected observable outcome, evidence, actual execution state | All remain NOT_RUN until a real run with source SHA, environment, observed result |
+| `AcceptanceCase` | stable `SKI-TC-<FR>-P/N`, preconditions, action, expected observable outcome, evidence, actual execution state | At source SHA `916ed6...`, 4 cases have scoped GitHub/static PASS with provider evidence; 20 remain NOT_RUN. Native/host acceptance remains NOT_RUN |
 | `NativePilot` | pinned tag+source, host OS, Python, generated file list, before/after hashes, CLI exit/stdout/stderr, collision and rollback review | A CLI trial is not automatically independent A.1 or production host acceptance |
 | `HandoffSnapshot` | last exact source/policy/feature pointers, persisted location and truthfulness, open tasks/risks, next safe step | STOP may be documented without a runtime-close; RESUME revalidates all boundaries |
 
@@ -24,7 +24,7 @@
 
 ## Bidirectional trace keys
 
-`Global BR-xxx / S2C-REQ-xxx / S2C-NFR-xxx` → `SKI-FR-xxx` → `feature spec` → `Txxx` → `SKI-TC-xxx-P/N` → `actual evidence/ref` (currently NOT_RUN). See [master RTM Section L](../../.agents/.traceMatrix.md) and [acceptance catalogue](checklists/integrationAcceptance.md).
+`Global BR-xxx / S2C-REQ-xxx / S2C-NFR-xxx` → `SKI-FR-xxx` → `feature spec` → `Txxx` → `SKI-TC-xxx-P/N` → `actual evidence/ref` (4 scoped GitHub/static PASS, 20 NOT_RUN at pinned source SHA). See [master RTM Section L](../../.agents/.traceMatrix.md) and [acceptance catalogue](checklists/integrationAcceptance.md).
 
 ## Compatibility and migration
 

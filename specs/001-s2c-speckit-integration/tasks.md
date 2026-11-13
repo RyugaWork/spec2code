@@ -6,32 +6,32 @@
 
 ## Phase 1 — Web/GitHub bootstrap (documentation; no code execution)
 
-- [x] T001 Create a draft project constitution at `.specify/memory/constitution.md` that respects root AGENTS and the master BRD.
-- [x] T002 Select `specs/001-s2c-speckit-integration` in `.specify/feature.json` without creating a Git feature branch.
-- [x] T003 Author this feature's `spec.md`, `plan.md`, `tasks.md`, and an explicit quality checklist; map to S2C BR/REQ/AC.
-- [x] T004 Update S2C AGENTS, RTM, plans/risk, adapter guide and README to support Web and native modes without duplicating BRD.
-- [x] T005 Static-check the JSON pointer, repository-contained paths, task ID format, uniqueness, documentation links, and Git diff against the pre-integration HEAD.
+- [x] T001 [US4] Create a draft project constitution at `.specify/memory/constitution.md` that respects root AGENTS and the master BRD.
+- [x] T002 [US1] Select `specs/001-s2c-speckit-integration` in `.specify/feature.json` without creating a Git feature branch.
+- [x] T003 [US1] Author this feature's `spec.md`, `plan.md`, `tasks.md`, and an explicit quality checklist; map to S2C BR/REQ/AC.
+- [x] T004 [US1] Update S2C AGENTS, RTM, plans/risk, adapter guide and README to support Web and native modes without duplicating BRD.
+- [x] T005 [US3] Static-check the JSON pointer, repository-contained paths, task ID format, uniqueness, documentation links, and Git diff against the pre-integration HEAD.
 
 **Bootstrap evidence:** GitHub tree HEAD `ebdbd03f027a8e65ce5cde8ddc5ea0af5a1cad14` was read after authoring. `.specify/feature.json` parses to a contained `specs/` path, `spec.md`/`plan.md`/`tasks.md` exist, T001..T015 are unique and match the existing S2C bridge's `T\d{3,6}` convention, and 171 relative Markdown links from the relevant edited files resolve in the Git tree. This is a **read-only static GitHub inspection**, not Python bridge or native Spec Kit CLI test evidence. T001..T005 are document/bootstrap tasks only.
 
 ## Phase 2 — Official CLI preparation (separate reviewed execution)
 
-- [ ] T006 Select and verify a mature supported official Spec Kit release, installation source/tag, hash and CLI/agent integration.
-- [ ] T007 In a disposable **local checkout**, back up any existing `.specify` and agent skill files; execute official `specify init --here --force --non-interactive --integration <approved-key> --script py` only with explicit authorization; inspect generated diff.
-- [ ] T008 Prove official skills/scripts exist and work in the selected coding agent; capture actual `specify version`, pointer, stage and platform evidence.
-- [ ] T009 Reconcile official generated templates/scripts and feature pointer without overwriting owner content; separately review any proposed integration into this working branch.
+- [ ] T006 [US2] Select and verify a mature supported official Spec Kit release, installation source/tag, hash and CLI/agent integration.
+- [ ] T007 [US2] In a disposable **local checkout**, back up any existing `.specify` and agent skill files; execute official `specify init --here --force --non-interactive --integration <approved-key> --script py` only with explicit authorization; inspect generated diff.
+- [ ] T008 [US2] Prove official skills/scripts exist and work in the selected coding agent; capture actual `specify version`, pointer, stage and platform evidence.
+- [ ] T009 [US2] Reconcile official generated templates/scripts and feature pointer without overwriting owner content; separately review any proposed integration into this working branch.
 
 ## Phase 3 — Independent design validation (before any B code task)
 
-- [x] T010 Reconcile master BRD, Google stakeholder revision, Constitution, feature AC, RTM, risk and exact Git SHA **as a draft revision crosswalk only**; no owner approval or A.1 status implied.
-- [ ] T011 Obtain actual independent A.1 report (`A1-VAL-01..09`) and source-bound signoff. Report P0/P1 risks explicitly; do not infer PASS from markdown creation.
-- [ ] T012 Record a separately approved B task and scope for any adapter, CLI/script, config, security, or host-source modifications.
+- [x] T010 [US4] Reconcile master BRD, Google stakeholder revision, Constitution, feature AC, RTM, risk and exact Git SHA **as a draft revision crosswalk only**; no owner approval or A.1 status implied.
+- [ ] T011 [US4] Obtain actual independent A.1 report (`A1-VAL-01..09`) and source-bound signoff. Report P0/P1 risks explicitly; do not infer PASS from markdown creation.
+- [ ] T012 [US4] Record a separately approved B task and scope for any adapter, CLI/script, config, security, or host-source modifications.
 
 ## Phase 4 — Future authorized implementation and acceptance
 
-- [ ] T013 Implement only approved bridge/runtime enhancements and regression tests on exact source revisions; reject missing or unsafe paths.
-- [ ] T014 Validate on disposable representative hosts (Windows/OneDrive/junction, Linux, without Spec Kit, with official CLI), capture logs, source hashes and actual results.
-- [ ] T015 Obtain independent B.1 and release/merge authorization; preserve handoff, migration and rollback evidence.
+- [ ] T013 [US3] Implement only approved bridge/runtime enhancements and regression tests on exact source revisions; reject missing or unsafe paths.
+- [ ] T014 [US3] Validate on disposable representative hosts (Windows/OneDrive/junction, Linux, without Spec Kit, with official CLI), capture logs, source hashes and actual results.
+- [ ] T015 [US4] Obtain independent B.1 and release/merge authorization; preserve handoff, migration and rollback evidence.
 
 ## Dependencies
 

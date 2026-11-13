@@ -28,3 +28,7 @@ Spec Kit documentation: https://github.github.com/spec-kit/how-to/existing-proje
 ## Support status
 
 `speckit_bridge.py --stage status|plan|tasks|analyze|implement|converge` statically checks artifact presence and returns hashes/task IDs. Its `READY` only means files are present within scope, **not** that A.1 passed or code is authorized. Standalone host repositories without Spec Kit remain supported. Avoid copying development Constitution into unrelated host repositories.
+
+## SK-03 native pilot preparation (not an installation)
+
+An upstream-versioned [disposable CLI pilot runbook](../.agents/.documents/specKitNativePilot.md) now details a candidate `v1.2.6` and actual prerequisites, isolated Git worktree commands for Codespaces/Windows, generated-file collision review and required evidence checks `SK3-01..08`. This was a **research/static-source and failed-offline-tool attempt**, not an executed native `specify init`. `v1.4.0` contains newer security-hardening changes, so a user/owner must decide the version before any real host adoption. The initial Web/GitHub Markdown workflow remains functional without CLI.

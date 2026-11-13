@@ -72,3 +72,46 @@ As a project owner, I can trace active Spec Kit feature requirements to S2C BR/R
 - **DESIGNED:** native feature files and repo-side governance/trace mapping.
 - **NOT_RUN:** actual upstream CLI initialization, native skill execution, installed-host tests, Python security/regression suite, A.1/B.1 and release.
 - **Owner decision pending:** accepted baseline, supported CLI release, candidate host environment and official native agent integration.
+
+## User Scenarios & Testing — Spec Kit template alignment
+
+This feature has four explicit stories US-01..04 with positive/negative paths above. The canonical 24-case [feature acceptance catalogue](checklists/integrationAcceptance.md) maps each SKI-FR-001..012 requirement to `SKI-TC-xxx-P` and `SKI-TC-xxx-N`. Exact procedures, fixture partitions, observable expected outcomes and required evidence are recorded there; **execution remains NOT_RUN**. No new software capability is claimed by writing its test design.
+
+## Requirements — ownership and traceability
+
+The functional requirements SKI-FR-001..012 above are refinements of S2C master BRD/SRS, not owner-approved replacements. [RTM Section L](../../.agents/.traceMatrix.md) maintains **12 separate explicit requirement rows**, each linking global BR/S2C-REQ, tasks, risks and two planned acceptance cases. A missing/duplicate ID, unapproved host permission or incomplete provenance is a requirement-quality failure, not a PASS.
+
+### Key Entities
+
+- `FeatureSelection`: exact selected feature directory from `.specify/feature.json`, independent of Git branch.
+- `SourceSnapshot`: Git SHA, Constitution/AGENTS revision and optional provider-specific Google BRD revision, all independently identified.
+- `FeatureArtifact`: project Constitution and feature spec/plan/tasks, each with ownership, update status and source hash.
+- `FeatureTask`: stable `T001..T015`, actual documentation completion versus pending native/approval/code work.
+- `AcceptanceCase`: `SKI-TC-001-P/N..012-P/N`, expected observable outcome and actual evidence state.
+- `NativePilot`: reviewed CLI version, disposable worktree, before/after inventory, generated assets and observed exit codes.
+
+See [logical data model](data-model.md); **no new runtime entity, database or API is implemented**.
+
+## Success Criteria *(mandatory)*
+
+| ID | Observable/measurable acceptance target | Current status and evidence boundary |
+| --- | --- | --- |
+| `SKI-SC-01` | Exactly 12 unique SKI-FR requirements have 12 unique explicit RTM entries and two stable P/N case IDs each, with no orphan | Static GitHub validation required on final SHA; not independent A.1 |
+| `SKI-SC-02` | Selected feature JSON parses and resolves to a contained path with all three required feature artifacts | Git tree/JSON static validation; not native bridge execution |
+| `SKI-SC-03` | 15 unique task IDs (`T001..T015`) follow existing bridge pattern, each with truthful completion status | Static source check; no runtime tests implied |
+| `SKI-SC-04` | Zero missing relative Markdown links within the changed Spec Kit feature/AGENTS/RTM/runbook files | Count + missing links must be recorded for an exact Git SHA |
+| `SKI-SC-05` | Git branch inventory unchanged by Markdown feature selection and no implicit Git extension | Compare branch refs and record actual before/after state |
+| `SKI-SC-06` | Native CLI only counts as installed after observed exact version, generated script+skill inventory, preserved owner files and official prerequisite test results | `NOT_RUN` until authorized network-enabled environment |
+| `SKI-SC-07` | Host/negative safety tests do not write outside scope or hide forbidden output; preserve full original source hashes and clear failure | `NOT_RUN`; required real disposable host tests |
+| `SKI-SC-08` | No A.1/B/B.1 or release transition based on a same-model review, static file presence or unsupported CLI claim | Documentation policy stated; real authorization remains independent and unknown |
+
+These are functional completeness targets, not arbitrary performance SLOs. Latency, tokens, budget, quorum, supported host OS and exact approved upstream release remain `UNKNOWN` pending DEC-091/DEC-SK3 owner decisions and benchmarks.
+
+## Assumptions and unresolved questions
+
+1. The requester has authorized Markdown design/governance updates to the S2C development branch, **not** source-code deployment, unsafe `--force` or host migration.
+2. The official Spec Kit version and agent integration are not yet owner-approved; `v1.2.6` is a disposable trial candidate and newer `v1.4.0` may contain security fixes requiring consideration.
+3. ChatGPT Web may use an authenticated GitHub connector but cannot invoke the official native skills/CLI without an actual executable host. Standalone S2C hosts without Spec Kit remain valid.
+4. Exact business/security reviewer identity, OS matrix, NFR thresholds and acceptable migration path are `UNKNOWN`; no synthetic approval or test result can resolve them.
+
+**Supporting technical artifacts:** [research](research.md), [plan](plan.md), [model](data-model.md), [interface](contracts/web-native-interface.md), [quickstart](quickstart.md), [requirement checklist](checklists/requirements.md) and [acceptance cases](checklists/integrationAcceptance.md).

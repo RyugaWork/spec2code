@@ -23,7 +23,7 @@
 
 ## Phase 3 — Independent design validation (before any B code task)
 
-- [ ] T010 Reconcile master BRD, Google stakeholder revision, Constitution, feature AC, RTM, risk and exact Git SHA.
+- [x] T010 Reconcile master BRD, Google stakeholder revision, Constitution, feature AC, RTM, risk and exact Git SHA **as a draft revision crosswalk only**; no owner approval or A.1 status implied.
 - [ ] T011 Obtain actual independent A.1 report (`A1-VAL-01..09`) and source-bound signoff. Report P0/P1 risks explicitly; do not infer PASS from markdown creation.
 - [ ] T012 Record a separately approved B task and scope for any adapter, CLI/script, config, security, or host-source modifications.
 
@@ -35,7 +35,7 @@
 
 ## Dependencies
 
-T001–T005 (documentation bootstrap) → T006–T009 (approved native pilot) → T010–T012 (independent gate and explicit permission) → T013–T015 (future implementation/acceptance). Actual CLI may be installed *for development verification in an authorized disposable environment* before A.1, but **must not use that as permission to mutate product/host code**.
+T001–T005 (Markdown bootstrap) → T010 (independent **draft/document** source reconciliation, possible before native setup); T006–T009 (separately approved native pilot, optional for drafting but required before claiming native integration) and T010 current-revision recheck → T011 independent A.1; **only** A.1 PASS + T012 explicit B approval can permit T013 implementation, followed by T014 host tests and T015 independent B.1/release decision. Source drift invalidates affected T010 evidence and requires remapping. Actual CLI may be installed *for development verification in an authorized disposable environment* before A.1, but **must not use that as permission to mutate product/host code**.
 
 ## STOP / RESUME
 
@@ -54,3 +54,11 @@ Record `feature_directory`, exact current Git SHA, completed task checkboxes wit
 T003/T004/T005 documentation and preflight scope now also includes the standard Spec Kit feature supporting artifacts: [research](research.md), [logical data model](data-model.md), [Web/Native interface contract](contracts/web-native-interface.md), [quickstart](quickstart.md) and [24-case acceptance design](checklists/integrationAcceptance.md). The feature [specification](spec.md) includes explicit success criteria and assumptions, and [plan](plan.md) includes technical context, Constitution Check, project structure and complexity rationale. Master RTM Section L uses **12 exact SKI-FR IDs** with corresponding 24 exact test IDs instead of slash shorthand.
 
 **Important:** T001..T005 remain marked completed as *documentation bootstrap* tasks only. This authoring extension is not an observed native CLI execution or independent A.1. All existing T006..T015 remain unchecked, and none of the 24 feature acceptance cases is reported PASS. Future static Git tree/source checks may report `STATIC_INSPECTED` with exact source SHA separately.
+
+## PLAN-094 — T010 exact source crosswalk (documentary completion only)
+
+**Reviewed Git source snapshot:** `fce2a8e4c425f9e21b15592e3f5f9e653703c3d9` on `docs/plan-089-a1-readiness`. **Google BRD stakeholder revision:** `AHj4eMRu50FIWgL_K17Wef7cveq_qCIe8Kq-pV-robhc37C8Gu9H5AxWK3QuEPL1cD7P6iFgRJQH2lSraIPO5DPP15fTuHPOmCZwAwFV5g` (Draft v1.5, sections 25 PLAN-092, 26 PLAN-093 and 27 PLAN-094 present). **Project Constitution:** DRAFT/NOT_RATIFIED; root AGENTS/global SRS/risk retain authority.
+
+**Observed documentary crosswalk:** 12 unique SKI-FR rows in `spec.md`, 12 explicit mapping rows in master RTM Section L, 24 distinct planned P/N IDs in the feature acceptance catalogue, 15 unique T IDs in the task register and zero unresolved referenced global BR/REQ/NFR IDs. Global critical security/authority risks remain OPEN. Google BRD is a stakeholder-level summary, **not a byte-identical source SRS**, and its update is not signoff. `T010` check means this one source-revision pair was mapped at **draft** level only; recheck on source drift and obtain real owner/independent review under T011. No native CLI/host test was executed and no version/OS decision granted.
+
+**Current tasks:** 6 documentation/reconciliation tasks `T001..T005, T010` recorded done; native T006..T009 remain unchecked, independent T011 unchecked, explicit B T012 unchecked, source/host/release T013..T015 unchecked. Do not collapse these statuses into an invented release gate.

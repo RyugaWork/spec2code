@@ -1,6 +1,6 @@
 # AGENTS.md — Spec2Code agent operating contract (v0.8.0 candidate)
 
-> **CURRENT WORKSTREAM — PLAN-095: Spec Kit Web/Native safety and task execution-gate design for S2C itself, with A.1/B/B.1 unapproved.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
+> **CURRENT WORKSTREAM — PLAN-098: existing-first integration planning for F43–F64; runtime remains unchanged, A.1/B/B.1 unapproved.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
 
 > Applies to **development of this repository**, not automatically to projects where the portable skill is installed. The v0.8.0 governance/workflow work is a **candidate**, not a stable release. Instructions guide a human-supervised ChatGPT/Codex agent; they do not themselves enforce filesystem containment or grant permissions.
 
@@ -41,19 +41,13 @@ Authority is **by subject**, not a single blanket file hierarchy: approved busin
 
 Use the **actual task description and observed repository-relative paths** consistently for Policy Resolver, Context Router and Workflow Guard. Never create a fake path just to make a gate pass. A budget setting (`minimal`, `balanced`, `deep`) may reduce optional context but not mandatory security/requirement reading.
 
-## 4. Five-stage human-directed workflow
+## 4. Nine universal stages, five actual machine phases
 
-| S2C stage | Required reasoning / evidence | Failure path |
-| --- | --- | --- |
-| **DISCOVER** | Exact checkout, current worktree state, root/nested AGENTS, applicable canonical references; find source without assuming domain | Unknown root/policy → stop affected operation |
-| **SPECIFY_PLAN** | Requirement authority, scope, acceptance criteria, plan, risk, Spec Kit artifacts when used | Conflict/unapproved behavior → `NEEDS_REVIEW` |
-| **IMPLEMENT** | Only approved file changes; preserve other work; record self-authored edits separately from external drift | Changed scope or missing policy → re-evaluate |
-| **VERIFY** | Actual build/test/security evidence with command, platform, revision and outcome | Fail/stale evidence → return to IMPLEMENT explicitly |
-| **HANDOFF_REVIEW** | Traceable changed paths, remaining risks, exact session handoff and independent reviewer decision | No approval → keep open; do not assert release |
+For **every phase and task**, record DISCOVER → PLAN → RISK MANAGEMENT → IMPLEMENT → TEST → VERIFY → OPTIMIZE → HANDOFF → DOCUMENT. Each stage has input, expected output, observed evidence and status. In Phase A, IMPLEMENT means authoring authorized design documents; OPTIMIZE may return `NO_CHANGE`. STOP does not silently CLOSE. [Exact stage contract](.agents/.workflow/workflowSpecification.md#2-universal-nine-stage-execution-contract-plan-098).
 
-These are responsibilities, **not** a promise that `workflow_guard.py` executes the stages or grants approval. Its current machine gate only evaluates/records state and has unresolved v0.8.0 correctness defects; see section 7 and PLAN-081. A `READY` policy/context status does not mean the implementation is approved, tested or safe.
+Phase A's P1–P9 are separate *content substeps*, A.1/B.1 require independent approval, and `workflow_guard.py` still has **five machine phases** `DISCOVER, SPECIFY_PLAN, IMPLEMENT, VERIFY, HANDOFF_REVIEW` with known P0/P1 blockers. No runtime schema migration or auto-approval.
 
-When Spec Kit is present, its native agent skills own `constitution → specify → clarify? → plan → checklist? → tasks → analyze? → implement → converge`. Confirm the integration actually installed; the commands are *agent instructions*, not shell executables. The read-only S2C bridge may discover an active feature through `.specify/feature.json` or `SPECIFY_FEATURE_DIRECTORY`; it never chooses by branch name, rewrites `specs/` or substitutes for artifact review. The minimum S2C implementation bridge gate checks `spec.md`, `plan.md`, `tasks.md`, but file existence is not approval.
+[One F43–F64 integration matrix](.agents/.documents/featureDesign.md#11-f43f64-relation-and-feasibility-matrix) controls relationship/compatibility decisions; use existing path, policy, context, session and proposed F38–F42 review mechanisms instead of duplicate engines. Sequential role-lenses are not independent workers. F58 SAFE cleanup is proposed only and cannot delete unowned/legacy/active/historical/source/evidence files. No automatic merge/release.
 
 ## 5. Mandatory security and data-preservation rules
 

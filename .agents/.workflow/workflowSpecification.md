@@ -13,7 +13,27 @@ Actors: requester (scope/authorization), interactive agent (reads, assists and r
 
 Each task must have a stable task ID; actual task description; verified target repository/ref; scoped affected paths; consulted AGENTS/policy and requirements; work authorization; session ID if local runtime started; phase; evidence and outstanding gates. Unknown details are `UNKNOWN`, not invented.
 
-## 2. Normal five-stage agent lifecycle
+## 2. Universal nine-stage execution contract (PLAN-098)
+
+**Every phase and every task** (A, A.1, B, B.1, release, maintenance and later F64) must record all nine stages with `taskId, phase, stage, input/sourceSHA, expectedOutput, actualOutput, riskIds, evidence, status, ownerRole, nextAction`. A missing tool is `NOT_RUN`, never PASS. A particular tool check can be `NOT_APPLICABLE` with reason, but the stage itself cannot vanish. IMPLEMENT means producing the phase-appropriate artifact; A planning documents do not authorize B source edits.
+
+| Universal stage | Minimum input → output / failure path |
+| --- | --- |
+| DISCOVER | Actual repository/ref, AGENTS, source/authority → scoped inventory; unknown root/owner blocks |
+| PLAN | Scope → acceptance criteria, expected output, dependency and resource/test plan |
+| RISK MANAGEMENT | Plan and evidence → discovered/scored risks, highest-risk mitigation and blocker disposition |
+| IMPLEMENT | Approved action → only phase-appropriate scoped artifact with provenance |
+| TEST | Artifact → static/doc/build/security/mutation test evidence when applicable |
+| VERIFY | Observed result vs AC, source freshness and required independent approval |
+| OPTIMIZE | Baseline → bounded change or `NO_CHANGE`; re-T​​EST/VERIFY if changed, reassess risk |
+| HANDOFF | STOP-safe snapshot, risks, result/next owner and PERSISTED/NOT_PERSISTED |
+| DOCUMENT | Sync canonical BRD/RTM/feature/risk/decision records and final handoff links |
+
+**Static verification:** informal review, walkthrough, technical review and inspection are different review evidence levels; coding conventions, control/data flow, unreachable code, complexity, security and dependencies are static-analysis checks. Proposed F38–F42 worker reviews reuse frozen source and independent findings where actually available; one-model sequential lenses are **not** independently executed workers.
+
+**Fail-safe:** stop unsafe operations, do not silently reauthorize, preserve evidence, bound attempts and resources, record blocked status and handoff. External A.1/B.1 approval cannot be replaced with a model score. F64 proposal requires externally immutable Z0/Z1 Protected Core, >95% completeness and scoped line+branch coverage, 100% mandatory acceptance criteria, no mandatory security blocker and human merge. Existing five machine phases remain unchanged.
+
+## 3. Normal five-stage machine lifecycle (unchanged)
 
 | Phase | Required entry evidence | Permitted work | Exit criteria | Failure response |
 | --- | --- | --- | --- | --- |

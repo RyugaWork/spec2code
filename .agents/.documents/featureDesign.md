@@ -2,19 +2,71 @@
 
 > **Design inventory**, not a claim that proposed behavior is implemented. Source baseline: [feature register F01–F37](../.features.md), [draft specification](../.spec.md), [system RTM](../.traceMatrix.md) and [research register](researchRegister.md). A design option must be explicitly accepted by the responsible owner before it becomes a normative requirement or runtime task.
 
-## 1. Functional domains and dependency map
+## 1. PLAN-098 — AS-IS/TO-BE integration of existing S2C and F43–F64
 
-| Design area | Features and requirements | Observed implementation or specification | Design question and acceptance gap |
+**Design-only status.** F01–F42 statuses are unchanged (see [feature register](../.features.md)); F38–F42 remain proposed reviews, not real independent worker instances. F43–F64 are 22 **DESIGN_PROPOSED** IDs, not code or accepted tests. This is the **single detailed integration matrix**. H/M/L below are feasibility hypotheses pending actual tests.
+
+| Subsystem | Existing ownership | Proposed integrated capability | Invariant |
 | --- | --- | --- | --- |
-| **D01 Repository boundary & IO** | F04, F08, F09, F13–F15, F18; NFR-001/002 | `.source/scripts/path_guard.py`, `scope_io.py`, `config_loader.py` | Require POSIX/Windows threat model and sensitive/managed output rules; Windows TOCTOU, ownership and OneDrive test still OPEN |
-| **D02 Discovery and architecture evidence** | F01–F03, F02, F25 | `scan_infrastructure.py`, `architecture_tree.py`, `context_router.py` | How to detect stale metadata, untrusted source and heuristic links without treating context indexes as authoritative code |
-| **D03 Policy, requirement & agent governance** | F12, F27–F29, F32–F35; NFR-004/005 | `AGENTS.md`, `.agents/.workflow/`, `policy_resolver.py` | Canonical authority by domain, root/nested AGENTS precedence, no approval from policy `READY`; Agents are logical roles |
-| **D04 Sessions, attribution and runtime handoff** | F05–F06, F16–F17, F24, F26 | `session_guard.py`, `handoff_store.py` | Preserve source attribution, external drift and exact-session SHA; explicit old-layout migration and no auto-deletion |
-| **D05 Workflow integrity / eventual pause** | F30, F36–F37; NFR-006/007 | `workflow_guard.py`, [workflow spec](../.workflow/workflowSpecification.md), [STOP protocol](../.workflow/stopAndHandoff.md) | Correct real-scope gates and invalidation **before** building runtime STOP/RESUME; schema and backward compatibility design needed |
-| **D06 Optional Spec Kit integration** | F07, F22 | `speckit_bridge.py`, `.source/integrations/speckit/README.md` | Select real active feature, respect upstream ownership, distinguish CLI vs native agent skills; no silent init/modify |
-| **D07 Interfaces, deployment and independent acceptance** | F10–F11, F19–F20, F31, F36 | `mcp_boundary.py`, `.github/workflows/tests.yml`, `docs/INSTALL.md` | No real MCP server; preserve JSON/CLI and installed bundle; verify exact-OS and host policy before release |
+| S01 Governance | F12,F27–F28,F32–F37; AGENTS/RTM | F46 changes, F58 consolidation, universal lifecycle | Preserve owners and approvals |
+| S02 Source graph | F01,F02,F25; scanner, architecture_tree | F43 AST, F45 drift, F55 pipeline, F57 enforcement | Revision evidence, fallback |
+| S03 Context | F03,F29; context_router | F49 task routing, F51 compression | Never omit mandatory policy |
+| S04 Security | F04,F08–F10,F13–F15,F18,F26,F28; path_guard/scope_io | F44 firewall, F48 fail-safe, F62 supply chain, F64 protection | OS enforcement; P0 still open |
+| S05 State | F05,F06,F16,F17,F24,F30,F36,F37; session/handoff/workflow | F46, F58, F64 | Preserve 5-phase machine schema |
+| S06 Upstream | F07 Spec Kit bridge; F22 excluded | F53 API, F55 spec mapping | Upstream owns .specify and specs |
+| S07 Quality | F20,F31; tests/CI | F47 common gate, F52 sandbox, F57, F61 | Observed results only |
+| S08 App/Data | F01/F02, proposed F38–F42 | F53/F55/F56 data/API pipeline | No unreviewed schemas |
+| S09 Review | F33 roles; F38–F42 proposed | Static review, DBA F56, FinOps F63 | Independent evidence/dissent |
+| S10 Optional runtime | F10 authorization library, F19 deferred | F50 CI/SLM, F54 skills, F59 resilience, F60 flags | Opt-in and bounded |
 
-Features F21–F23 are expressly non-goals, even if tests or docs discuss their prohibition. This catalogue groups current scope; grouping does not change or create a feature ID.
+### 1.1 F43–F64 relation and feasibility matrix
+
+Each row maps a **proposal** into an old feature instead of creating a parallel subsystem. EXTEND=existing component; ADAPTER=optional plugin; NEW=restricted capability. None is implemented by this document.
+
+| ID / proposed function | Existing features | Integration target | Feasibility / priority | Proposed acceptance / caution |
+| --- | --- | --- | --- | --- |
+| **F43** AST manipulation | F02,F03 | EXTEND source graph with parser adapters | M/P1 | CAS hash, syntax and rollback tests |
+| **F44** AI firewall/RBAC | F04,F09,F10,F28 | EXTEND trusted host policy boundary | M/P0 | Deny read/write/execute/delete; prompt alone is insufficient |
+| **F45** Semantic Spec–Code drift | F02,F05,F07,F17 | EXTEND source/trace fingerprints | M/P1 | AC+contract diff, provenance, no AI-only approval |
+| **F46** Controlled feature evolution | F12,F30,F37 | EXTEND change/impact workflow | H/P1 | Dependency and stale-AC invalidation |
+| **F47** Official coding conventions | F20,F31,F32 | EXTEND one quality gate | H/P1 | Per-stack lint and false-positive review |
+| **F48** Strict fail-safe | F04,F05,F09,F30 | EXTEND bounded execution/rollback policy | M/P0 | Retry/time/resource caps and cancellation |
+| **F49** GPT Web/Codex routing | F03,F29,F33 | EXTEND task and context router | H/P1 | Permission/budget/capability, no hidden delegation |
+| **F50** Lightweight CI and SLM | F20,F31,F49 | ADAPTER optional default OFF | M/P2 | Isolated secrets, CPU/memory budget, deterministic fallback |
+| **F51** Semantic context compression | F03,F29,F02 | EXTEND context router | M/P1 | Provenance, mandatory-policy recall and benchmark |
+| **F52** Dry-run sandbox | F20,F31,F47 | ADAPTER disposable execution | M/P1 | Untrusted code isolated; bounded self-repair |
+| **F53** Bidirectional API contract sync | F07,F02 | ADAPTER OpenAPI/DTO mapping | M/P2 | Per-API authority, breaking-change checks |
+| **F54** Skill API/gateway | F10,F07 | EXTEND capability registry/adapters | M/P2 | Discover/invoke/cancel with scoped permission |
+| **F55** Source→SPEC→ERD→DB→API→CODE | F01,F02,F07,F25 | NEW bounded pipeline planner reusing graph | M/P1 | No inference of unapproved business rules |
+| **F56** DBA Guard and reviewer | F38–F42,F47 | EXTEND shared static/review gate | M/P1 | N+1/index/tracking context-dependent |
+| **F57** Architecture enforcer | F02,F30,F47 | EXTEND source graph + quality gate | M/P0 | Host-approved layer rules and indirect bypass tests |
+| **F58** SAFE cleanup/knowledge merge | F06,F14,F24,F26 | EXTEND ownership/retention handoff | M/P1 | No deletion of unowned/active/legacy/evidence |
+| **F59** Cloud-native resilience | F48,F47,F50 | ADAPTER deployment profiles | M/P2 | Stateless durable behavior; idempotent bounded retries |
+| **F60** Feature flags/dark launch | F46,F52,F59 | ADAPTER at feature boundary | M/P2 | Canary/telemetry/kill switch; rollback latency not guaranteed |
+| **F61** Mutation testing | F47,F52,F42 | ADAPTER inside same quality gate | M/P2 | Equivalent mutants and resource budget |
+| **F62** Dependency security | F44,F47,F50 | EXTEND supply-chain quality gate | H/P0 | Registry, advisory, license, lockfile and exception |
+| **F63** AI FinOps profiler | F38–F42,F50,F56 | EXTEND reviewer + optional price adapter | M/P2 | Workload/region/time/price evidence, not AST-only dollar claims |
+| **F64** Controlled self-evolution | F44,F48,F52,F57,F58,F61 | NEW restricted mode after external security gates | L/P1 design | Z0/Z1 denial, completion >95%, line+branch >95%, 100% mandatory AC, human approval |
+
+### 1.2 Integration decisions — merge shared mechanisms
+
+| Decision | Reuse/merge rather than append | Contract and fail-safe |
+| --- | --- | --- |
+| DEC-098-01 | ONE quality gate F47 serving F56/F57/F61/F62 | Check(scope,revision,rule) → finding(severity,evidence,status); P0 not voted away |
+| DEC-098-02 | ONE context router F03/F29 serving F49/F51/SLM | Source references and mandatory policy immutable under compression |
+| DEC-098-03 | ONE proposed F38–F42 reviewer protocol for static/QA/DBA/FinOps | Evidence-first raw findings, role/persona weights, dissent; role-lenses ≠ independent workers |
+| DEC-098-04 | ONE source+trace graph F02/F12 supporting F43/F45/F53/F55/F57 | Spec/API owner decisions, no implicit sync override |
+| DEC-098-05 | ONE trusted F04/F09/F10/F28 scope/permission boundary for F44/F48/F58/F64 | Deny-by-default; OS/host controls outside the model |
+| DEC-098-06 | ONE F05/F06/F30/F37 session and handoff record for F46/F58 | STOP ≠ CLOSE; stale evidence invalidated |
+| DEC-098-07 | Optional adapters only: F50/F52/F53/F54/F59/F60 | No compulsory new daemon, DB, vector engine, GPU or MCP server |
+| DEC-098-08 | Keep excluded F21–F23 excluded | No unattended shell/Git, vendored Spec Kit or hardcoded domains |
+
+**Feature workspace (design only):** `s2c/features/<feature-id>/spec/{html,erd,db,api,code}/`, `existing/{html,erd,db,api,code}/`, `plan2code/{html,erd,db,api,code,tests}/` and `manifest.json`. `spec` references the approved source; `existing` is read-only evidence; `plan2code` is staging. Existing `s2c/` already stores architecture indexes: require path collision/ownership and migration review **before creation**. F58 SAFE mode is only a proposed policy; **no automatic cleanup in this planning task**.
+
+### 1.3 Critical path, measurable gates and ordering
+
+M0 source/status/ID/BRD/RTM/risk reconciliation → independent **A.1** → explicit **B** → M1 repair OS/Path Guard/workflow P0 → M2 trace/retention/ownership/versioning → M3 shared static/AST/context/review pilots → M4 optional CI/SLM/API/DB/cloud/FinOps adapters and **B.1** → M5 release owner decision. F64 is the last isolated capability. Every phase/task uses the [universal nine-stage process](../.workflow/workflowSpecification.md#2-universal-nine-stage-execution-contract-plan-098). Source runtime/host testing and independent approval remain NOT_RUN.
+
 
 ## 2. Reusable design card template for each new or modified feature
 

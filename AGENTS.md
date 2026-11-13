@@ -12,6 +12,8 @@ Start with `.agents/.spec.md`, `.agents/.features.md`, `.agents/.plans.md`, `.ag
 | --- | --- | --- |
 | Route a request to a responsibility | [agent roles](.agents/.workflow/agentRoles.md) | Logical responsibilities, not running subagents |
 | Select workflow and commands | [agent runbook](.agents/.workflow/agentRunbook.md) | Human-directed, no silent execution |
+| Verify stage transitions and STOP semantics | [workflow specification](.agents/.workflow/workflowSpecification.md) | Five phases plus agent-level STOP; no native PAUSED state |
+| Recover an interrupted task | [STOP/handoff protocol](.agents/.workflow/stopAndHandoff.md) | Snapshot, persistence status, fresh RESUME checks |
 | Resolve requirement authority | [document governance](.agents/.documents/.documentGovernance.md) | Approval comes from the relevant owner |
 | Discover applicable rules | [policy routing](.agents/.documents/.policyRouting.md) | Locator, not authorization |
 | Decide change and delivery gates | [testing and delivery](.agents/.workflow/testingAndDelivery.md) | Actual evidence and independent review |
@@ -72,3 +74,9 @@ Git writes (branch creation, commit, push, merge, force, deletion), code edits, 
 PR [#7](https://github.com/RyugaWork/spec2code/pull/7) currently has unresolved review findings: `CLOSE` loses task scope, VERIFY/HANDOFF policy operations are misrouted, source/Spec Kit changes are incompletely fingerprinted, and scope-free `status` may incorrectly report mismatch. These are **runtime defects**; updating AGENTS cannot fix them. Do not claim the five-stage guard is end-to-end validated or use its output as independent approval until corrected with regression tests. Windows TOCTOU/junction and legacy migration review also remain open.
 
 Agent-facing policy: be specific about what was **read**, **changed**, **tested**, **not tested**, and **blocked**. Handoff must never upgrade a missing gate to PASS.
+
+## 8. STOP and resumable handoff — PLAN-083
+
+A requester `STOP`/`pause`, or a safety/authority blocker, takes precedence over further task implementation. Immediately stop new mutations, preserve any in-flight uncertainty, and capture the exact last-known task/phase, source/ref, modified paths, approvals, test evidence, pending work and next safe action. Follow [STOP/handoff protocol](.agents/.workflow/stopAndHandoff.md) and the [STOP template](.source/references/stop-handoff-template.md). A safe explicitly authorized handoff write may be persisted under a host-reviewed path; otherwise provide the full useful handoff in chat marked `NOT_PERSISTED`. Never claim a file exists without verification.
+
+STOP is an **agent-level reporting outcome**, not a `workflow_guard.py` status or operation; do not substitute `invalidate`, `close`, `session_guard finish` or `merge` for STOP. Resume only on an explicit request after revalidating exact checkout/AGENTS, required policies, session state and any stale Spec Kit/source/test evidence. See the [system RTM](.agents/.traceMatrix.md), `S2C-REQ-037` and `S2C-NFR-007`; runtime pause/resume remains specified, not implemented.

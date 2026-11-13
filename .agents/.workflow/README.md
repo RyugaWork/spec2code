@@ -37,3 +37,10 @@ Workflow Guard evaluates requirements and records user-authorized transitions. I
 - [Test/delivery gates](testingAndDelivery.md) and [Git rules](../.git.workflow.md): explicit evidence and external acceptance before merge/release.
 
 These agent documents guide ChatGPT/Codex interactions and do not implement missing Workflow Guard controls. PR #7 retains three P0 and one P1 review findings; active Windows TOCTOU, OneDrive and legacy-migration risks are unchanged.
+
+## PLAN-083 interruptible work protocol
+
+- [Workflow specification](workflowSpecification.md) describes the five ordinary phases plus an **agent-level STOP edge** usable at any phase, the minimum evidence for each phase and the gate for re-entry.
+- [STOP/handoff protocol](stopAndHandoff.md) requires an immediate freeze of new mutations, bounded observed status, factual handoff with `PERSISTED` or `NOT_PERSISTED`, and explicit RESUME revalidation.
+- The [STOP handoff template](../../.source/references/stop-handoff-template.md) is separate from successful session finish/merge evidence. **Do not call `finish`, `merge`, Workflow Guard `invalidate` or `close` merely to stop.**
+- The [system RTM](../.traceMatrix.md) tracks F37/`S2C-REQ-037` and NFR-007 as specified but without native runtime STOP tests. Current `.source/.config/workflow.json` has **no PAUSED status**.

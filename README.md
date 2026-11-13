@@ -54,3 +54,9 @@ The real MCP server, automatic code execution, unattended Git mutations, Windows
 The [development AGENTS contract](AGENTS.md) routes ChatGPT/Codex work by **authority, task, phase and allowed action**. The [logical agent roles](.agents/.workflow/agentRoles.md) and [agent runbook](.agents/.workflow/agentRunbook.md) cover requirement analysis, policy review, implementation, verification and exact-session handoff without pretending there is an autonomous multi-agent executor. When installed in another project, this repository's AGENTS is **not** copied as that project's root policy; review the [optional host AGENTS guidance](docs/AGENTS_PATCH.md) instead.
 
 Official Spec Kit commands run through the agent's installed integration. Its `.specify/` and `specs/` are never owned by the S2C bridge. The current v0.8 Workflow Guard has unresolved PR #7 correctness blockers; PLAN-081 instructions do not fix them. No stable release or security clearance is implied by the documentation.
+
+## Concrete system RTM and interruptible workflow (PLAN-082/083)
+
+See the [System Requirements Traceability Matrix](.agents/.traceMatrix.md) for F01–F37 requirement/AC, source, test and gap mapping. The [Workflow Specification](.agents/.workflow/workflowSpecification.md) and [STOP & Handoff Protocol](.agents/.workflow/stopAndHandoff.md) require a controlled STOP at any phase, an observed state snapshot, a truthful persisted-or-chat handoff and a checked RESUME. The [STOP Handoff Template](.source/references/stop-handoff-template.md) is bundled with the portable Skill.
+
+This is **interactive agent guidance**; a machine `pause/resume` command is not implemented in Workflow Guard. STOP never silently closes a session, merges a handoff or authorizes Git/release actions. See [PR #8](https://github.com/RyugaWork/spec2code/pull/8) for candidate documentation and [PR #7](https://github.com/RyugaWork/spec2code/pull/7) for unresolved runtime issues.

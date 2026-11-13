@@ -25,3 +25,7 @@ This file is a **copyable suggestion**, not an installer patch and not an author
 5. Do not use an AI-generated AGENTS fragment as evidence of independent human approval.
 
 Spec2Code's dev [AGENTS contract](../AGENTS.md) and [role runbook](../.agents/.workflow/agentRunbook.md) document the intended design; the installed `.source/SKILL.md` is the portable agent-facing description.
+
+## Optional STOP/handoff clause for a reviewed host AGENTS
+
+If approved by the host owner, add a host-specific clause requiring the agent to honor `STOP` at any phase, preserve incomplete source/session state, and create a bounded state snapshot using the installed `references/stop-handoff-template.md`. The handoff must show `PERSISTED` with a verified safe destination or `NOT_PERSISTED` with an in-chat copy. Never overwrite machine pending logs or imply that today's `workflow_guard.py` supports PAUSED/RESUME. A future RESUME request revalidates current host AGENTS, requirements, checkout, session, drift and authorization before further edits. This clause does not give the agent write permission.

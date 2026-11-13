@@ -72,3 +72,9 @@ Next owner/action: <explicit decision needed, if any>
 ```
 
 Do not add raw secret values, fabricated approval identities, claimed test sessions or machine state from another checkout.
+
+## 7. STOP/PAUSE/HANDOFF is always available as an agent response
+
+Follow the [workflow specification](workflowSpecification.md) and [STOP/handoff protocol](stopAndHandoff.md). If the user stops a task, **do not finish the planned task first**: cease new changes, report in-flight uncertainty, inspect only safe observed state, and prepare the [STOP handoff template](../../.source/references/stop-handoff-template.md). An authorized, safe file write should use a new reviewed path (never overwrite the machine handoff ledger); otherwise provide the handoff in this conversation explicitly labeled `NOT_PERSISTED`. Preserve the actual ACTIVE/UNKNOWN session state, and never imply that `workflow_guard.py` supports a PAUSED enum or resume transition. Subsequent RESUME needs the user's instruction, fresh repository/path/policy/source validation, attribution reconciliation and refreshed test evidence.
+
+The [RTM](../.traceMatrix.md) maps this agent-level behavior to F37, `S2C-REQ-037` and `S2C-NFR-007`; these are **not** runtime PASS until validated with code and integration tests.

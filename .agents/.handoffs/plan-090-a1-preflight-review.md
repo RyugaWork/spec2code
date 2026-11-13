@@ -94,7 +94,7 @@ Priority follows the existing L×I risk policy: P0 critical/mandatory blocker; P
 
 ### REV-090-09 — P2 / Escaped inline-code markup affects SRS readability/parsing (L03, L05)
 
-**Source:** `.agents/.spec.md:266-375`, e.g. literals `\`UNKNOWN/BLOCKED\`` and `\`.specify/\``; static scan counted **160** backslash-backtick occurrences.
+**Source:** `.agents/.spec.md:266-375`. For example, source text contains a backslash before each backtick surrounding `UNKNOWN/BLOCKED` and `.specify/`; the static source scan counted **160 backslash-backtick occurrences**.
 **Observed:** Markdown backslash escaping causes backticks to be displayed literally instead of using normal inline-code markup. Intended identifiers and paths are harder to scan and may confuse downstream Markdown parsers or automated style checks. The content itself is not invalidated.
 **Fix:** Remove only unintended backslash escapes around inline code in SRS-15..17, preserving actual code identifiers and any intentional escapes; render-check the resulting diff.
 **Trace/risk:** BR-014; document preflight quality. **Status: REVISE, high confidence.**

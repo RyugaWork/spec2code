@@ -47,3 +47,17 @@
 ## 4. Source sufficiency and present gate
 
 P3 has sufficient **existing internal evidence to draft planning/design documents**; it has **not** established upstream-current integration facts, host-specific authority or signed SRS acceptance. Status: `READY_FOR_DESIGN_DRAFT` with `RQ-084-02,03,05,06,07,08` open. This is not `APPROVED_FOR_IMPLEMENTATION`.
+
+## 5. PLAN-086 official technology-source registry (dated examples and per-host research)
+
+| SRC ID | Official source | Observed fact / scope | Status |
+| --- | --- | --- | --- |
+| `SRC-017` | [Microsoft .NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core) | At 2026-11-13 .NET 10 LTS actively supported; .NET 11 STS released 2026-11-10 and actively supported, but too fresh under S2C's **default preference**; .NET 8 EOL 2026-11-10 | OFFICIAL REVIEWED; recheck for host selection |
+| `SRC-018` | [Python versions status](https://devguide.python.org/versions/) | Per-release bugfix/security/EOL lifecycle; confirm specific target interpreter and package compatibility, no universal hardcoded default | OFFICIAL REVIEWED; no host chosen |
+| `SRC-019` | [Microsoft PowerShell support lifecycle](https://learn.microsoft.com/en-us/powershell/scripting/install/powershell-support-lifecycle) | PowerShell 7.6 LTS supported on 2026-11-13; edition and target OS/.NET and modules matter; Windows PowerShell 5.1 is a distinct compatibility choice | OFFICIAL REVIEWED; no host chosen |
+| `SRC-020` | [PostgreSQL versioning policy](https://www.postgresql.org/support/versioning/) | Major versions have five-year support; major upgrade differs from minor security patch; validate specific database engine and migration | OFFICIAL REVIEWED; no host selected |
+| `SRC-021` | [MySQL LTS and Innovation releases](https://dev.mysql.com/doc/refman/en/mysql-releases.html) | MySQL distinguishes release tracks; host must identify actual engine/release and storage/driver compatibility | OFFICIAL REFERENCE; no host selected |
+| `SRC-022` | [SQLite release history](https://sqlite.org/changes.html) | Versioned SQLite releases, security fixes and app-bundled distribution differ from server DBMS support | OFFICIAL REFERENCE; no host selected |
+| `SRC-023` | [Cross-stack policy](technologyVersionPolicy.md), [technology assessment](technologyAssessmentTemplate.md), [override record](technologyOverrideTemplate.md) | Applies to S2C Python/tooling and integrated host Python/PowerShell/SQL/.NET decisions; explicit user preference overrides default maturity but not security and permissions | DESIGN PROPOSED; A.1 NOT RUN |
+
+Research questions: `RQ-086-01` current vendor support and patch channel for **actual chosen product/version**; `RQ-086-02` credible adoption/tooling and structure evidence; `RQ-086-03` existing EOL/preview/security exception; `RQ-086-04` did user explicitly select a nondefault stack/layout; `RQ-086-05` does permission cover S2C source, host repo, or both? Record every answer with `TECH-ID` and `OVR-ID` when applicable, never guess support or approval.

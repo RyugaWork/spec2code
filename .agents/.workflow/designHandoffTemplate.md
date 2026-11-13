@@ -45,3 +45,16 @@ A handoff author must not claim a durable file exists unless the exact location 
 - Implementation authorization: `NOT_AUTHORIZED` unless explicitly granted for a reviewed revision.
 
 A handoff at P9 is **input** to [A.1](validationSpecification.md), not automatic design approval. Keep separate [validation report](validationReportTemplate.md) and never promote `READY_FOR_REVIEW` to `APPROVED_FOR_IMPLEMENTATION` without the owner's actual decision.
+
+## Technology and requester override handoff (PLAN-086)
+
+- Applicable target: `S2C_SOURCE` / `HOST_REPOSITORY` / `BOTH` (actual repository/ref):
+- Python interpreter/libs, PowerShell edition/modules, SQL DBMS/dialect/driver, .NET/other versions as affected:
+- Technology assessment `TECH-ID`, official vendor support checked date and adoption/compatibility evidence:
+- Conservative **supported mature default** and mainstream project layout:
+- Explicit user-selected alternative or structure override `OVR-ID` / [template](../.documents/technologyOverrideTemplate.md), or NONE:
+- Override classification: supported newly GA / preview / EOL / experimental / other, with real host security and permission decision:
+- Risk R67–R73, mitigation, rollback/migration, planned tests, source/RTM changes:
+- A.1/B.1 **NOT_RUN** or exact observed report and reviewer; user approval of a version **not** automatic write/merge approval:
+
+See [cross-stack policy](../.documents/technologyVersionPolicy.md) and [assessment](../.documents/technologyAssessmentTemplate.md). A handoff is planning evidence; it cannot self-approve code changes, new tools or a database migration.

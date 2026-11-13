@@ -35,3 +35,9 @@ Only official source/installer may create upstream templates, scripts and coding
 ## Compliance cases
 
 See [SKI-TC catalogue](../checklists/integrationAcceptance.md), especially cases 001-N, 005-N, 007-N, 008-N, 009-N, 010-N and 012-N; every actual native test is currently NOT_RUN.
+
+## PLAN-095 — Native mutation caveat
+
+The [native S2C execution safety gate](../../../.agents/.workflow/specKitNativeExecutionGate.md) distinguishes document operations, official CLI installation, source-code implementation, host QA and owner approvals. The current T001..T015 register is mixed; it must not be submitted wholesale to `$speckit-implement`. A continuation answer of “yes” to the upstream incomplete-checklist prompt never grants A.1, B permission, host Path Guard or B.1.
+
+The gate exists **as Markdown guidance only**, not as a deployed runtime hook. Fail closed when a selected coding agent cannot apply host/S2C policies at the point of write, when a source/revision drifts or when `converge` proposes a task outside explicit authorization.

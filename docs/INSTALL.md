@@ -63,3 +63,7 @@ See [Configuration](CONFIGURATION.md). The bundled `.config/*.json` belongs **in
 ## v0.7.0 target output migration (review required)
 
 A fresh checkout receives generated architecture documents under `s2c/` and exact-session handoffs under `.agents/.handoffs/`. Existing `.handoffs/` evidence and root-level generated architecture docs **are not automatically migrated or deleted**. Finish/merge ACTIVE older sessions using their matching version, preserve exact bytes and hashes, and approve a manual migration plan before starting the new version. If the host already owns files in `s2c/`, the runtime refuses to overwrite them. The application's own source directories do not move.
+
+## PLAN-080 installation additions
+
+Copy the entire new skill bundle (SKILL.md, .config/, scripts/, references/ and integrations/ where applicable). Do not overlay active v0.7 sessions or replace just one script. Preserve host AGENTS, .specify/, specs/, .agents/state and existing handoffs; perform backup and a reviewed migration if version state changes. Missing new configurations fail closed.

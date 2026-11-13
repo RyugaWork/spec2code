@@ -21,6 +21,7 @@ import scan_infrastructure as infra
 import speckit_bridge
 import path_guard as guard
 import config_loader
+import policy_resolver
 
 ROUTING_CONFIG = config_loader.load('routing')
 POLICY = Path(ROUTING_CONFIG['paths']['policy'])
@@ -278,6 +279,29 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
     }
     # Spec Kit artifacts are referenced by path/hash only; no duplicated spec body.
     pack['spec_kit'] = speckit_bridge.discover(root, speckit_stage)
+    governance_operation = ('implement' if speckit_stage == 'implement' else
+                            'verify' if speckit_stage == 'converge' else
+                            'plan' if speckit_stage in ('plan', 'tasks', 'analyze') else 'read')
+    policy_result = policy_resolver.resolve(policy_resolver.PolicyRequest(
+        root, task_id, task, tuple(paths), governance_operation))
+    mandatory = sorted({item['path'] for item in policy_result['root_agents']} |
+                       {doc['path'] for doc in policy_result['selected_documents'] if doc['required']})
+    pack['governance'] = {
+        'schema_version': 1,
+        'status': policy_result['policy_status'],
+        'required_policy_paths': mandatory,
+        'candidate_policy_paths': sorted({doc['path'] for doc in policy_result['candidate_documents']}),
+        'blocking_reasons': policy_result['blocking_reasons'],
+        'review_reasons': policy_result['review_reasons'],
+    }
+    # A policy blocking implementation cannot publish a deceptively READY pack.
+    # Review-needed routing remains available for inspection but cannot be
+    # mistaken for a fully cleared implementation gate.
+    if policy_result['policy_status'] == 'BLOCKED':
+        raise RuntimeError('GOVERNANCE_BLOCKED: required policy missing or conflicting')
+    if (policy_result['policy_status'] == 'NEEDS_REVIEW' and
+            pack['routing_status'] in ('READY', 'TRUNCATED')):
+        pack['routing_status'] = 'NEEDS_REVIEW'
     # Do not include task free text in machine file; it could contain PII/secrets.
     infra.atomic_text(root / PACK, json.dumps(pack, ensure_ascii=False, indent=2) + '\n', root=root)
     return pack
@@ -302,7 +326,8 @@ def main() -> int:
         result = route(root,args.task_id,args.task,args.paths,args.function,args.mode,args.token_limit,args.speckit_stage)
         print(f"CONTEXT_ROUTE | {result['task_id']} | session={result['session_id']} | {result['effective_mode'].upper()} | {result['routing_status']} | source={len(result['source_paths'])} | layers={','.join(result['direct_layers']) or '-'} | target={result['token_budget_target']} tokens")
         print('CONTEXT_PACK | .agents/state/context-pack.json | ' + '; '.join(result['reasons'][:2]))
-        if result['routing_status'] == 'NEEDS_EXPLICIT_PATH':
+        if (result['routing_status'] in ('NEEDS_EXPLICIT_PATH', 'NEEDS_REVIEW')
+                or result['governance']['status'] == 'NEEDS_REVIEW'):
             return 3
         return 0
     except (OSError, RuntimeError, KeyError, ValueError) as exc:

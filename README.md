@@ -40,3 +40,11 @@ The Spec Kit `implement` stage requires active feature `spec.md`, `plan.md`, `ta
 ## Security and release status
 
 No unconditional overwrite or deletion of host project files is authorized by this layout change. POSIX anchored file operations offer additional containment; Windows TOCTOU, case-folding, path alias, CRLF and generated-document collisions need additional verification. See [risk register](.agents/.risk.md) and [Path Guard](docs/PATH_GUARD.md).
+
+## v0.8.0 candidate — Core + Governance Integration
+
+Development is occurring on `feat/governance-integration-v0.8.0`; the v0.7.0 layout/Windows CI PR #6 was integrated into `spec2code/InitialVersion_v0`. This is **not a stable release**.
+
+The candidate adds task-scoped, read-only host policy discovery, Policy Resolver references in Context Router, and a non-autonomous five-stage Workflow Guard with event integrity checks. The task description and affected paths must be supplied consistently for implementation gates. Evidence references and hash-chained workflow events never constitute independent authorization. Consult `.agents/.plans.md`, `.agents/.risk.md`, and `.agents/.checklist.md` for outstanding acceptance, security and migration risks.
+
+The real MCP server, automatic code execution, unattended Git mutations, Windows filesystem-race protection, and automatic legacy-data migration are **not** provided by this candidate.

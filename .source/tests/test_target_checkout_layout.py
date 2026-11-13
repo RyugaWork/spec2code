@@ -1,5 +1,6 @@
 """Target layout regression and legacy migration safety for v0.7.0."""
 import json
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -83,6 +84,61 @@ class TargetCheckoutLayoutTests(unittest.TestCase):
         self.assertIn('LAYOUT_MIGRATION_REQUIRED',out.stderr)
         self.assertEqual(json.loads(legacy.read_text())['generated_paths'], ['API/.summerize.md'])
         self.assertFalse((self.root/'s2c/.summerize.md').exists())
+
+    def test_installed_bundle_style_governance_workflow_smoke(self):
+        """Exercise actual CLI entrypoints on a disposable host checkout."""
+        self.assertEqual(self.run_cli('start').returncode, 0)
+        task = 'Update example function'
+        route = subprocess.run([
+            sys.executable, str(SCRIPTS / 'context_router.py'), '--root',
+            str(self.root), '--task-id', 'T001', '--task', task,
+            '--paths', 'src/example.py', '--speckit-stage', 'status'],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(route.returncode, 0, route.stderr)
+        pack = json.loads((self.root / '.agents/state/context-pack.json').read_text())
+        self.assertIn('governance', pack)
+        self.assertIn('status', pack['governance'])
+        common = ['--root', str(self.root), 'begin', '--task-id', 'T001',
+                  '--task', task, '--paths', 'src/example.py']
+        begin = subprocess.run([sys.executable, str(SCRIPTS / 'workflow_guard.py'), *common],
+                               capture_output=True, text=True, timeout=60)
+        self.assertEqual(begin.returncode, 0, begin.stderr)
+        initial = json.loads(begin.stdout)
+        self.assertFalse(initial['release_authorized'])
+        status = subprocess.run([
+            sys.executable, str(SCRIPTS / 'workflow_guard.py'), '--root',
+            str(self.root), 'evaluate', '--task-id', 'T001',
+            '--phase', 'DISCOVER', '--task', task, '--paths', 'src/example.py'],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(status.returncode, 0, status.stderr)
+        report = json.loads(status.stdout)
+        self.assertEqual(report['gate_status'], 'READY')
+        self.assertFalse(report['can_grant_permissions'])
+
+    def test_copied_install_bundle_works_without_source_repo(self):
+        """Install the complete bundle into a clean disposable target checkout."""
+        bundle = self.root / '.agents/skills/spec-to-code'
+        shutil.copytree(SCRIPTS.parent, bundle,
+                        ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+        self.assertTrue((bundle / '.config/governance.json').is_file())
+        self.assertTrue((bundle / '.config/workflow.json').is_file())
+        def installed(script, *args):
+            return subprocess.run(
+                [sys.executable, str(bundle / 'scripts' / script), '--root',
+                 str(self.root), *args], capture_output=True, text=True, timeout=60)
+        started = installed('session_guard.py', 'start')
+        self.assertEqual(started.returncode, 0, started.stderr)
+        policy = installed('policy_resolver.py', '--task-id', 'T001',
+                           '--task', 'Update example function',
+                           '--paths', 'src/example.py', '--operation', 'plan',
+                           '--format', 'json')
+        self.assertEqual(policy.returncode, 0, policy.stderr)
+        self.assertEqual(json.loads(policy.stdout)['policy_status'], 'READY')
+        workflow = installed('workflow_guard.py', 'begin',
+                             '--task-id', 'T001', '--task', 'Update example function',
+                             '--paths', 'src/example.py')
+        self.assertEqual(workflow.returncode, 0, workflow.stderr)
+        self.assertFalse(json.loads(workflow.stdout)['release_authorized'])
 
 
 if __name__ == '__main__':

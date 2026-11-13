@@ -54,3 +54,7 @@ The authoritative runtime JSON files are in `.source/.config/`. The separate `.a
 ## Target output contracts
 
 The installed skill's `.config/architecture.json` declares `output_root: "s2c"`; `.config/handoff.json` owns `.agents/.handoffs/`. The strict loader refuses redirection outside these reserved outputs. `s2c/` is a generated document namespace, while `.agents/state/` holds private machine state. The separate developer `.agents/.config/` folder is never loaded as runtime policy.
+
+## PLAN-080 runtime configuration
+
+Two required v0.8.0 sections are bundled adjacent to installed scripts: `governance.json` (read-only host policy routing) and `workflow.json` (five-phase non-autonomous state protocol). The strict loader validates them and rejects missing/mixed bundles. Neither configuration may grant approvals, change repository root, invoke shell, write host AGENTS, enable a GitHub action or add MCP permissions.

@@ -28,3 +28,11 @@ This repository develops an independent universal Spec-to-Code agent skill. Do n
 3. Verify Linux and Windows separately; report skipped security tests explicitly. Keep old Windows failures OPEN until reproduced and fixed.
 4. Before upgrading installed skill, finish active sessions with their original version; never erase state or silently migrate.
 5. `.source/.config/` stores tunable policy data only. Invariants and permissions remain enforced by code/host.
+
+## PLAN-080 universal governance and five-phase workflow
+
+S2C applies domain-scoped authority. Host AGENTS and approved requirements control host behavior; official Spec Kit controls its own artifacts; test evidence proves observations but not authorization. An installed skill and its handoffs never approve business rules or override host policy.
+
+For this development repository, use `.agents/.documents/.documentGovernance.md`, `.agents/.documents/.policyRouting.md`, `.agents/.git.workflow.md` and `.agents/.workflow/testingAndDelivery.md` when relevant.
+
+DISCOVER → SPECIFY_PLAN → IMPLEMENT → VERIFY → HANDOFF_REVIEW are controlled stages. The policy resolver only locates applicable documents; the workflow guard only checks and records allowed transitions. Neither tool performs Git, code edits, test execution, Spec Kit stage execution, or self-approval. Existing Path Guard, session identity and SHA-256 handoff rules are unchanged.

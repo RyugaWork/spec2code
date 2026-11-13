@@ -1,6 +1,6 @@
 # Spec2Code — Planning & Specification Workflow (PLAN-084)
 
-> **Current baseline: PLAN-088 / unified BRD v1.3 (PLAN-087 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](../.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
+> **Current baseline: PLAN-089 / unified BRD and SRS v1.4 (PLAN-087/088 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](../.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
 
 
 > **Current project phase: DESIGN_IN_PROGRESS.** This nine-stage **design lifecycle** is distinct from the existing five-phase **runtime-assisted implementation workflow** in [workflowSpecification.md](workflowSpecification.md). This document instructs a human-directed ChatGPT/Codex planning process. It does not add runtime transitions, run tests, modify code or grant permission to merge a PR.

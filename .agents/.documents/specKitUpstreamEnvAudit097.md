@@ -31,15 +31,18 @@ set -euo pipefail
 unset SPECIFY_FEATURE_DIRECTORY SPECIFY_FEATURE
 export SPECIFY_FEATURE_NO_PERSIST=1
 test -f .specify/feature.json
-sha256sum .specify/feature.json > /tmp/s2c-feature-before.sha256
-# Confirm a contained, real (non-symlinked) specs/<id> feature using S2C preflight.
-# Upstream checks are NOT a substitute for S2C's guard.
+POINTER_SHA_BEFORE="$(sha256sum .specify/feature.json | cut -d' ' -f1)"
+# Invoke the REAL S2C bridge/Path Guard in the verified disposable checkout.
+python .source/scripts/speckit_bridge.py --root . --stage analyze
+# Enforce the owner-approved specs/<feature-id> namespace policy separately:
+# the current bridge checks containment, not strict feature namespace (SK96-01).
 python .specify/scripts/python/check_prerequisites.py --json --require-spec --require-tasks --include-tasks
-sha256sum -c /tmp/s2c-feature-before.sha256
+POINTER_SHA_AFTER="$(sha256sum .specify/feature.json | cut -d' ' -f1)"
+test "$POINTER_SHA_BEFORE" = "$POINTER_SHA_AFTER"
 git status --short
 ```
 
-`/tmp/s2c-feature-before.sha256` is a temporary operator-owned file; use a unique, non-colliding location and remove only with ownership confirmation. The `sha256sum -c` check detects pointer change, **not** writes to other paths. For a stronger scoped check, compare the entire before/after Git status, generated artifacts and external sentinel hashes.
+The checksum is held in a shell variable; this preflight does not write a new hash file outside the checkout. The `sha256sum -c` check detects pointer change, **not** writes to other paths. For a stronger scoped check, compare the entire before/after Git status, generated artifacts and external sentinel hashes.
 
 ### Windows PowerShell
 
@@ -49,7 +52,10 @@ Remove-Item Env:SPECIFY_FEATURE_DIRECTORY -ErrorAction SilentlyContinue
 Remove-Item Env:SPECIFY_FEATURE -ErrorAction SilentlyContinue
 $env:SPECIFY_FEATURE_NO_PERSIST = '1'
 $before = (Get-FileHash .specify/feature.json -Algorithm SHA256).Hash
-# Independently validate S2C root/feature containment and junctions.
+# Invoke S2C's REAL bridge and existing Path Guard before any upstream script.
+python .source/scripts/speckit_bridge.py --root . --stage analyze
+if ($LASTEXITCODE -ne 0) { throw 'S2C guarded preflight failed' }
+# Check strict specs/<id> namespace policy separately (SK96-01).
 python .specify/scripts/python/check_prerequisites.py --json --require-spec --require-tasks --include-tasks
 if ($LASTEXITCODE -ne 0) { throw 'Native prerequisite check failed' }
 $after = (Get-FileHash .specify/feature.json -Algorithm SHA256).Hash
@@ -79,3 +85,5 @@ These five tests are **additional** to original 24 feature acceptance cases and 
 - `DEC-SK97-04`: independent A.1, separate B-authorized host enforcement/negative tests and later B.1/release decision remain distinct.
 
 **STOP:** The current runner could not resolve GitHub DNS and does not have `specify-cli`, so no upstream CLI/official script execution, local S2C bridge run or new native-negative PASS is claimed. See [native pilot](specKitNativePilot.md), [execution gate](../.workflow/specKitNativeExecutionGate.md), [feature test catalogue](../../specs/001-s2c-speckit-integration/checklists/integrationAcceptance.md).
+
+**Precision note:** Executing `speckit_bridge.py --stage analyze` checks root containment, pointer paths and required artifact presence with S2C's real bundled guard; it does **not** enforce the proposed strict `specs/<feature-id>` namespace (SK96-01), prove semantic correctness or authorize A.1/B. Do not run either example until a real authorized checkout, executable upstream scripts and owner scope exist. These examples were **not executed** in PLAN-097.

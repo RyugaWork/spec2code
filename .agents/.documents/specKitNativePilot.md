@@ -116,3 +116,10 @@ These are **documented commands, NOT executed in this turn**. They do not instal
 DEC-SK3-01 owner chooses reviewed release (including security-hardening differences); DEC-SK3-02 chooses real Codex/Codespaces/Windows host; DEC-SK3-03 explicitly permits force merge **inside a throwaway checkout only**; DEC-SK3-04 approves which generated files can be carried into current development branch; DEC-SK3-05 confirms reviewer/owner A.1 and B scope.
 
 STOP state: `SK3_PILOT_BLOCKED_BY_TOOL_NETWORK`. Preserve original git branch, original `.specify/` and all currently unfinished task IDs. On RESUME recheck the exact current SHA, feature pointer, Constitution, applicable AGENTS and latest Google BRD revision. Do not use a fake CLI substitute, fabricated native test output or silent promotion to A1_PASS.
+
+
+## 5. Actual disposable Git-worktree mechanics smoke test (NOT the native CLI)
+
+A local **synthetic** miniature Git repository was initialized and committed with six representative S2C files: root AGENTS, feature.json, draft Constitution and feature spec/plan/tasks. Git then created one detached worktree at that exact SHA; SHA-256 hashes for all six files matched between original and disposable worktree, both worktrees remained clean, and the branch count stayed **one**. The synthetic temporary directory was automatically disposed when the test completed.
+
+**Observed:** Git checkout isolation mechanism works in this Linux tool environment for ordinary files. **Not observed:** actual S2C checkout, Spec Kit CLI or official scripts, remote network, any Windows/junction/OneDrive attack case, user-host compatibility, A.1/B.1 or authorized code changes. Therefore `SK3-01` remains `NOT_RUN` for the real S2C native pilot. This smoke test cannot be promoted into a native `specify init` PASS.

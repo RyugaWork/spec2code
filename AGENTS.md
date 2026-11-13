@@ -1,6 +1,6 @@
 # AGENTS.md — Spec2Code agent operating contract (v0.8.0 candidate)
 
-> **CURRENT AUTHORIZED WORKSTREAM — PLAN-087: BRD and implementation-plan consolidation.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
+> **CURRENT WORKSTREAM — PLAN-089: staged SRS, interface and acceptance design toward independent A.1.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
 
 > Applies to **development of this repository**, not automatically to projects where the portable skill is installed. The v0.8.0 governance/workflow work is a **candidate**, not a stable release. Instructions guide a human-supervised ChatGPT/Codex agent; they do not themselves enforce filesystem containment or grant permissions.
 
@@ -118,3 +118,13 @@ Each worker must have bounded read scope and an independent evidence report with
 Review writes and logs require separately authorized ownership/collision-safe paths, source fingerprints, redaction and scope checks; Google Docs/connector reads use connector authorization rather than claiming OS Path Guard protection. On STOP, drift, partial failure or budget exhaustion capture honest PARTIAL/STALE/BLOCKED evidence and handoff; re-run affected checks on RESUME. Existing `.source/scripts` and runtime five-phase configuration remain unchanged by this documentation contract. See proposed acceptance AC-REV-01..09 in the [master plan](.agents/.spec.md#13-one-consolidated-dependency-plan-plan-088-maps-into-m0m5).
 
 **No self-approval:** documentation edits under PLAN-088 do not themselves complete A.1; implementation tasks T088-05..09 and host adoption remain separately gated. Keep root AGENTS (development policy) distinct from portable `.source/SKILL.md` and every host-owned AGENTS.
+
+## 14. PLAN-089 staged documentation-to-implementation handoff
+
+Use [master SRS-01..12 and interface contracts](.agents/.spec.md) as the sole requirement/design authority for this development workstream; [planned test catalogue](.agents/.workflow/testingAndDelivery.md) and [RTM](.agents/.traceMatrix.md) are distinct operational indexes, not duplicate BRDs.
+
+**Stages in order:** A0 inspect exact branch/source and permissions → A1 write all 12 substantive SRS sections and label unknown owner details → A2 define contracts, failure/STOP and compatibility rules → A3 map all 21 BRs to planned positive/adverse cases in the RTM → A4 reassess existing risks and prepare handoff → A.1 independent reviewer checks A1-VAL-01..09 with real evidence → only after separate user/owner-approved B scope may code modifications begin → B.1 real host acceptance and separate release decision.
+
+A document author may perform **self-consistency preflight** but must label it `PREFLIGHT_ONLY`, not `A1_PASS`. A named real reviewer may sign only exact source revisions; never invent independent agent votes, green tests, version compatibility, budget results, or approval. Where host facts are absent, keep `UNKNOWN/BLOCKED` while continuing independent safe documentation tasks.
+
+There are 42 **planned** acceptance scenario identifiers (`TC-S2C-BR001..021-P/N`), not 42 automated tests. Every test execution claim must have command/procedure, exact SHA, platform and original result; RTM evidence remains `NOT_RUN` until then. A PR merge is not an A.1 or B.1 signoff. The current worker planner, orchestration service, native STOP/RESUME and reviewed host output namespace are not implemented by documenting them.

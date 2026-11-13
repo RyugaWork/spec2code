@@ -42,3 +42,7 @@ After actual native installation, follow the *agent-specific official* Spec Kit 
 ## PLAN-095 — Controlled Web-mode GitHub edit evidence
 
 This bounded paragraph was added as a **document-only authorized GitHub connector operation**, to be re-fetched and checked against an exact commit in the [Web-mode execution evidence](../../.agents/.documents/specKitWebModeEvidence095.md). It is **not** evidence that upstream `specify`, any native Spec Kit coding-agent skill, a local Python guard, CI or independent A.1/B.1 verification executed.
+
+## PLAN-095 — Actual Web-mode cases and authority boundary
+
+Read [GitHub connector evidence](../../.agents/.documents/specKitWebModeEvidence095.md): four positive cases `SKI-TC-001-P`, `003-P`, `004-P` and `006-P` have narrow PASS results on source SHA `916ed6aa769e1fb9c25d9bd988277275613ae695`; 20 original cases remain NOT_RUN. Follow the [Web/GitHub staged workflow](../../.agents/.workflow/specKitWebWorkflow.md) for further document-only edits and the [native mutation safety gate](../../.agents/.workflow/specKitNativeExecutionGate.md) before *any* possible native `implement` or `converge`. These documents and static checks are **not deployed command interception or independent A.1/B.1 signoff**.

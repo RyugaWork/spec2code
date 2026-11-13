@@ -1,6 +1,6 @@
-# Spec2Code — Feature Design Catalogue (PLAN-084)
+# Spec2Code — Feature Design Catalogue (PLAN-084; integrated PLAN-098)
 
-> **Design inventory**, not a claim that proposed behavior is implemented. Source baseline: [feature register F01–F37](../.features.md), [draft specification](../.spec.md), [system RTM](../.traceMatrix.md) and [research register](researchRegister.md). A design option must be explicitly accepted by the responsible owner before it becomes a normative requirement or runtime task.
+> **Design inventory**, not a claim that proposed behavior is implemented. Source baseline: [feature register F01–F42](../.features.md), [draft specification](../.spec.md), [system RTM](../.traceMatrix.md) and [research register](researchRegister.md). A design option must be explicitly accepted by the responsible owner before it becomes a normative requirement or runtime task.
 
 ## 1. PLAN-098 — AS-IS/TO-BE integration of existing S2C and F43–F64
 

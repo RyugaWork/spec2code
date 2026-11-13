@@ -1,6 +1,6 @@
 # Spec2Code v0.7.0
 
-> **Current baseline: PLAN-088 / unified BRD v1.3 (PLAN-087 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](.agents/.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
+> **Current baseline: PLAN-089 / unified BRD and SRS v1.4 (PLAN-087/088 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](.agents/.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
 
 
 Infrastructure-aware, universal Spec-to-Code agent skill with optional read-only upstream GitHub Spec Kit bridge.
@@ -84,3 +84,9 @@ For **both Spec2Code's own source/toolchain and any integrated repository**, Age
 The single canonical development BRD, architecture, functional integration model and dependency-based M0–M5 implementation plan is [`.agents/.spec.md`](.agents/.spec.md). It currently covers BR-001..021, including **proposed** weighted multi-agent review, with linked [RTM](.agents/.traceMatrix.md), [risk matrix](.agents/.riskMatrix.md), [features](.agents/.features.md), [task ledger](.agents/.plans.md) and [agent contract](AGENTS.md). [Google BRD](https://docs.google.com/document/d/1M3_2tNUxOXci83pcpPCzBkxwvRvixeT7FYeGyIsFOa4) is the stakeholder-facing mirror; reconcile revisions and BR IDs before treating a new draft as approved.
 
 The S2C portable skill source is in `.source/`; governance records in `.agents/`; documentation and installation guidance in `docs/`. This repository's default `main` may not contain the development tree until an explicitly reviewed integration. Current architecture/runtime and proposed review automation must not be confused: the five-phase `workflow_guard.py`, Path Guard and session tools exist as candidate development code; multi-agent review orchestration and native STOP/RESUME do **not**. A.1/B.1 and actual implementation/merge/release require distinct approvals.
+
+## PLAN-089 — Staged documentation completion toward A.1
+
+The canonical [master specification](.agents/.spec.md) now contains 12 substantive SRS chapters (Sections 15), proposed cross-module contract definitions (Section 16), and phased acceptance design (Section 17). The [test catalogue](.agents/.workflow/testingAndDelivery.md) lists two **planned** cases per BR-001..021 (42 total; no execution claimed), and the [RTM](.agents/.traceMatrix.md) preserves their reverse mappings. The [SRS review inventory](.agents/.documents/systemSpecificationPlan.md) records outstanding decision/owner/evidence gaps. Google BRD Draft v1.4 mirrors the stakeholder-level specification and plan.
+
+This work is documentation and design only: `A1_NOT_RUN`, `B_NOT_AUTHORIZED`, `B1_NOT_RUN`. No actual worker orchestration, runtime STOP/RESUME, merged PR, unit-test PASS or release decision follows merely from writing these chapters. The next required step is independent A.1 and explicit scope approval; code safety M1 must precede new worker implementation M3.

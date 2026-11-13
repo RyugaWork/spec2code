@@ -111,3 +111,12 @@ Requester / ChatGPT Web / native Codex or Copilot
 **Decisions still required:** accountable business/security reviewer for A.1, accepted CLI stable release and agent integration (Codex/Copilot), supported host environment, exact integration branch target and approval for any code/host install. Without decisions, documentation bootstrap can be reviewed but no implementation/release is authorized.
 
 **Rollback:** revert only added documentation files in this feature on the authorized branch; do not delete unknown `.specify`/host state. Any later official CLI initialization requires a baseline backup and reviewed diff before applying to development or host.
+
+
+## PLAN-096 — Bridge specification/source drift (future B-authorized remediation)
+
+[Source audit](../../.agents/.documents/specKitBridgeSourceAudit096.md) identifies four **static contract discrepancies**: in-root but non-`specs/` feature selection, duplicate JSON feature key acceptance, empty mandatory artifact presence, and duplicate task-ID counting. These are not runtime-reproduced defects and must not be marked as tested.
+
+**First choose behavior/compatibility:** Strict `specs/<id>` is specified in `SKI-FR-001`, but the existing bridge permits any contained relative directory. Resolve whether host overrides should be allowlisted before changing Python. Establish the distinction between structural file presence and a richer quality gate for emptiness and ID semantics.
+
+**B task plan (currently NOT_AUTHORIZED):** (i) owner approves exact namespace/JSON/content/ID contracts, (ii) independent A.1 binds source and policies, (iii) separately approve guarded `.source/scripts/speckit_bridge.py` or selected config changes, (iv) add `SK96-NEG-01..04` tests without mocks replacing security modules, (v) run existing seven bridge tests plus new negatives and platform-specific adversarial cases with real logs, (vi) B.1 and release separately. Preserve read-only API and no executable Spec Kit trigger. See [negative catalogue](checklists/integrationAcceptance.md).

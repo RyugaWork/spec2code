@@ -50,3 +50,17 @@ For each actual run capture `caseId`, `SKI-FR`, exact Git SHA, approved feature 
 - `SKI-TC-006-P` — 12 distinct requirement rows map to 12 exact RTM rows and 24 expected unique P/N acceptance IDs, none missing.
 
 **Totals:** 4/24 `PASS` in strictly scoped Web/Static GitHub operation; 20/24 `DESIGNED/NOT_RUN`. All host-negative cases, S2C Python guard tests, official native CLI/skills, independent A.1, explicit B, B.1 and release remain `NOT_RUN`/`NOT_AUTHORIZED`. `SK95-GATE-01..08` are **additional design-only** native approval checks, all `NOT_RUN`. Historical PASS is pinned to the tested SHA and not silently promoted after source/policy drift.
+
+
+## PLAN-096 — Four additional bridge negative partitions (all NOT_RUN)
+
+These four proposed cases are **additional to**, not substitutes for, the original 24 `SKI-TC-xxx-P/N` feature cases (4 narrow Web/static PASS, 20 NOT_RUN at the PLAN-095 source snapshot). They are based on [source-line audit SK96-01..04](../../../.agents/.documents/specKitBridgeSourceAudit096.md); **no real S2C bridge, guard dependency or native CLI test was executed**.
+
+| ID | Feature requirement | Negative fixture | Expected decision / output | Status |
+| --- | --- | --- | --- | --- |
+| `SK96-NEG-01` | `SKI-FR-001` | Existing in-root non-`specs/` feature directory and env override | Owner-approved feature namespace policy enforced; reject if strict; preserve scope | NOT_RUN; POLICY_DECISION_PENDING |
+| `SK96-NEG-02` | `SKI-FR-001`, `SKI-FR-008` | Duplicate `feature_directory` JSON keys | Ambiguous pointer rejected before last-key-wins selection | NOT_RUN |
+| `SK96-NEG-03` | `SKI-FR-003`, `SKI-FR-007` | Zero-byte/whitespace mandatory artifacts | Structural/quality gate blocks or explicitly identifies incomplete artifact | NOT_RUN; SEMANTIC_RULE_PENDING |
+| `SK96-NEG-04` | `SKI-FR-006`, `SKI-FR-007` | Duplicate `T001` across story labels | Duplicate reported, never silently counted as two unique tasks | NOT_RUN |
+
+**Supporting smoke only:** Python stdlib demonstrates last JSON duplicate key wins, a zero-byte file is still `is_file()`, and regex matches duplicate task IDs. This did **not** invoke S2C's real bridge or establish a negative-test PASS. All original 4/24 Web/static PASS remain source-pinned; no native security acceptance, A.1, B or B.1 approval.

@@ -32,3 +32,9 @@ Spec Kit documentation: https://github.github.com/spec-kit/how-to/existing-proje
 ## SK-03 native pilot preparation (not an installation)
 
 An upstream-versioned [disposable CLI pilot runbook](../.agents/.documents/specKitNativePilot.md) now details a candidate `v1.2.6` and actual prerequisites, isolated Git worktree commands for Codespaces/Windows, generated-file collision review and required evidence checks `SK3-01..08`. This was a **research/static-source and failed-offline-tool attempt**, not an executed native `specify init`. `v1.4.0` contains newer security-hardening changes, so a user/owner must decide the version before any real host adoption. The initial Web/GitHub Markdown workflow remains functional without CLI.
+
+## PLAN-094 — Complete feature design (static review, not native execution)
+
+The active feature now also contains [research](../specs/001-s2c-speckit-integration/research.md), a [logical data model](../specs/001-s2c-speckit-integration/data-model.md), [Web/Native contract](../specs/001-s2c-speckit-integration/contracts/web-native-interface.md), [quickstart](../specs/001-s2c-speckit-integration/quickstart.md) and [24 designed acceptance cases](../specs/001-s2c-speckit-integration/checklists/integrationAcceptance.md). [Feature spec](../specs/001-s2c-speckit-integration/spec.md) and [plan](../specs/001-s2c-speckit-integration/plan.md) now align their core section names/order with the official Spec Kit templates.
+
+The master [RTM Section L](../.agents/.traceMatrix.md) uses **12 explicit** SKI-FR requirement IDs, not slash shorthand. Static GitHub inspection at pre-append SHA `a45c7db2162ef8e6683b20bb1d9b8e97918f019d` confirmed 12 requirement IDs, 12 RTM rows, 24 unique case IDs, 15 unique task IDs and 137 relative links checked with no missing target among 13 read files. This is **STATIC_INSPECTED**, *not* Python, CLI or security test PASS. All 24 case outcomes remain `NOT_RUN`.

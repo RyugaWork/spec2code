@@ -45,3 +45,16 @@
 - Handoff link / `NOT_PERSISTED`:
 
 **Rules:** A.1 PASS does not authorize B; B.1 PASS does not authorize merge/release. FAIL/BLOCKED stops promotion and requires a dated handoff with targeted rework. Design phase cannot claim B.1 tests ran.
+
+## PLAN-086 technology / version / structure override validation checklist
+
+- Applicability: `S2C_SOURCE`, `HOST_REPOSITORY`, `BOTH`; exact affected paths/revision:
+- Named runtime/interpreter/PowerShell edition/SQL DBMS+driver+dialect/other platform version:
+- Baseline supported-mature-mainstream candidate and official support checked date:
+- Dependency/OS/build/CI, database migration/backup, security servicing and architecture evidence:
+- User override `OVR-ID`, request and risk/owner approval, or NONE:
+- A1-VAL-01/05/07 actual source/design and risk decision (or `NOT_RUN`):
+- B1-VAL-01/03/04/06 actual effective version/structure and regression/security evidence (or `NOT_RUN`):
+- Explicit separate permission to modify code, schema, CI or host data (or `NOT_AUTHORIZED`):
+
+Use [cross-stack technology policy](../.documents/technologyVersionPolicy.md) and [override template](../.documents/technologyOverrideTemplate.md). A user-approved version preference is **not** independent release acceptance or a waiver of host safety controls.

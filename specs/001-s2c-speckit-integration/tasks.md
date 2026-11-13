@@ -6,11 +6,13 @@
 
 ## Phase 1 — Web/GitHub bootstrap (documentation; no code execution)
 
-- [ ] T001 Create a draft project constitution at `.specify/memory/constitution.md` that respects root AGENTS and the master BRD.
-- [ ] T002 Select `specs/001-s2c-speckit-integration` in `.specify/feature.json` without creating a Git feature branch.
-- [ ] T003 Author this feature's `spec.md`, `plan.md`, `tasks.md`, and an explicit quality checklist; map to S2C BR/REQ/AC.
-- [ ] T004 Update S2C AGENTS, RTM, plans/risk, adapter guide and README to support Web and native modes without duplicating BRD.
-- [ ] T005 Static-check the JSON pointer, repository-contained paths, task ID format, uniqueness, documentation links, and Git diff against the pre-integration HEAD.
+- [x] T001 Create a draft project constitution at `.specify/memory/constitution.md` that respects root AGENTS and the master BRD.
+- [x] T002 Select `specs/001-s2c-speckit-integration` in `.specify/feature.json` without creating a Git feature branch.
+- [x] T003 Author this feature's `spec.md`, `plan.md`, `tasks.md`, and an explicit quality checklist; map to S2C BR/REQ/AC.
+- [x] T004 Update S2C AGENTS, RTM, plans/risk, adapter guide and README to support Web and native modes without duplicating BRD.
+- [x] T005 Static-check the JSON pointer, repository-contained paths, task ID format, uniqueness, documentation links, and Git diff against the pre-integration HEAD.
+
+**Bootstrap evidence:** GitHub tree HEAD `ebdbd03f027a8e65ce5cde8ddc5ea0af5a1cad14` was read after authoring. `.specify/feature.json` parses to a contained `specs/` path, `spec.md`/`plan.md`/`tasks.md` exist, T001..T015 are unique and match the existing S2C bridge's `T\d{3,6}` convention, and 171 relative Markdown links from the relevant edited files resolve in the Git tree. This is a **read-only static GitHub inspection**, not Python bridge or native Spec Kit CLI test evidence. T001..T005 are document/bootstrap tasks only.
 
 ## Phase 2 — Official CLI preparation (separate reviewed execution)
 

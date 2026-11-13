@@ -1,4 +1,6 @@
-# Spec2Code change workflow v0.7.0
+# Spec2Code workflow index — planning before implementation
+
+> **Now:** [Planning & Specification Workflow P1–P9](planningSpecificationWorkflow.md) and [design handoff](designHandoffTemplate.md). The historical change workflow and the five-stage runtime-assisted implementation model described below apply **only after planning review and explicit implementation authorization**. STOP in the current design phase is an ordinary planning handoff, not a Workflow Guard machine state.
 
 1. **Requirement:** update `../.spec.md` as required and set the feature's status in `../.features.md`.
 2. **Plan first:** record scope, owner, changed files, rollback, acceptance tests in `../.plans.md`.
@@ -44,3 +46,10 @@ These agent documents guide ChatGPT/Codex interactions and do not implement miss
 - [STOP/handoff protocol](stopAndHandoff.md) requires an immediate freeze of new mutations, bounded observed status, factual handoff with `PERSISTED` or `NOT_PERSISTED`, and explicit RESUME revalidation.
 - The [STOP handoff template](../../.source/references/stop-handoff-template.md) is separate from successful session finish/merge evidence. **Do not call `finish`, `merge`, Workflow Guard `invalidate` or `close` merely to stop.**
 - The [system RTM](../.traceMatrix.md) tracks F37/`S2C-REQ-037` and NFR-007 as specified but without native runtime STOP tests. Current `.source/.config/workflow.json` has **no PAUSED status**.
+
+## PLAN-084 — authoritative design-phase entrypoints
+
+- [Nine-stage Planning & Specification workflow](planningSpecificationWorkflow.md): scope, specification plan, research, RTM, feature and workflow design, risk discovery, risk management and design handoff.
+- [SRS authoring plan](../.documents/systemSpecificationPlan.md), [research register](../.documents/researchRegister.md), [feature design catalogue](../.documents/featureDesign.md), [system RTM](../.traceMatrix.md): evidence and design inputs, including gaps.
+- [Scored risk matrix](../.riskMatrix.md) and [risk register](../.risk.md): after every design pass reprioritize and mitigate the largest unresolved risk in documentation; no runtime patch.
+- [Design handoff template](designHandoffTemplate.md): preserve exact document revisions, decisions, risks and next stage. Future [implementation workflow](workflowSpecification.md) remains separate and does not start automatically when this document is opened.

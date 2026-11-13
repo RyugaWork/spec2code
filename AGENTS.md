@@ -1,5 +1,7 @@
 # AGENTS.md — Spec2Code agent operating contract (v0.8.0 candidate)
 
+> **CURRENT AUTHORIZED WORKSTREAM — PLAN-084: Planning & Specification.** First use the [nine-stage planning lifecycle](.agents/.workflow/planningSpecificationWorkflow.md) and [SRS authoring plan](.agents/.documents/systemSpecificationPlan.md). Research, requirements, feature design, risk scoring/review and design handoff are **not** authorization to implement runtime behavior, run host migrations or fix code. The [five-stage workflow specification](.agents/.workflow/workflowSpecification.md) describes **later implementation**.
+
 > Applies to **development of this repository**, not automatically to projects where the portable skill is installed. The v0.8.0 governance/workflow work is a **candidate**, not a stable release. Instructions guide a human-supervised ChatGPT/Codex agent; they do not themselves enforce filesystem containment or grant permissions.
 
 ## 1. Mission, entrypoints and boundaries
@@ -80,3 +82,7 @@ Agent-facing policy: be specific about what was **read**, **changed**, **tested*
 A requester `STOP`/`pause`, or a safety/authority blocker, takes precedence over further task implementation. Immediately stop new mutations, preserve any in-flight uncertainty, and capture the exact last-known task/phase, source/ref, modified paths, approvals, test evidence, pending work and next safe action. Follow [STOP/handoff protocol](.agents/.workflow/stopAndHandoff.md) and the [STOP template](.source/references/stop-handoff-template.md). A safe explicitly authorized handoff write may be persisted under a host-reviewed path; otherwise provide the full useful handoff in chat marked `NOT_PERSISTED`. Never claim a file exists without verification.
 
 STOP is an **agent-level reporting outcome**, not a `workflow_guard.py` status or operation; do not substitute `invalidate`, `close`, `session_guard finish` or `merge` for STOP. Resume only on an explicit request after revalidating exact checkout/AGENTS, required policies, session state and any stale Spec Kit/source/test evidence. See the [system RTM](.agents/.traceMatrix.md), `S2C-REQ-037` and `S2C-NFR-007`; runtime pause/resume remains specified, not implemented.
+
+## 9. Design-first workflow while PLAN-084 is active
+
+Follow P1 INTENT_SCOPE → P2 SPEC_PLAN → P3 RESEARCH_DISCOVER → P4 REQUIREMENTS_TRACE → P5 FEATURE_DESIGN → P6 ARCHITECTURE_WORKFLOW_DESIGN → P7 RISK_DISCOVERY → P8 RISK_MANAGEMENT_REVIEW → P9 DESIGN_HANDOFF. Produce the [research register](.agents/.documents/researchRegister.md), [feature design catalogue](.agents/.documents/featureDesign.md), [risk matrix](.agents/.riskMatrix.md) and [design handoff template](.agents/.workflow/designHandoffTemplate.md). Every design iteration reassesses all changed risks, selects the highest-priority unresolved exposure and **mitigates at the specification/design level**; later code changes need a distinct authorized implementation plan. The current status is `DESIGN_IN_PROGRESS`; do not treat a spec, matrix or handoff as runtime PASS or human approval.

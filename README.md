@@ -102,3 +102,7 @@ For a coding-agent native workflow, the official `specify-cli` + selected agent 
 ## PLAN-094 — Continue Spec Kit development from the selected feature
 
 For **ChatGPT Web**, use [feature quickstart](specs/001-s2c-speckit-integration/quickstart.md) and [official-template feature spec](specs/001-s2c-speckit-integration/spec.md) with [research](specs/001-s2c-speckit-integration/research.md), [plan](specs/001-s2c-speckit-integration/plan.md) and [24 designed test cases](specs/001-s2c-speckit-integration/checklists/integrationAcceptance.md). The authoritative 12-row [RTM](.agents/.traceMatrix.md) and root AGENTS still govern all tasks. T010 draft reconciliation is documented; native SK-03 remains unavailable in this offline runner. Do not treat manually edited Spec Kit files as if `specify init` or official coding-agent skills had run.
+
+### PLAN-095 — Web-mode execution and native safety evidence
+
+[Web/GitHub workflow](.agents/.workflow/specKitWebWorkflow.md) describes browser-based Spec Kit artifact steps without claiming native CLI execution. [Native execution gate](.agents/.workflow/specKitNativeExecutionGate.md) prevents treating upstream checklist continuation or author-executed tasks as S2C A.1/B permission. [Four scoped GitHub/static positive cases](.agents/.documents/specKitWebModeEvidence095.md) are documented with exact Git commit/blob/compare evidence; 20 additional feature cases and every native host/security gate remain unrun. The existing PR stays Draft; no new branch or runtime source file was added.

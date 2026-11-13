@@ -1,4 +1,6 @@
-# Spec2Code change workflow v0.7.0
+# Spec2Code workflow index — planning before implementation
+
+> **Now:** [Planning & Specification Workflow P1–P9](planningSpecificationWorkflow.md) and [design handoff](designHandoffTemplate.md). The historical change workflow and the five-stage runtime-assisted implementation model described below apply **only after planning review and explicit implementation authorization**. STOP in the current design phase is an ordinary planning handoff, not a Workflow Guard machine state.
 
 1. **Requirement:** update `../.spec.md` as required and set the feature's status in `../.features.md`.
 2. **Plan first:** record scope, owner, changed files, rollback, acceptance tests in `../.plans.md`.
@@ -28,3 +30,30 @@ Workflow Guard evaluates requirements and records user-authorized transitions. I
 - Run `workflow_guard.py begin/evaluate/advance` with identical `--task` and `--paths`. A different description or path set cannot reuse recorded workflow state.
 - Root and nested AGENTS, scoped policy documents, host policy map and context-pack fingerprints are snapshot inputs. Change invalidation requires explicit reconciliation.
 - Workflow Guard never approves a human gate, executes tests, modifies source, pushes Git or certifies Windows TOCTOU resistance. Review requires an independently trusted host decision; CLI stage commands alone cannot self-authorize.
+
+## PLAN-081 agent playbooks and authority
+
+- [Roles](agentRoles.md): coordinator, requirements, architecture/policy, implementation, test, security and handoff responsibilities. These are logical roles; S2C has no daemon or autonomous subagent worker.
+- [Runbook](agentRunbook.md): separate read-only, planning, implementation, verification and delivery actions; scoped context routing, local session lifecycle, optional upstream Spec Kit and fail-closed reporting.
+- [Domain authorities](../.documents/.documentGovernance.md) and [policy routing](../.documents/.policyRouting.md): identify owners and required operation without turning a discovered reference into permission.
+- [Test/delivery gates](testingAndDelivery.md) and [Git rules](../.git.workflow.md): explicit evidence and external acceptance before merge/release.
+
+These agent documents guide ChatGPT/Codex interactions and do not implement missing Workflow Guard controls. PR #7 retains three P0 and one P1 review findings; active Windows TOCTOU, OneDrive and legacy-migration risks are unchanged.
+
+## PLAN-083 interruptible work protocol
+
+- [Workflow specification](workflowSpecification.md) describes the five ordinary phases plus an **agent-level STOP edge** usable at any phase, the minimum evidence for each phase and the gate for re-entry.
+- [STOP/handoff protocol](stopAndHandoff.md) requires an immediate freeze of new mutations, bounded observed status, factual handoff with `PERSISTED` or `NOT_PERSISTED`, and explicit RESUME revalidation.
+- The [STOP handoff template](../../.source/references/stop-handoff-template.md) is separate from successful session finish/merge evidence. **Do not call `finish`, `merge`, Workflow Guard `invalidate` or `close` merely to stop.**
+- The [system RTM](../.traceMatrix.md) tracks F37/`S2C-REQ-037` and NFR-007 as specified but without native runtime STOP tests. Current `.source/.config/workflow.json` has **no PAUSED status**.
+
+## PLAN-084 — authoritative design-phase entrypoints
+
+- [Nine-stage Planning & Specification workflow](planningSpecificationWorkflow.md): scope, specification plan, research, RTM, feature and workflow design, risk discovery, risk management and design handoff.
+- [SRS authoring plan](../.documents/systemSpecificationPlan.md), [research register](../.documents/researchRegister.md), [feature design catalogue](../.documents/featureDesign.md), [system RTM](../.traceMatrix.md): evidence and design inputs, including gaps.
+- [Scored risk matrix](../.riskMatrix.md) and [risk register](../.risk.md): after every design pass reprioritize and mitigate the largest unresolved risk in documentation; no runtime patch.
+- [Design handoff template](designHandoffTemplate.md): preserve exact document revisions, decisions, risks and next stage. Future [implementation workflow](workflowSpecification.md) remains separate and does not start automatically when this document is opened.
+
+## PLAN-085 — validation boundaries
+
+Overall process: **A (P1–P9 planning) → [A.1](validationSpecification.md) (design validation) → separately authorized B (implementation) → [B.1](validationSpecification.md) (system and stakeholder acceptance) → separately authorized release**. A.1 and B.1 have their own [validation report](validationReportTemplate.md) and explicit FAIL/BLOCKED feedback into the impacted previous lifecycle. Current status: **A active, A.1 NOT RUN, B NOT AUTHORIZED, B.1 NOT RUN**. A green CI run or RTM link audit does not constitute A.1 or B.1 PASS.

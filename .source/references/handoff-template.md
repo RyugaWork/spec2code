@@ -14,3 +14,7 @@
 - Migration, compatibility and rollback notes:
 - Git actions authorized / performed (commit SHA only if actually committed):
 - Additional approvals still required:
+
+## Distinguish a normal completion handoff from STOP
+
+If work was interrupted, **do not** fill this completion template as though verification and closure succeeded. Instead use [STOP Handoff](stop-handoff-template.md), preserving current phase, observed session state, uncommitted changes, test evidence, `PERSISTED` vs `NOT_PERSISTED`, pending AC IDs and RESUME preconditions. STOP never silently calls `session_guard finish/merge` or Workflow Guard `close`.

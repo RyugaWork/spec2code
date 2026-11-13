@@ -5,9 +5,9 @@ This integration uses the **upstream GitHub Spec Kit**, not a fork or copied pro
 ## Install (in the target project, not the skill source repo)
 
 1. Install the official `specify-cli` following https://github.github.com/spec-kit/installation.html (Python 3.11+).
-2. For a new project, run `specify init --here --integration codex --script py`. If an **existing non-empty project** requires `--force`, make a reviewable branch/backup and inspect all generated diffs first.
-3. Run `specify version` to check the CLI is available and `specify integration list` to verify the agent integration.
-4. Invoke the real Spec Kit stages in your agent. In Codex skills mode the official syntax is `$speckit-specify`, `$speckit-plan`, `$speckit-tasks`, `$speckit-analyze`, `$speckit-implement`, `$speckit-converge` (plus `$speckit-clarify` when needed). Other agents use their own syntax. Do **not** run these as ordinary shell commands.
+2. For a new project, run `specify init --here --integration codex`. If an **existing non-empty project** requires `--force`, make a reviewable branch/backup and inspect all generated diffs first.
+3. Run `specify version` to check the CLI is available and `specify integration list` to inspect the agent integration. For an existing Spec Kit project, inspect the workspace and use `specify integration install codex` when adding Codex; do not overwrite installed files blindly.
+4. Review existing `.specify/constitution.md` where applicable, then invoke the real Spec Kit stages in your agent. In Codex skills mode the official syntax is `$speckit-specify`, `$speckit-plan`, `$speckit-tasks`, `$speckit-analyze`, `$speckit-implement`, `$speckit-converge` (plus `$speckit-clarify` when needed). Other agents use their own syntax. Do **not** run these as ordinary shell commands.
 
 ## Spec Kit → Spec2Code bridge
 
@@ -31,3 +31,11 @@ python .agents/skills/spec-to-code/scripts/context_router.py --root . --task-id 
 - Spec Kit may offer an experimental MCP server independently. This adapter does **not** implement or expose MCP transport; that work is separate.
 
 Official references: https://github.github.com/spec-kit/quickstart.html , https://github.github.com/spec-kit/integrations/cli.html , https://github.github.com/spec-kit/how-to/existing-projects.html .
+
+## PLAN-081 agent integration and upstream process updates
+
+The official upstream SDD workflow includes an initial project **constitution** and optional **clarify**, **checklist** (requirements quality) and **analyze** gates around specify/plan/tasks/implement/converge. The `converge` process can append outstanding work to the active `tasks.md` under upstream ownership; S2C does not invoke or approve that edit. Codex's native `$speckit-<command>` skills live under `.agents/skills/speckit-*/SKILL.md`; other integrations use their own syntax. Validate current commands and multi-install safety against the upstream docs rather than assuming another coding agent uses the same slash/dollar prefix. The official Spec Kit may also supply separate bug-fix and idea-assessment processes; these are not mandatory S2C workflow stages and must not be inferred from a branch or merely from a directory name.
+
+The S2C `.config/speckit.json` and read-only bridge deliberately model only their implemented subset of artifact-existence preflight. A missing optional stage in the S2C stage list is **not** proof that upstream lacks that stage. Do not change bundled stage validation or claim integration support from this documentation edit alone.
+
+References: https://github.github.com/spec-kit/quickstart.html and https://github.com/github/spec-kit/blob/main/docs/integrations/codex.md .

@@ -1,5 +1,8 @@
 # Spec2Code v0.7.0
 
+> **Current baseline: PLAN-087 / BRD v1.2.** Start with [the unified BRD, architecture and M0–M5 implementation plan](.agents/.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
+
+
 Infrastructure-aware, universal Spec-to-Code agent skill with optional read-only upstream GitHub Spec Kit bridge.
 
 **Status:** repository layout migration candidate; prior Windows/security risks remain open. Requires Python 3.10+ and Git. Spec Kit CLI is separate.
@@ -48,3 +51,29 @@ Development is occurring on `feat/governance-integration-v0.8.0`; the v0.7.0 lay
 The candidate adds task-scoped, read-only host policy discovery, Policy Resolver references in Context Router, and a non-autonomous five-stage Workflow Guard with event integrity checks. The task description and affected paths must be supplied consistently for implementation gates. Evidence references and hash-chained workflow events never constitute independent authorization. Consult `.agents/.plans.md`, `.agents/.risk.md`, and `.agents/.checklist.md` for outstanding acceptance, security and migration risks.
 
 The real MCP server, automatic code execution, unattended Git mutations, Windows filesystem-race protection, and automatic legacy-data migration are **not** provided by this candidate.
+
+## Agent operating documentation (PLAN-081, v0.8.0 candidate)
+
+The [development AGENTS contract](AGENTS.md) routes ChatGPT/Codex work by **authority, task, phase and allowed action**. The [logical agent roles](.agents/.workflow/agentRoles.md) and [agent runbook](.agents/.workflow/agentRunbook.md) cover requirement analysis, policy review, implementation, verification and exact-session handoff without pretending there is an autonomous multi-agent executor. When installed in another project, this repository's AGENTS is **not** copied as that project's root policy; review the [optional host AGENTS guidance](docs/AGENTS_PATCH.md) instead.
+
+Official Spec Kit commands run through the agent's installed integration. Its `.specify/` and `specs/` are never owned by the S2C bridge. The current v0.8 Workflow Guard has unresolved PR #7 correctness blockers; PLAN-081 instructions do not fix them. No stable release or security clearance is implied by the documentation.
+
+## Concrete system RTM and interruptible workflow (PLAN-082/083)
+
+See the [System Requirements Traceability Matrix](.agents/.traceMatrix.md) for F01–F37 requirement/AC, source, test and gap mapping. The [Workflow Specification](.agents/.workflow/workflowSpecification.md) and [STOP & Handoff Protocol](.agents/.workflow/stopAndHandoff.md) require a controlled STOP at any phase, an observed state snapshot, a truthful persisted-or-chat handoff and a checked RESUME. The [STOP Handoff Template](.source/references/stop-handoff-template.md) is bundled with the portable Skill.
+
+This is **interactive agent guidance**; a machine `pause/resume` command is not implemented in Workflow Guard. STOP never silently closes a session, merges a handoff or authorizes Git/release actions. See [PR #8](https://github.com/RyugaWork/spec2code/pull/8) for candidate documentation and [PR #7](https://github.com/RyugaWork/spec2code/pull/7) for unresolved runtime issues.
+
+## Current work phase — PLAN-084: Planning and Specification
+
+Spec2Code is currently refining its **design package**, not implementing STOP/RESUME in Python. Start with the [nine-stage planning workflow](.agents/.workflow/planningSpecificationWorkflow.md), [SRS authoring plan](.agents/.documents/systemSpecificationPlan.md), [source research register](.agents/.documents/researchRegister.md), [feature design catalogue](.agents/.documents/featureDesign.md), [scored risk matrix](.agents/.riskMatrix.md) and [design handoff template](.agents/.workflow/designHandoffTemplate.md). Design passes discover and reprioritize risks, then improve the **specification/design** for the highest-risk open item. Implementation needs a distinct approved phase, and the existing [five-stage specification](.agents/.workflow/workflowSpecification.md) applies to that later lifecycle.
+
+## PLAN-085 — Validation checkpoints A.1 and B.1
+
+Process: **A Planning & Specification → [A.1 Design Validation](.agents/.workflow/validationSpecification.md) → B Implementation (separate permission) → B.1 System/Acceptance Validation → separate release approval**. A.1 verifies design quality, authority, traceability, risk and handoff before implementation; B.1 verifies real behavior, security, host/OS and stakeholder acceptance after implementation. [Validation report template](.agents/.workflow/validationReportTemplate.md) preserves per-check evidence and feedback paths. Neither checkpoint runs automatically or changes Workflow Guard runtime states. Current work remains A/design only.
+
+## Stable technology choices and explicit user override — PLAN-086
+
+For **both Spec2Code's own source/toolchain and any integrated repository**, Agents recommend **supported, mature, widely adopted** Python, PowerShell, named SQL DBMS, .NET and other technology majors and conventional project structures by default, not the newest version. [Universal technology policy](.agents/.documents/technologyVersionPolicy.md), [assessment](.agents/.documents/technologyAssessmentTemplate.md), and [User Override record](.agents/.documents/technologyOverrideTemplate.md) cover official support, maturity, adoption, compatibility, safety, migrations and architecture evidence.
+
+**Explicit user choice can override the conservative default.** For example, a newly released **supported** .NET 11 can be the requested design version with documented compatibility risk; the default .NET 10 LTS remains a dated illustration. EOL .NET 8 (as of 2026-11-13) or another unsupported runtime requires additional safety/legacy acceptance, not false claims of support. For Python, PowerShell and SQL use each product's current vendor lifecycle and actual engine/edition, not .NET-specific version rules. An override records the desired stack, exact S2C/host scope, risk and approvals, but **never automatically modifies code** or bypasses host security, Path Guard, testing or Git permission. Both A.1/B.1 validations remain NOT RUN.

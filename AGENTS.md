@@ -214,3 +214,50 @@ A review must identify the exact checkout root, effective relevant AGENTS files,
 This paragraph is the latest **candidate-source** status on `docs/plan-089-a1-readiness`; it does not rewrite historical PR #7 or author-side A.1 records. The requester explicitly directed a bounded `A.1 review → Path Guard/Workflow Guard P0 repairs → return to A` cycle. Source patch `78c65b278fbd2ec384301c88abfdf6c84d388a29` addresses scope preservation at CLOSE, phase-specific VERIFY/HANDOFF policy routing, scoped-file and active Spec Kit freshness, and Windows reparse-point preflight; regression tests were added. A CI regression for legacy unscoped status exposed a real compatibility case; the next code revision retains unscoped-source freshness when the stored empty-scope digest actually matches, and labels otherwise unprovable freshness as `NEEDS_REVIEW`. See [PLAN-111 handoff](.agents/.handoffs/plan-111-a1-p0-return-to-a.md).
 
 Do not infer from static Windows reparse detection that hostile TOCTOU or non-anchored writes are OS-safe. Independent A.1 signoff remains **NOT_RUN**; this targeted requester-directed security remediation does **not** constitute general Phase-B authorization, host risk acceptance, B.1, release or permission to merge. Re-enter A/P4, P6, P7, P8 and P9 for owner decisions, threat model, exact acceptance checks and independent review.
+
+## GOV-20261114 — Pre-update review matrix and GPT Web–Codex A↔A.1 control
+
+**Status: AGENT CONTRACT / PREFLIGHT_ONLY.** This is not runtime enforcement, an independently signed A.1 PASS, functioning Codex dispatch, or B authorization. The canonical BRD/spec, RTM, plans, risk matrix and A.1 review criteria stay in .agents/.spec.md, .agents/.traceMatrix.md, .agents/.plans.md, .agents/.riskMatrix.md and .agents/.workflow/validationSpecification.md. Do not create another authoritative BRD or change the five Workflow Guard machine phases.
+
+### G1 — Mandatory pre-update review and impact matrix
+
+Before each material AGENTS/spec/plan/source/config/test modification, inspect the exact branch/ref, applicable root/nested policies, owner, paths, current evidence and risks. Record a pre-edit matrix with columns: review ID; requirement and source SHA; gap/conflict; impact/risk; affected files; planned treatment; executor; expected result; failed result and rollback; acceptance evidence; decision. No matrix, unresolved policy conflict, missing permission or contested file owner means BLOCKED_REVIEW for affected writes. Review the exact diff against the matrix afterward; the author may report PREFLIGHT_ONLY, never independent approval.
+
+**This update's author-side pre-edit review matrix** (all runtime/independent checks remain NOT_RUN):
+
+| ID | Gap / baseline observation | Risk | Planned treatment / acceptance |
+| --- | --- | --- | --- |
+| RM-GOV-01 | Existing review roles lack a universal pre-edit matrix requirement | P1 | Require matrix and diff comparison; documentation check only |
+| RM-GOV-02 | Codex support described but task executor tags inconsistent | P1 | Define GPTWEB/CODEX/AUTO tags and complete task envelope |
+| RM-GOV-03 | Codex host/provider dispatch not evidenced working | P1 | Capability-gated dispatch; HANDOFF_REQUIRED on missing capability |
+| RM-GOV-04 | A.1 fail-to-A path exists but quantitative cycle gate is unspecified | P0 | A rework, bounded rerun and independent A.1 validation |
+| RM-GOV-05 | No strict per-group >99.99% test metric with P0 veto | P0 | Define denominator, no rounding, evidence and NO_GO |
+| RM-GOV-06 | Task remaining counts not mandatory after every phase | P1 | Report checkpoint with unique-ID remaining and executor split |
+| RM-GOV-07 | Parallel writer/source drift may overwrite another chat | P1 | Single file owner, ref/blob lease, stop on drift |
+| RM-GOV-08 | Existing independent review and B authorization must stay intact | P0 | Preserve A1-VAL-01..09 and distinct owner signoff |
+
+### G2 — Per-task executor and routing protocol
+
+- [GPTWEB]: requirements, planning, research, risk/trace matrices, review, evidence interpretation, stage checkpoints and GO/NO-GO recommendations. Connector-based Markdown writes are permitted only with explicit scope and connector authority. Never claim local Path Guard evidence for remote-only writes.
+- [CODEX]: any local checkout inspection/change, executable code, tests/build/security/fault injection, command execution and Git operations. Verify real Codex/host capability, sandbox, checkout root, allowlist, budget and the separate authorization for each sensitive action. A missing Codex is not permission for GPTWEB to pretend it executed a command.
+- [AUTO]: a routing directive, not an executor or blanket permission. If a task is READY, authorized and an actual Codex connection is verified, send its full scoped instruction and retain the dispatch receipt. Otherwise mark HANDOFF_REQUIRED and provide a complete copyable Codex request; continue only unrelated safe tasks. Never claim an unseen chat was synchronized or a tool call succeeded.
+- Every task must have task_id, phase, requirement/AC, executor tag, owner, priority, dependencies, target branch/commit SHA, owned paths and exclusions, permissions, inputs, expected_result, failed_result, test plan, timeout/retry/cost budgets, evidence, rollback and status. Never infer commit/push/merge authority from the executor tag.
+- Reconcile per-file ownership and task IDs against parallel workstreams before dispatch. One writer per path; reviewers operate on immutable source revisions. Do not duplicate already-running A.1 tasks or create new branches merely for assignment.
+
+### G3 — A → A.1 feedback loop and failure recovery
+
+A consists of P1–P9 design/planning. A.1 is separate independent design validation, including review of evidence from only specifically authorized P0 repairs; it is not general Phase-B implementation permission. On FAIL, BLOCKED, stale source, missing mandatory evidence, or unresolved P0: record defect/root cause and affected risk/RTM IDs; return to the relevant A step (requirements/AC, architecture, threat model or treatment); re-authorize and perform scoped remediation if needed; freeze a fresh source pair; rerun all mandatory A.1 criteria and affected regressions. Even if A design is unchanged, record the return and rationale. Use bounded time/attempts/cost; at budget exhaustion stop safely with a handoff, never loop without limit. A.1 PASS cannot automatically authorize B, merge, release, deployment or any elevated permission. B and B.1 retain separate owner and acceptance gates.
+
+### G4 — Strict >99.99% quality and authority gate
+
+For every required executable test group at the same pinned revision, R = valid_passes / all_valid_executions × 100%. The gate requires **R > 99.99%** in EACH mandatory measurable group, without rounding up or compensating a weak security group with other groups. Track retry attempts, failures, skipped/quarantined tests and exclusions explicitly; do not cherry-pick results or treat retries as independent tests unless the defined sampling protocol allows it. Zero executed or insufficiently evidenced tests mean NOT_MEASURABLE/BLOCKED, not 100%.
+
+Additional hard requirements: zero unresolved P0/security bypass; 100% of required evidence traceable to exact source SHA, platform, command and observed outcome; every applicable A1-VAL-01..09 independently evaluated PASS at the same pinned Git/Google source pair; accountable owner approvals for outstanding risks/ADR and separate B entry authority. Missing one condition means NO_GO and return to A; document-only preflight cannot attain a numeric runtime PASS. Passing test percentages alone are not proof of 99.99% production reliability; a statistical reliability claim requires separately justified sampling/confidence.
+
+### G5 — Mandatory checkpoint and remaining-task report
+
+After EACH phase, batch, failure and return cycle, record: phase, source SHA, task_total, done_verified, ready, in_progress, failed, blocked, reopened, newly_discovered, task_remaining, gptweb_remaining, codex_remaining, P0_open, gate_result, evidence_refs, next_task, handoff_ref. Task remaining is the number of UNIQUE current ledger task IDs not verified DONE, including reopened and newly discovered tasks. Do not subtract from a fixed initial count when scope grows. Distinguish PLANNED/READY/IN_PROGRESS/FAILED/BLOCKED/REOPENED/DONE_VERIFIED/NOT_RUN and UNKNOWN; do not turn a proposal into a completion. Count an ID once regardless of executor or retry. When a gate fails, reopen affected tasks, add explicit RCA/remediation/regression tasks, recalculate counts and checkpoint before selecting the next READY task.
+
+### G6 — Collision safety, permissions and closeout
+
+For each write, re-read the current path/blob SHA and approved policy; on drift or another chat's ownership, stop and re-review before overwriting. Maintain explicit reviewed allowlists, preserve secrets, host Spec Kit ownership, source, tests and evidence. Prefer the existing work branch and a small coherent change; commit only when separately authorized and do not auto-merge or force-push. Record BEFORE/matrix/action/AFTER, exact file diff, test outcomes as PASS/FAIL/NOT_RUN, remaining counts, rollback, and handoff. Mark this AGENTS-only governance change RUNTIME_NOT_RUN until independently observed tests and a real host evaluation exist.

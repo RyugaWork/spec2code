@@ -110,3 +110,19 @@ For **ChatGPT Web**, use [feature quickstart](specs/001-s2c-speckit-integration/
 ## PLAN-096 — Actual Spec Kit bridge contract-gap assessment
 
 The [source-bound PLAN-096 bridge audit](.agents/.documents/specKitBridgeSourceAudit096.md) identified four unverified runtime gaps in feature namespace policy, duplicate pointer JSON handling, empty mandatory artifact handling and duplicate task-ID detection. [Feature acceptance catalogue](specs/001-s2c-speckit-integration/checklists/integrationAcceptance.md) adds **four planned, unrun** negative test cases `SK96-NEG-01..04`; the existing 24-case test status remains **4 scoped Web/static PASS / 20 NOT_RUN**. Read the [PLAN-096 handoff](.agents/.handoffs/plan-096-bridge-source-audit-handoff.md) before taking any B-phase action. No S2C Python/JSON/CI file was changed; native Spec Kit CLI/skills and independent A.1/B.1 validation remain NOT_RUN.
+
+## Current documentation and review entrypoints — PLAN-103
+
+The development branch's latest **authored** documentation is PLAN-103 (not the historical PLAN-092 summary above). The version in the title describes the **runtime baseline**, not approval or release of these newer proposed features.
+
+| Purpose | Canonical entrypoint | Status |
+| --- | --- | --- |
+| Unified BRD / SRS / architecture and planned delivery | [Master specification](.agents/.spec.md#28-plan-103--technical-review-closeout-and-remaining-authority-boundary) | AUTHORING_COMPLETE_CANDIDATE, owner approval pending |
+| Feature design, reuse and open ADRs | [Feature design](.agents/.documents/featureDesign.md#10-plan-102--architecture-decision-records-for-a1-disposition) | DESIGN_PROPOSED |
+| Explicit draft BR-022..027 → F43..64 → 44 acceptance-case IDs | [RTM Section P](.agents/.traceMatrix.md#p-plan-098--draft-integration-trace-crosswalk-not-implementation) and [test catalogue](.agents/.workflow/testingAndDelivery.md#plan-100-candidate-feature-acceptance-cases) | DESIGN_CASES_LINKED / NOT_RUN |
+| Codex/Gemini optional MCP and bounded Auto Run | [Master Section 26](.agents/.spec.md#26-plan-101--codexgeminiantigravity-documentation-integration-candidate) and [runbook](.agents/.workflow/agentRunbook.md#11-plan-101--codex-autorun-preflight) | Provider and CLI sandbox unverified |
+| Independent design review before code | [A.1 definitions and author review findings](.agents/.workflow/validationSpecification.md#10-plan-103--author-side-technical-review-and-findings-not-independent-a1) | A1_NOT_RUN |
+| Security and threat acceptance | [Scored risk matrix](.agents/.riskMatrix.md) | P0 OPEN / residual UNKNOWN |
+| Exact source, checks and continuation | [PLAN-103 traceability checkpoint](.agents/.handoffs/plan-103-traceability-review-checkpoint.md) and [technical review handoff](.agents/.handoffs/plan-103-documentation-final-handoff.md) | Documentation evidence only |
+
+The connected [Google BRD](https://docs.google.com/document/d/1M3_2tNUxOXci83pcpPCzBkxwvRvixeT7FYeGyIsFOa4/edit) is a **Draft stakeholder summary**, not a second normative SRS or independently accepted source pair. Preserve the existing Draft PR and do not infer that `A1_PASS`, a B authorization, Gemini MCP connectivity or host security tests follow from this index. Read the [workflow index](.agents/.workflow/README.md#current-authoring-and-review-entrypoints--plan-103) before any resumed documentation work.

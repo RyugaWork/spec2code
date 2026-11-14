@@ -57,3 +57,14 @@ These agent documents guide ChatGPT/Codex interactions and do not implement miss
 ## PLAN-085 — validation boundaries
 
 Overall process: **A (P1–P9 planning) → [A.1](validationSpecification.md) (design validation) → separately authorized B (implementation) → [B.1](validationSpecification.md) (system and stakeholder acceptance) → separately authorized release**. A.1 and B.1 have their own [validation report](validationReportTemplate.md) and explicit FAIL/BLOCKED feedback into the impacted previous lifecycle. Current status: **A active, A.1 NOT RUN, B NOT AUTHORIZED, B.1 NOT RUN**. A green CI run or RTM link audit does not constitute A.1 or B.1 PASS.
+
+## Current authoring and review entrypoints — PLAN-103
+
+This page is an **index**, not a new workflow implementation or a replacement for the original nine-stage PLAN-084 planning workflow. For the current **authoring candidate**:
+
+1. Read [master BRD/SRS/architecture §28](../.spec.md#28-plan-103--technical-review-closeout-and-remaining-authority-boundary) and [the existing architecture decisions](../.documents/featureDesign.md#10-plan-102--architecture-decision-records-for-a1-disposition). Preserve the host's own AGENTS and the official Spec Kit ownership of `.specify/` and `specs/`.
+2. Read [RTM P](../.traceMatrix.md#p-plan-098--draft-integration-trace-crosswalk-not-implementation) and [test catalogue](testingAndDelivery.md#plan-100-candidate-feature-acceptance-cases); BR-022..027 now have **44 explicitly named designed cases**, not 44 executed or approved outcomes.
+3. Read [A.1 validation definitions and PLAN-103 author-review findings](validationSpecification.md#10-plan-103--author-side-technical-review-and-findings-not-independent-a1), [risk matrix](../.riskMatrix.md), and [source-bound handoffs](../.handoffs/plan-103-traceability-review-checkpoint.md). A technical author review is *not* independent approval.
+4. On STOP/RESUME, use [the existing protocol](stopAndHandoff.md) and recheck the actual Git SHA, Google Draft revision, source-owner decisions, P0 risk and host/sandbox. Do not convert `NOT_RUN` into `PASS`.
+
+**Current gates:** `AUTHORING_COMPLETE_CANDIDATE`, `A1_NOT_RUN`, `B_NOT_AUTHORIZED`, `B1_NOT_RUN`, provider CLI/MCP and actual host security tests unverified. Any subsequent B work requires a separately scoped approval; no new machine phases, YAML/JSON, automatic CLI or agent worker are created by this index.

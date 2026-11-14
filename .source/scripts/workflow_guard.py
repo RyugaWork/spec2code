@@ -331,7 +331,10 @@ def evaluate(req: WorkflowRequest) -> dict:
         if session and (current["session_id"] != session["id"] or
                         current["binding_fingerprint"] != binding):
             blocking.append("WORKFLOW_SESSION_MISMATCH")
-        if req.operation == "status" and not req.task and not req.paths:
+        if (req.operation == "status" and not req.task and not req.paths
+                and current.get("scope_sha256") != _scope_digest(req)):
+            # A previously scoped workflow cannot be re-fingerprinted without
+            # its raw request; do not manufacture a mismatch or a PASS.
             review.append("WF_SCOPE_REQUIRED_FOR_FRESHNESS")
         else:
             if current.get("scope_sha256") != _scope_digest(req):

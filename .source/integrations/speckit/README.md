@@ -84,3 +84,9 @@ The bridge's **static** `READY` only proves that required native artifacts exist
 ### PLAN-096 — Read-only bridge is NOT a semantic feature validator
 
 [Actual source audit](../../../.agents/.documents/specKitBridgeSourceAudit096.md) found that the existing `speckit_bridge.py` verifies repository containment, basic file presence/hashes and bounded task-ID collection, **but does not** currently enforce the feature-spec `specs/<id>` namespace, reject duplicate `feature_directory` JSON keys, classify zero-byte required artifacts as incomplete or reject duplicate task IDs. These are **source-to-feature contract gaps**, not observed native regressions. The four planned `SK96-NEG-01..04` host tests are NOT_RUN and require real unmodified bundled guard dependencies plus authorized host execution. Do not treat `READY` as requirements-quality PASS or A.1/B permission.
+
+## PLAN-109 / M02 — Upstream bridge evidence equivalence matrix
+
+Differentiate `source_static_validated` (the bridge's current read-only artifact checks), `web_document_committed` (GitHub fast-forward readback), `native_cli_observed` (real official version/help and source/pointer side effects), and `host_containment_verified` (approved OS sandbox with negative external sentinels). None of the earlier levels implies a later one. A bridge `READY` is not upstream Spec Kit or semantic requirements review success.
+
+During an authorized native pilot, pin the exact feature reference and official Spec Kit release, sanitize inherited feature-directory environment, monitor `.specify/feature.json` before/after and record unexpected writes; deny `implement` or convergence without explicit task and Phase-B permissions. On partial output or unavailable native CLI, preserve source-bound logs and mark native cases `NOT_RUN`. T011/T012/T015 remain human decisions, not tool-generated checkboxes.

@@ -55,3 +55,9 @@
 - Git commit/push/merge performed? <NO / exact authorized action with SHA, if actually done>
 
 **Note:** Do not include secret/PII contents, raw prompt histories or claim a completed test or independent review from this handoff.
+
+## PLAN-109 / M08 — Required pause and rollback uncertainty
+
+When populating this template, name **what was actually executed and where** (GitHub connector, local CLI, external MCP or static read), not simply what the agent planned. Include last verified source SHA and branch, changed-file allowlist, pre-existing uncommitted files, pending tool actions, source/Google revision drift, failed checks, open P0 and exact next owner action. Mark interrupted or unverified operations `UNKNOWN` instead of `PASS`.
+
+A handoff contains redacted IDs and evidence links, never credentials, personal secrets, raw provider conversations or guessed approval signatures. On resume require source/policy/host revalidation; when a prior write may have succeeded but returned no confirmation, inspect actual state before any retry. Rollback must name a scoped proposed revert and protect other writers' work; avoid automated deletion of old handoffs.

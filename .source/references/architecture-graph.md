@@ -17,3 +17,9 @@ Graph edges are `from` consumer, `to` dependency, labeled with an evidence level
 ## Token controls
 
 Default to Minimal for one low-risk file, Balanced for an ordinary task, and Deep for security, schema, cross-layer or external-drift risk. A mode never certifies missing dependencies or replaces tests. Source body is not copied into machine context packs.
+
+## PLAN-109 / M09 — Layer graph for safe source context
+
+The source graph must distinguish **observed** imports/calls/schema references from conjectural semantic dependencies. Each node records file/module/function/controller identity, path, source SHA, role (producer/consumer), referenced requirement, data classification and confidence. Traverse direct and transitive dependencies with bounded depth/node/time budgets; mark `TRUNCATED` when limits prevent complete impact coverage.
+
+A parallel work proposal can proceed only with approved disjoint direct **and transitive** write sets and a trusted integrator; unknown dependency or cross-layer state owner blocks parallel writes. Graph-derived context is not a filesystem permission grant. A change in data schema, transaction boundary, access policy or public API must invalidate relevant trace, tests and design docs on a pinned source rather than offering a misleading complete impact score.

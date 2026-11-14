@@ -69,3 +69,18 @@ A supported newly GA stable major may be a user-designated choice when the user 
 | P9 handoff | [PLAN-089 review handoff](../.handoffs/plan-089-a1-readiness-handoff.md), exact branch/evidence and open signoffs | PREPARED, A.1 NOT_RUN |
 
 **Pending owner decisions:** BR-001..021 approval; technical SRS source of truth for production adoption; accepted n/budget/role coverage and support matrix; schema compatibility and review output namespace; Path Guard Windows attack surface; implementation milestone owner and rollout restriction. Current document package is suitable for a **human A.1 review**, not `A1_PASS` or `APPROVED_FOR_IMPLEMENTATION`. Never use a static completeness checklist to assert reviewed security or compatibility.
+
+## 8. PLAN-102 — Authoring exit checklist and ownership queue
+
+The SRS and system planning content is **author-complete as a candidate** when every active design item has one canonical home, a requirement/feature and risk owner (or explicit UNKNOWN), planned positive/negative observables, reverse RTM, version/host assumptions, recovery/STOP and a bounded handoff. [Master `27](../.spec.md#27-plan-102--documentation-authoring-closure-and-bounded-implementation-blueprint) contains the unified exit rule; [A.1 packet](../.workflow/validationSpecification.md#9-plan-102--independent-a1-review-packet-and-criteria) contains the independent test.
+
+| Remaining non-authoring decision | Accountable party needed | Current result |
+| --- | --- | --- |
+| BR-001..027 approval, especially candidate BR-022..027 | Business/product owner | UNKNOWN |
+| Git master and Google BRD accepted semantics/revision | Document/product owner | DRIFT OPEN until mirror reviewed |
+| Threat model, external data, Windows sandbox and P0 mitigation | Host/security owner | OPEN |
+| Proposed ADR-102 and DEC-091/101 ownership, quotas and version selections | Architecture/tool/QA owners | PROPOSED |
+| A.1 independently signed report on exact pair | Authorized independent reviewer | NOT_RUN |
+| Phase-B work scope, test environment and command authority | Requester + host/security owner | NOT_AUTHORIZED |
+
+Do not treat missing human decisions as unfinished drafting that an agent can invent. If author-side static checks pass and open owner decisions are explicitly registered, label the package `AUTHORING_COMPLETE_CANDIDATE / A1_REVIEW_PENDING`, never `A1_PASS` or `IMPLEMENTATION_READY`.

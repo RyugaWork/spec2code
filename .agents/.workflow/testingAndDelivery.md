@@ -159,3 +159,23 @@ These proposed cases address the [RTM R crosswalk](../.traceMatrix.md#r-plan-100
 | MM-TC-12 | MM-REQ-012 | Mismatched Git/Google BRD source pair + missing reviewer | Owner discrepancy remains OPEN; cannot mark A.1 PASS | NOT_RUN |
 
 A doc-only link/ID/changed-file check can justify `DOCS_PREPARED_FOR_A1` but **must not** promote these tests to PASS, native Spec Kit tests to executed, or S2C to IMPLEMENTATION_READY.
+
+## PLAN-102 — First implementation validation fixtures
+
+**Design-only**, extending the already registered L1-WF01..04, L1-SC01..03 and MM-TC-01..12; no new test IDs and no claimed execution. Every host test must capture exact command/test-runner version, Git SHA, source+config fingerprints, OS, isolated disposable root, approved scope, before/after sentinel hash and redacted logs. Do not execute against the user's active checkout or any unrelated directory.
+
+| Existing ID | Minimum precondition/fixture | Required test action | Observable assertion for B.1 evidence |
+| --- | --- | --- | --- |
+| L1-WF01 | Scoped task, approved five-phase journal, trusted reviewer manifest | Try valid transition then CLOSE with unchanged scope | Task ID/path/policy evidence retained; no implicit approval |
+| L1-WF02 | Distinct verify and handoff policy obligations | Remove a required verify/handoff policy and attempt phase advance | Denied with phase-correct reason; source unchanged |
+| L1-WF03 | Active feature spec/plan/tasks plus source fingerprint | Mutate one relevant input between VERIFY and CLOSE | Stale evidence invalidated; re-verification required |
+| L1-WF04 | Incomplete/unauthorized scope, source SHA drift and STOP request | Cancel and attempt RESUME with stale policy/source | STOP handoff persisted, no illegal CLOSE, stale resume rejected |
+| L1-SC01 | Windows junction, Linux symlink and external read-only sentinel | Try through-indirection and traversal file reads/writes | No unauthorized read/write; sentinel SHA before=after |
+| L1-SC02 | Protected Z0/Z1 plus untrusted config or delegated command | Attempt indirect protected modification | Denied at independent OS/policy boundary; no bypass |
+| L1-SC03 | Two bounded workers with overlapping transitive writeSet, stale HEAD | Schedule conflicting units and request commit | One approved integrator; conflict denied; prior files remain intact |
+| MM-TC-01/11 | Real installed CLI help and restricted host state folder | Attempt only genuinely supported invocation; probe known failure | Exit/stderr and version prove supported or BLOCKED, never mark success on exit 2/1 |
+| MM-TC-03/04 | Synthetic credentials and external sentinel | Invoke provider adapter with scoped context fixture | No secret payload, outside-root access or silent privilege expansion |
+| MM-TC-05/09/10 | Fake delayed/quota/aborted provider, pinned handoff | Exhaust bounded budget and resume after revision change | Explicit DEGRADED/STOP, source-validated resume; no infinite loop |
+| MM-TC-07/08/12 | Git branch moves, role-lens review and mismatched BRD revision | Request commit and A.1 promotion | Fail-closed Git lease; no fabricated reviewer or owner signoff |
+
+**Approval thresholds:** any external sentinel mutation or permission bypass is P0 FAIL; absent source/host evidence is NOT_RUN; malformed provider response must be rejected; mandatory negative scenarios must pass at actual host before independent B.1. No invented numerical performance threshold: owner must set concrete token/time/latency/concurrency/OS targets in [A.1](validationSpecification.md#9-plan-102--independent-a1-review-packet-and-criteria).

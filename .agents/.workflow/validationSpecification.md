@@ -109,3 +109,23 @@ For BR-017..021 (proposed S2C-REQ-038..042, F38..42), A.1 additionally checks as
 Future B.1 additionally requires real host-supported worker/sequential execution evidence; domain-mixed fixtures (software/data/BRD), n=1 and unavailable roles, quota/timeout, malicious source, stale revision, minority blocker, corrupted/partial reports and safe recovery; exact commit/config/host/OS/budget; regression results on approved source and actual independent signoff. Distinguish `INCONCLUSIVE` review recommendation from A.1/B.1 validation outcomes. Missing evidence = NOT_RUN/BLOCKED, never PASS.
 
 No change to the five machine runtime phases, host permissions or existing A.1/B.1 approval authority is made here. Status at this revision: BR-017..021 DESIGN_PROPOSED, A.1 NOT_RUN, B NOT_AUTHORIZED, B.1 NOT_RUN.
+
+## 9. PLAN-102 — Independent A.1 review packet and criteria
+
+**Source of truth:** [master `27](../.spec.md#27-plan-102--documentation-authoring-closure-and-bounded-implementation-blueprint), [RTM](../.traceMatrix.md#t-plan-102--gate-to-implementation-trace), [risks](../.riskMatrix.md#22-plan-102--risk-disposition-priority-and-handoff), and [design ADRs](../.documents/featureDesign.md#10-plan-102--architecture-decision-records-for-a1-disposition). This is an **author-prepared evidence index**, not a scored external A.1 review. Reviewer name/authority/signature **UNKNOWN**; every formal A1-VAL outcome remains `NOT_RUN`.
+
+| Gate | Required evidence and reviewer assertion | Author-preflight finding | Formal reviewer |
+| --- | --- | --- | --- |
+| A1-VAL-01 Authority | Exact Git SHA and Google doc/tab/revision, accepted BRD semantics, accountable approvers | Git/Google revision pair exists; mirror had PLAN-098..101 gap; owner approval unknown | NOT_RUN |
+| A1-VAL-02 Requirement testability | Each active BR/REQ, actor/precondition, positive/negative AC and ambiguous default disposition | SRS-01..12 drafted; BR-022..027 candidate, F43..64 not approved | NOT_RUN |
+| A1-VAL-03 Bidirectional trace | Requirement → feature → task → test → risk/evidence and reverse; no orphan identifiers | Candidate RTM covers 44 F cases and 12 MM test IDs; execution NOT_RUN | NOT_RUN |
+| A1-VAL-04 Scope and workflow | Architecture layers, source owner, five machine phases vs nine work stages, STOP/RESUME and Spec Kit source | Contracts described; native mutation and real resume unverified | NOT_RUN |
+| A1-VAL-05 Security/integration | Path Guard Windows/OneDrive/junction threat model, env overrides, provider secrets, independent OS sandbox | Known P0 and CLI state failures; no hostile-host test | NOT_RUN |
+| A1-VAL-06 Risk controls | Highest P0 grouped by cause, treatment owner, residual risk, negative tests and rollback | Risks scored; mitigations not empirically closed | NOT_RUN |
+| A1-VAL-07 Independent validation plan | Case IDs, fixtures, OS/runtime/metrics, fail conditions, external sentinels and CI evidence | Planned catalogue; actual MM/L1 host cases NOT_RUN | NOT_RUN |
+| A1-VAL-08 Handoff provenance | Diff, exact source/CI refs, preexisting local changes, restart and rollback | GitHub checkpoints present; no fresh local git status | NOT_RUN |
+| A1-VAL-09 Approval and decision | Named independent reviewer, signed findings, accepted exceptions, owner risk/BRD decisions | No reviewer signature, approval or accepted P0 waiver | NOT_RUN |
+
+**Required review result envelope:** `reviewId, reviewerIdentity, authorityEvidence, gitSha, googleDocId, googleTabId, googleRevision, requirementScope, A1-VAL-01..09 dispositions(PASS|FAIL|BLOCKED|NOT_RUN), ADR decisions, P0 risks, dissent, evidenceLinks, reviewedAt, signatureRef, nextActions`. Only an authorized real reviewer may create a formal decision; an agent cannot backfill identity or sign on behalf of a reviewer. A.1 PASS requires all mandatory applicable checks PASS with evidence, plus separate owner dispositions for blocking requirements/risks. Any unreviewed mandatory case => A1_BLOCKED/NOT_RUN. A.1 does not itself authorize B.
+
+**Candidate authoring exit:** content cross-references, explicit owner queue and static ID/link checks may be `AUTHORING_COMPLETE_CANDIDATE` while formal A.1 remains NOT_RUN. A review outcome must be source-pair stable: if Git SHA or Google revision changes materially, re-evaluate impacted A.1 gates instead of reusing a prior signature.

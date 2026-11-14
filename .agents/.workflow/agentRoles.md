@@ -16,6 +16,12 @@ This is a **role protocol for a single human-directed ChatGPT/Codex agent or exp
 
 These roles may be fulfilled sequentially by one agent. For high-risk changes, an **independent human reviewer** must make the acceptance decision; repeating a review in the same model conversation is not independence.
 
+## GOV-20261114 — Executor routing and reviewer independence
+
+Each task has one executor label, [GPTWEB] for requirements, reviews, impact/risk matrix, checkpoints and authorized remote documentation, or [CODEX] for actual local repository inspection/edits, commands, tests, security probes and Git execution. [AUTO] is a routing directive, not a third executor or permission tier. It may dispatch an authorized READY Codex task only through a verified live provider; otherwise issue HANDOFF_REQUIRED, preserving task IDs and evidence. See [root contract](../../AGENTS.md#active-agent-contract--read-first).
+
+The coordinator requires task ID, phase, source SHA, requirements/AC, dependencies, priority, assigned writer, permitted and forbidden paths, action permissions, expected result, failed result/rollback, budgets, evidence and status. Parallel reviewers use immutable source; a single integrator owns shared writes. Independent A.1 review, owner risk acceptance and Phase-B authorization are external decisions, not GPTWEB/CODEX self-certifications. A simulated persona or sequential same-model review has independentWorkers=0.
+
 ## Assignment and escalation
 
 1. Classify the request as READ, PLAN, IMPLEMENT, VERIFY or DELIVERY. An ambiguous action cannot be elevated to a write merely to complete a workflow.

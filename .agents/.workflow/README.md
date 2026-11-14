@@ -2,6 +2,10 @@
 
 > **Current state:** PLAN-103 documentation is an **author-complete candidate for independent A.1**, not an A.1 PASS or code authorization. [Planning & Specification P1–P9](planningSpecificationWorkflow.md) and [design handoff](designHandoffTemplate.md) are the recorded Phase-A process. The implementation flow described below is future and only applicable following independent review, host/security approval and a separately authorized B task. STOP/handoff is an agent procedure, not a newly deployed Workflow Guard machine state.
 
+**Active current entry:** [root contract](../../AGENTS.md#active-agent-contract--read-first), [executor roles](agentRoles.md#gov-20261114--executor-routing-and-reviewer-independence), [runbook](agentRunbook.md#gov-20261114--matrix-routing-execution-and-checkpoint), [validation](validationSpecification.md), [audit](../.handoffs/audit-20261114-agents-compatibility.md). PLAN-111 P0 patch is a candidate; formal A.1 NOT_RUN and B NOT_AUTHORIZED.
+
+**The numbered implementation sequence below is Phase-B-only**, requiring a separate scoped approval; do not use it to start code work during the current Phase A.
+
 1. **Requirement:** update `../.spec.md` as required and set the feature's status in `../.features.md`.
 2. **Plan first:** record scope, owner, changed files, rollback, acceptance tests in `../.plans.md`.
 3. **Threat model:** classify security/data/cross-OS effects in `../.risk.md`; block unsafe writes.
@@ -38,7 +42,7 @@ Workflow Guard evaluates requirements and records user-authorized transitions. I
 - [Domain authorities](../.documents/.documentGovernance.md) and [policy routing](../.documents/.policyRouting.md): identify owners and required operation without turning a discovered reference into permission.
 - [Test/delivery gates](testingAndDelivery.md) and [Git rules](../.git.workflow.md): explicit evidence and external acceptance before merge/release.
 
-These agent documents guide ChatGPT/Codex interactions and do not implement missing Workflow Guard controls. PR #7 retains three P0 and one P1 review findings; active Windows TOCTOU, OneDrive and legacy-migration risks are unchanged.
+These agent documents guide ChatGPT/Codex interactions and do not implement missing Workflow Guard controls. PR #7 contains historical P0/P1 review findings; PLAN-111 has candidate corrections but lacks independent exact-head host/security confirmation. This is not a current verified open-defect count.
 
 ## PLAN-083 interruptible work protocol
 

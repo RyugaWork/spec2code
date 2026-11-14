@@ -82,3 +82,13 @@ Populate the following only when an **actual independent authorized reviewer** h
 | A1-VAL-09 Independent signoff | NOT_RUN | Named reviewer/signature absent |
 
 An A.1 PASS requires the reviewer to replace all applicable mandatory entries with real evidence and reach an independently authorized aggregate outcome; the packet's template rows do not award PASS. Phase-B approval and B.1 remain separate decisions.
+
+## GOV-20261114 — Quantitative evidence and checkpoint (blank until observed)
+
+| Group/source SHA | Valid PASS | Valid total | Fail/retry/skip/exclusion policy | Unrounded R | Exact host/command/evidence | Verdict |
+| --- | ---: | ---: | --- | ---: | --- | --- |
+| NOT_RUN / specify group | UNKNOWN | UNKNOWN | UNKNOWN | NOT_MEASURABLE | NOT_RUN | BLOCKED |
+
+Require strict R > 99.99% in every mandatory measured executable group, zero unresolved P0, all applicable real independent A1-VAL-01..09 and full required evidence. Keep design validation distinct from runtime test percentage. Any missing requirement means NO_GO, not inferred signoff.
+
+Task checkpoint after each phase: total unique task IDs; done_verified; ready; in_progress; failed; blocked; reopened; newly discovered; remaining; gptweb_remaining; codex_remaining; P0_open; next task/owner; handoff/evidence refs. This template itself is NOT_RUN.

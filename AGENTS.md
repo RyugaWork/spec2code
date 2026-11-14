@@ -1,8 +1,19 @@
 # AGENTS.md — Spec2Code agent operating contract (v0.8.0 candidate)
 
-> **CURRENT WORKSTREAM — PLAN-100: L0 construction-readiness execution and A.1 preflight, with L1–L7 implementation staged behind independent approval.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
+> **CURRENT OBSERVED BASELINE — PLAN-111 targeted P0 patch is a source candidate requiring return to A; independent A.1 NOT_RUN and B NOT_AUTHORIZED.** Re-pin current branch/source and owner approvals before each task; this statement is not live Codex, Path Guard or Windows safety evidence.
 
 > Applies to **development of this repository**, not automatically to projects where the portable skill is installed. The v0.8.0 governance/workflow work is a **candidate**, not a stable release. Instructions guide a human-supervised ChatGPT/Codex agent; they do not themselves enforce filesystem containment or grant permissions.
+
+## Active agent contract — read first
+
+1. **Authority and source:** read current root/nested AGENTS and scope, approved requirements, canonical S2C [BRD](.agents/.spec.md), [RTM](.agents/.traceMatrix.md), [plans](.agents/.plans.md) and [risk matrix](.agents/.riskMatrix.md). Historical PLAN/handoff notes cannot supersede actual current evidence or human owner decisions.
+2. **Pre-edit review:** pin exact branch/SHA, identify affected paths, owner and risk; create a matrix with gap, impact, executor, expected and failed result, rollback and acceptance evidence before material edits. [Current audit record](.agents/.handoffs/audit-20261114-agents-compatibility.md) contains the matrix and historical GOV review.
+3. **Task routing:** [GPTWEB] owns analysis, review and explicitly authorized connector-document changes; [CODEX] owns local code/shell/tests/Git work; [AUTO] routes only when a real authorized connection exists. Otherwise HANDOFF_REQUIRED. See [roles](.agents/.workflow/agentRoles.md) and [runbook](.agents/.workflow/agentRunbook.md).
+4. **Lifecycle and quality:** A/P1–P9 → independent A.1 → separately authorized B → B.1. Failed or blocked A.1 returns to A and fresh A.1. For each executable mandatory measurable group require unrounded R > 99.99%, no open P0, complete evidence and actual independent A1-VAL-01..09 verdicts. A.1 is a design gate, not a substitute for runtime reliability or B permission.
+5. **Security and concurrency:** exact checkout, physical Path Guard plus OS sandbox for local operations, bounded budget/STOP, secrets exclusions, one writer per file, SHA lease on writes, no automatic commit/merge/release permission. The host owns its AGENTS, Spec Kit owns its native feature artifacts.
+6. **Checkpoint:** after each phase/failure report unique remaining/reopened/new/blocked task IDs and GPTWEB/CODEX split, evidence source SHA and next owner. Do not report hypothetical execution as PASS. Use [A.1 rules](.agents/.workflow/validationSpecification.md) and the [report template](.agents/.workflow/validationReportTemplate.md).
+
+**Scope note:** PLAN-111 P0 code remediation and historical PR #7 findings require fresh host tests and independent review. This Markdown cleanup does not alter Workflow Guard machine phases, close P0 risks, execute Codex or authorize B. Older PLAN headings are historical/proposed until checked against pinned source evidence.
 
 ## 1. Mission, entrypoints and boundaries
 
@@ -67,7 +78,7 @@ Git writes (branch creation, commit, push, merge, force, deletion), code edits, 
 
 ## 7. Known v0.8.0 blockers — do not paper over with instructions
 
-PR [#7](https://github.com/RyugaWork/spec2code/pull/7) currently has unresolved review findings: `CLOSE` loses task scope, VERIFY/HANDOFF policy operations are misrouted, source/Spec Kit changes are incompletely fingerprinted, and scope-free `status` may incorrectly report mismatch. These are **runtime defects**; updating AGENTS cannot fix them. Do not claim the five-stage guard is end-to-end validated or use its output as independent approval until corrected with regression tests. Windows TOCTOU/junction and legacy migration review also remain open.
+Historical PR [#7](https://github.com/RyugaWork/spec2code/pull/7) review reported these defects (PLAN-111 is a candidate patch, not independently verified closure): `CLOSE` loses task scope, VERIFY/HANDOFF policy operations are misrouted, source/Spec Kit changes are incompletely fingerprinted, and scope-free `status` may incorrectly report mismatch. These are **runtime defects**; updating AGENTS cannot fix them. Do not claim the five-stage guard is end-to-end validated or use its output as independent approval until corrected with regression tests. Windows TOCTOU/junction and legacy migration review also remain open.
 
 Agent-facing policy: be specific about what was **read**, **changed**, **tested**, **not tested**, and **blocked**. Handoff must never upgrade a missing gate to PASS.
 
@@ -223,18 +234,7 @@ Do not infer from static Windows reparse detection that hostile TOCTOU or non-an
 
 Before each material AGENTS/spec/plan/source/config/test modification, inspect the exact branch/ref, applicable root/nested policies, owner, paths, current evidence and risks. Record a pre-edit matrix with columns: review ID; requirement and source SHA; gap/conflict; impact/risk; affected files; planned treatment; executor; expected result; failed result and rollback; acceptance evidence; decision. No matrix, unresolved policy conflict, missing permission or contested file owner means BLOCKED_REVIEW for affected writes. Review the exact diff against the matrix afterward; the author may report PREFLIGHT_ONLY, never independent approval.
 
-**This update's author-side pre-edit review matrix** (all runtime/independent checks remain NOT_RUN):
-
-| ID | Gap / baseline observation | Risk | Planned treatment / acceptance |
-| --- | --- | --- | --- |
-| RM-GOV-01 | Existing review roles lack a universal pre-edit matrix requirement | P1 | Require matrix and diff comparison; documentation check only |
-| RM-GOV-02 | Codex support described but task executor tags inconsistent | P1 | Define GPTWEB/CODEX/AUTO tags and complete task envelope |
-| RM-GOV-03 | Codex host/provider dispatch not evidenced working | P1 | Capability-gated dispatch; HANDOFF_REQUIRED on missing capability |
-| RM-GOV-04 | A.1 fail-to-A path exists but quantitative cycle gate is unspecified | P0 | A rework, bounded rerun and independent A.1 validation |
-| RM-GOV-05 | No strict per-group >99.99% test metric with P0 veto | P0 | Define denominator, no rounding, evidence and NO_GO |
-| RM-GOV-06 | Task remaining counts not mandatory after every phase | P1 | Report checkpoint with unique-ID remaining and executor split |
-| RM-GOV-07 | Parallel writer/source drift may overwrite another chat | P1 | Single file owner, ref/blob lease, stop on drift |
-| RM-GOV-08 | Existing independent review and B authorization must stay intact | P0 | Preserve A1-VAL-01..09 and distinct owner signoff |
+**Historical matrix retained:** The original GOV-20261114 eight-row author pre-edit matrix is preserved in [agent compatibility audit](.agents/.handoffs/audit-20261114-agents-compatibility.md); it is not independent approval.
 
 ### G2 — Per-task executor and routing protocol
 

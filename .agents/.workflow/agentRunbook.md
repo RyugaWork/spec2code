@@ -2,6 +2,16 @@
 
 Applies to development of Spec2Code and, as **guidance only**, to an installed skill in another Git checkout. Select the relevant mode; do not assume every user request authorizes runtime state writes. Examples use `<skill>` as an explanation placeholder, **not** a literal shell path. In a host installation, the actual script path is `.agents/skills/spec-to-code/scripts/`; in this development repository it is `.source/scripts/`.
 
+## GOV-20261114 — Matrix, routing, execution and checkpoint
+
+- **Before material change:** pin branch/SHA, read applicable policies, map requirement/AC and affected files, publish a pre-edit review matrix with gap, risk/P0, owner, GPTWEB/CODEX executor, expected result, failed result/rollback and test/evidence. If authorization or path ownership is unknown, BLOCKED_REVIEW.
+- **Route:** [GPTWEB] handles analysis/review and expressly allowed connector docs; [CODEX] handles local code, shell, tests and Git. [AUTO] is conditional dispatch, not automatic permission. Without a verified authorized Codex interface, return HANDOFF_REQUIRED with a complete task envelope and do not invent execution receipts.
+- **Codex preflight:** actual checkout and local status, canonical root, branch SHA, root/nested AGENTS, validated Spec Kit feature, single file owner, allowlist/denials, approved OS sandbox, CLI capability, timeout/retry/cost budget, expected/failed result and verification steps. Remote connector writes never establish local Path Guard proof.
+- **After each phase/failure:** checkpoint unique IDs by done_verified, ready, in_progress, failed, blocked, reopened, newly discovered and remaining; split remaining between GPTWEB and CODEX, preserving unknown evidence, P0 risk and handoff/next owner. Reopened/new tasks increase remaining; do not count the same ID twice.
+- **Quality/recovery:** A.1 FAIL/BLOCKED returns to affected A design/risk stages before a fresh A.1 run. Each executable mandatory measurable group needs strict unrounded R > 99.99%, no unresolved P0, full evidence, independent applicable A1-VAL-01..09 and separate owner decisions. Unknown test denominator or absent host runner is NOT_MEASURABLE/BLOCKED. STOP on bounded-budget exhaustion; never infer B/merge authorization from A.1.
+
+See [root G1–G6](../../AGENTS.md), [roles](agentRoles.md) and [validation](validationSpecification.md). These instructions do not implement a Codex transport or machine PAUSED state.
+
 ## 0. Decide what is allowed
 
 | Request type | Permitted initial work | Not implied |
@@ -25,7 +35,7 @@ If there is no local checkout or no execution tool, perform a repository-source 
 ## 2. Spec Kit branch (only when truly installed)
 
 - Official Spec Kit tools and skills run in the **coding agent's chat**, not as subprocess calls made by S2C. `specify` CLI is for installation/integration management. Confirm the installed agent integration and invoke its native syntax (for Codex skills: `$speckit-specify`, `$speckit-plan`, `$speckit-tasks`, etc.).
-- Select the active feature from `SPECIFY_FEATURE_DIRECTORY` or `.specify/feature.json`; never infer it from the Git branch.
+- Resolve the active feature from validated `.specify/feature.json` in the exact physical checkout. Inherited `SPECIFY_FEATURE_DIRECTORY` and `SPECIFY_FEATURE` are untrusted and must be sanitized; only an explicit reviewed override may be canonicalized and accepted inside scope. Never infer it from a branch name.
 - Read-only inspection: `python .agents/skills/spec-to-code/scripts/speckit_bridge.py --root . --stage status`. Use `--stage plan` when `spec.md` is ready; `--stage implement` only when **all three** `spec.md`, `plan.md`, `tasks.md` exist.
 - Normal agent sequence: establish constitution when needed; `specify` → optional `clarify` → `plan` → optional `checklist` → `tasks` → optional `analyze` → `implement` → `converge`. The checklist is reviewer-owned evidence, not a way for S2C to approve requirements. Rework only impacted phases when a meaningful change invalidates them.
 - S2C does **not** own/write `.specify/` or `specs/` via its bridge. An authorized agent may edit active Spec Kit artifacts using upstream commands, subject to the host's policies and the relevant session provenance.
@@ -55,7 +65,7 @@ These filenames and task are **illustrations**; replace them with observed value
 
 ## 5. Workflow Guard caveats at PR #7
 
-The `workflow_guard.py` five-stage journal is a **pre-release advisory machine gate**, not an orchestrator or approval provider. Use identical `--task` and `--paths` for a scoped task. There are known open findings on the PR #7 head: missing scope in `CLOSE`, VERIFY/HANDOFF operation mapping, missing source/Spec Kit snapshot inputs and scope-free `status` mismatch. Do not represent `CLOSE` as verified, skip a security review, or assert release authorization merely because an event was written. `status` with full scope may be used for diagnosis, but this does not fix the underlying regression.
+The `workflow_guard.py` five-stage journal is a **pre-release advisory machine gate**, not an orchestrator or approval provider. Use identical `--task` and `--paths` for a scoped task. Historical PR #7 review observed: missing scope in `CLOSE`, VERIFY/HANDOFF operation mapping, missing source/Spec Kit snapshot inputs and scope-free `status` mismatch. Do not represent `CLOSE` as verified, skip a security review, or assert release authorization merely because an event was written. `status` with full scope may be used for diagnosis, but this does not fix the underlying regression.
 
 ## 6. Report format
 

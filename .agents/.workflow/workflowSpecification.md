@@ -112,3 +112,14 @@ This document describes the future **B implementation lifecycle**, including its
 - **B/VERIFY** is internal test/build and scope evidence; **B.1** is stakeholder/system validation. Passing the former does not satisfy the latter.
 - `B1_FAIL` returns to affected B implementation/tests, or to A/A.1 if the specification/design changed. `B1_BLOCKED` stops release and creates a handoff. `B1_PASS` requires real evidence but **still does not authorize Git merge/deploy**.
 - No B.1 is currently running, and neither A.1 nor B.1 is a machine phase in `.source/.config/workflow.json`.
+
+
+## 9. PLAN-099 — Concurrency policy across mandatory nine-stage tasks
+
+Parallelism may exist **inside** a phase (independent work units) or **between unrelated tasks in the same ready dependency wave**, but each individual task still completes all nine universal stages with evidence. Never parallelize an approval decision with a write that depends on that approval. Use the [construction-layer roadmap](../.spec.md#24-plan-099--construction-layer-roadmap-and-bounded-parallel-execution) and [DAG contracts](../.documents/featureDesign.md#81-bounded-parallel-work-and-worker-compatibility). This is a **design protocol**, not implemented threading or autonomous agent execution.
+
+**Dispatch preflight:** source and host policy revision current; all prerequisite units verified; read/write/impact sets and Z0–Z4 approved; direct and indirect write collisions absent; capability, deadline, max workers and token/CPU/memory/CI budgets within host policy; retry bound and cancellation supported; independent reviewer roles available or transparently `SEQUENTIAL_NONINDEPENDENT`. A task cannot acquire more authority by becoming a worker.
+
+**Execution barrier:** only one trusted integrator applies reviewed patches to a stable baseline, records changed source/hash, invalidates dependent cached evidence and reruns affected and mandatory regression/negative checks. Failure/timeout/drift/P0 requires cancellation of dependent nodes, no speculative release or cleanup, and a STOP-safe evidence handoff. Contended shared documents, Path Guard, trusted policies and workflow journal use a **single write owner**, with parallel read-only reviews allowed. No new runtime phase, active daemon, Git branch-per-worker or automatic PR merge is introduced.
+
+**Validation:** compare serial versus bounded parallel runs for identical input and expected output: correctness/AC, source/review independence, runtime, token+CI costs, collision and fail-safe recovery. Until witnessed on an exact revision, report `NOT_RUN` and retain serial mode as a safe fallback where permissible.

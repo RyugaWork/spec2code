@@ -70,3 +70,18 @@ The role catalogue supports a **future** multi-agent review service and present-
 Review personalities: skeptical (test assumptions), adversarial (find abuse/negative cases), constructive (improve completeness), pragmatic (feasibility/cost), compliance-first (governance/security), exploratory (edge cases). Selection combines expertise fit 35%, task fit 25%, perspective 15%, marginal coverage 15% and budget feasibility 10% **as proposed design defaults**, subject to versioned config and A.1 review. Constraints (mandatory role coverage/security, ownership, permissions, quota) are not traded for score. Worker uniqueness and correlation must be disclosed.
 
 The **Review Coordinator** freezes the policy/source revision, plans n and authenticates constraints; **Reviewer Workers** produce independent source-linked findings without reading each other's draft; the **Synthesis Reviewer** aggregates immutable results while retaining dissent/P0 blockers; the **Human Validator** alone makes A.1/B.1 or approval decisions in the proper gate. No coordinator/workers have been executed from this documented flow. Do not self-grade a simulated reviewer as independent. See [master](../.spec.md#12-weighted-multi-agent-review-requirements-and-design) and [RTM](../.traceMatrix.md#i-plan-088--unified-review-service-requirement-and-evidence-crosswalk-draft).
+
+
+## PLAN-099 — Multi-worker scheduling versus reviewer roles (design only)
+
+Retain the existing F33 logical responsibilities and proposed weighted F38–F42 profiles. Introduce **no new independent reviewer/coordinator authority**: a `Scheduler` responsibility may distribute ready, scoped units; a `Module Owner` is the sole writer for a shared component; a `Trusted Integrator` performs source-SHA, contract, conflict and regression checks; an `Independent Reviewer` evaluates evidence but cannot self-approve; an `Approval Owner` holds an explicit external human decision. These are **roles, not running services**.
+
+| Role / work type | Concurrency permissions | Output and stop condition |
+| --- | --- | --- |
+| Discovery/research/QA/security reviewer | Parallel read-only on same pinned source, with independent worker execution explicitly evidenced | Evidence-linked findings; unverified/partial dissent preserved |
+| Scoped implementation worker | Parallel only if approved DAG dependencies and nonoverlapping write + transitive impact sets, isolated environment with OS policy | Staged patch, exact source SHA, observed checks, resource budget; no shared master/Protected Core write |
+| Integration owner | Serial writes to shared contract, canonical BRD/RTM/AGENTS, workflow journal and merge target | One combined source SHA, regression/contract outcome; BLOCK on conflicts |
+| Security/quality gate | Can parallelize isolated checks but cannot be authored/approved by the same untrusted worker | Independent mandatory gate evidence; reject stale or P0 |
+| External approver | No automated authority delegation to workers or models | Explicit recorded approval only after independent A.1/B.1 evidence |
+
+The proposed [WorkUnit/WorkerResult contract](../.documents/featureDesign.md#81-bounded-parallel-work-and-worker-compatibility) carries task, parent stage, dependencies, source SHA, read/write/impact sets, budget, expected output and result. Worker count is **bounded by available host, budget and mandatory expert coverage**, not hardcoded globally. If no real worker runtime is available, use serial, explicitly labeled `SEQUENTIAL_NONINDEPENDENT`; fail closed when independence is a mandatory acceptance condition. A stage/task still traverses all nine universal steps, with safe STOP/handoff on collision or worker loss.

@@ -1,6 +1,6 @@
 # Spec2Code v0.7.0
 
-> **Current baseline: PLAN-092 / unified BRD/SRS v1.5 + Spec Kit bootstrap (PLAN-087..091 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](.agents/.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
+> **Development documentation baseline: PLAN-103 authoring candidate on the current development branch; runtime baseline remains v0.7.0.** Use the [unified master BRD/SRS](.agents/.spec.md), [RTM](.agents/.traceMatrix.md) and [current review index](#current-documentation-and-review-entrypoints--plan-103). Historical PLAN-087..102 sections below preserve context, not current approval status. A.1 independent validation and Phase B still require separate authorization.
 
 
 Infrastructure-aware, universal Spec-to-Code agent skill with optional read-only upstream GitHub Spec Kit bridge.

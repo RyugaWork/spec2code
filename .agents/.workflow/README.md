@@ -1,6 +1,6 @@
 # Spec2Code workflow index — planning before implementation
 
-> **Now:** [Planning & Specification Workflow P1–P9](planningSpecificationWorkflow.md) and [design handoff](designHandoffTemplate.md). The historical change workflow and the five-stage runtime-assisted implementation model described below apply **only after planning review and explicit implementation authorization**. STOP in the current design phase is an ordinary planning handoff, not a Workflow Guard machine state.
+> **Current state:** PLAN-103 documentation is an **author-complete candidate for independent A.1**, not an A.1 PASS or code authorization. [Planning & Specification P1–P9](planningSpecificationWorkflow.md) and [design handoff](designHandoffTemplate.md) are the recorded Phase-A process. The implementation flow described below is future and only applicable following independent review, host/security approval and a separately authorized B task. STOP/handoff is an agent procedure, not a newly deployed Workflow Guard machine state.
 
 1. **Requirement:** update `../.spec.md` as required and set the feature's status in `../.features.md`.
 2. **Plan first:** record scope, owner, changed files, rollback, acceptance tests in `../.plans.md`.

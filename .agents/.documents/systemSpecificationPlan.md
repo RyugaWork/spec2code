@@ -1,6 +1,6 @@
 # Spec2Code — System Specification Authoring Plan (PLAN-084)
 
-> **Current baseline: PLAN-092 / unified BRD/SRS v1.5 + Spec Kit bootstrap (PLAN-087..091 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](../.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
+> **Current authoring: PLAN-103 documentation candidate, while runtime remains v0.7.0.** The [unified master](../.spec.md), [RTM](../.traceMatrix.md), [test catalogue](../.workflow/testingAndDelivery.md) and [A.1 gates](../.workflow/validationSpecification.md) are the current design sources. Older PLAN-084..102 material is retained for provenance, not approval.
 
 
 > **Draft plan**, not an approved System Requirements Specification and not permission to implement. The existing `.agents/.spec.md` is a partial acceptance contract. This plan tracks acceptance and review of the 12 SRS chapters now consolidated into [the master Section 15](../.spec.md); it does not create a competing SRS or change source code.
@@ -84,3 +84,18 @@ The SRS and system planning content is **author-complete as a candidate** when e
 | Phase-B work scope, test environment and command authority | Requester + host/security owner | NOT_AUTHORIZED |
 
 Do not treat missing human decisions as unfinished drafting that an agent can invent. If author-side static checks pass and open owner decisions are explicitly registered, label the package `AUTHORING_COMPLETE_CANDIDATE / A1_REVIEW_PENDING`, never `A1_PASS` or `IMPLEMENTATION_READY`.
+
+### 8.1 Owner-ready decision evidence packet (do not self-approve)
+
+The requested *documentation drafting* work is complete as a candidate; the following **external** decisions cannot be inferred or signed by the author-model. Record each as an actual source-bound decision in the existing [validation report template](../.workflow/validationReportTemplate.md) and [PLAN-103 owner handoff](../.handoffs/plan-103-owner-review-packet.md), with `decision=ACCEPT|REVISE|BLOCK`, reviewer identity/authority, Git SHA, Google BRD tab/revision and evidence. PENDING is not ACCEPT.
+
+| Decision area | Minimum observed inputs to request | Accountable role and stop condition |
+| --- | --- | --- |
+| BRD and acceptance | Current master BR-001..027, proposed BR-022..027, 22 F43..64 rows, 44 candidate TC-F IDs, Google BRD Draft; explicit accepted/excluded scope and numeric owner-selected ACs | Business/product owner; lack of signed ownership → BLOCKED |
+| Architecture and technology | ADR-102-01..08, DEC-091/101, runtime/host versions and supported-maturity evidence, requested overrides | Architecture/technology owner; compatibility, policy or ownership UNKNOWN → REVISE/BLOCK |
+| Security and data sharing | RM-001..005 and RM-047..052, Windows path/junction and sandbox threat model, secrets/remote-provider disclosure, negative fixtures and residual-risk justification | Host/data/security owner; unaccepted P0 → BLOCK |
+| Provider and execution | Actual approved OS/worktree, Codex `--version` and `exec --help`, state DB permissions, MCP server package and tool list, authentication and network/data scope, retry/cost/timeout budget | Host tool operator and security owner; unverified commands/provider or unsafe sandbox → BLOCK |
+| Independent A.1 | Exactly pinned Git output SHA + Google tab/revision, BR/AC decisions, A1-VAL-01..09, risk/ADR packet, review report and dissent | Named independent reviewer; NOT_RUN or source drift → no A1_PASS |
+| Phase-B / release | A1_PASS evidence and a distinct written implementation scope, test environments, Path Guard restrictions, owners, rollback and later B1-VAL-01..09 evidence | Requester/maintainer/release authority; no separate B and B.1 approvals → no implementation/merge/release |
+
+**This is an owner action queue, not an automatic signature form or a new normative SRS.** [The original report template](../.workflow/validationReportTemplate.md) remains the single place to record a real review, and [handoff](../.handoffs/plan-103-owner-review-packet.md) preserves the current source evidence. No host CLI or Gemini/MCP probe occurred in this documentary pass.

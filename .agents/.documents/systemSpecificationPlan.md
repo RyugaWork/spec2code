@@ -99,3 +99,9 @@ The requested *documentation drafting* work is complete as a candidate; the foll
 | Phase-B / release | A1_PASS evidence and a distinct written implementation scope, test environments, Path Guard restrictions, owners, rollback and later B1-VAL-01..09 evidence | Requester/maintainer/release authority; no separate B and B.1 approvals → no implementation/merge/release |
 
 **This is an owner action queue, not an automatic signature form or a new normative SRS.** [The original report template](../.workflow/validationReportTemplate.md) remains the single place to record a real review, and [handoff](../.handoffs/plan-103-owner-review-packet.md) preserves the current source evidence. No host CLI or Gemini/MCP probe occurred in this documentary pass.
+
+## DOC-A02 — Owner decision completeness for exact-revision A.1
+
+Use the **existing** [validation report template](../.workflow/validationReportTemplate.md) rather than creating a second approval ledger. Each open owner decision must provide: `decisionId`, named owner and proof of scope of authority, `ACCEPT|REVISE|BLOCK`, exact Git SHA, Google doc ID/tab/revision when applicable, the affected BR/REQ/feature IDs, alternatives considered, security/compatibility evidence, date, expiry/revisit trigger and a verifiable signature/reference. A `PENDING` proposal is *not* an `ACCEPT` decision.
+
+For business approval, ask the owner to disposition **each** of BR-022..027 (accept/exclude/reword) and identify quantitative acceptance where the design intentionally leaves host/environment values open. For security, ask the host owner to decide real Windows/macOS/Linux scope, external-provider disclosure, sandbox and negative cases **per P0**. For review, require one independently accountable A.1 reviewer with access to the exact Git/Google pair; the author-model's sequential lenses are not independent. Until all these records exist, record `OWNER_PENDING / A1_NOT_RUN`, not `IMPLEMENTATION_READY`.

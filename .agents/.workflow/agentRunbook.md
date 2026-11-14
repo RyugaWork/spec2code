@@ -107,3 +107,9 @@ For **all** technology classes, including Python interpreter/requirements, Power
 8. **Gate:** only independent A.1 and a separate B approval can authorize source implementation. Refer to [test cases](testingAndDelivery.md#plan-101--codexgemini-mcp-acceptance-design).
 
 No command in this document is claimed to have been newly run.
+
+## DOC-A09 — Host CLI evidence and safe documentation fallback
+
+The operator must capture exact `codex --version`, `codex exec --help`, OS, sandbox policy, writable Codex state location, permitted commands, repository root, and actual stderr/exit **on the approved host** before claiming Auto Run. Prior Codex `0.169.0-alpha.11.1` rejected `--full-auto` (exit 2) and a separate read-only probe failed state/app-server initialization (exit 1). These failures are evidence of **incompatibility in that tested environment**, not successful model execution. Do not guess alternate flags, set unrestricted `--yolo`, auto-install unverified MCP packages or place state outside the approved sandbox without host consent.
+
+If the host cannot run the tool, stop automated execution and publish only independently authorized read/write **documentation through the GitHub connector**, identifying this as a distinct path. Before any remote commit check expected HEAD, allowed files, diff and actual result; never overwrite pre-existing uncommitted local work. Explicitly label `CLI_NOT_RUN / PROVIDER_NOT_VERIFIED / LOCAL_PATH_GUARD_NOT_TESTED` and preserve a per-batch handoff for resume. A GitHub document commit cannot satisfy native OS negative tests.

@@ -238,3 +238,9 @@ A proposed provider response `READY` means only that its scoped read was perform
 For every interface between Context Router, Policy Resolver, Path Guard, Workflow Guard, source graph, Spec Kit bridge, reviewer aggregator and handoff storage, document **who creates the authority**, who reads it, which fields are untrusted, what side effects are possible, and the failure state. A model-produced statement such as `approved=true` is data, not a permission grant. External reviewer/MCP tool responses must pass schema and source SHA checks before being displayed or considered as evidence.
 
 A design card is complete only if the primary and failure paths identify an owner, typed inputs/outputs, privacy classification, resource cap, replay/idempotency expectation, consistent rollback and referenced positive/negative case. Source or contract drift triggers a new impact review, never a silent compatibility assumption. These are proposed design checks; no live service has been verified.
+
+## APP-20261114 — Architecture-level requester approval boundary
+
+APP-02 approves the **current layered architectural direction** (S2C modules, official Spec Kit feature ownership and optional Codex/Gemini/Antigravity adapters); APP-03 approves the **design policy** for Manual, default Safe Auto, permissioned Sandbox Auto and restricted sandbox-only Full Auto. The exact decision source and six-row register are in [systemSpecificationPlan](systemSpecificationPlan.md).
+
+This is not a blanket `APPROVED` on every `ADR-102-01..08` or DEC-091/101 record: each host-specific API/security/OS/version/migration alternative still requires its designated owner and evidence. Existing `PROPOSED` per-ADR rows remain historical source-backed design options. No provider/CLI tool rights, live code write, host shell or production data access were enabled by this decision.

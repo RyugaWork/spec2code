@@ -180,3 +180,19 @@ Dispatch only `READY` DAG nodes with all prerequisite gates met; prohibit overla
 ### 8.2 Design acceptance and conservative fallback
 
 The parallel pilot must compare serial vs bounded n-worker execution for correctness, deterministic trace, total wall-clock time, total tokens/CI minutes, contention and failure recovery. No unmeasured speedup promise. Cancellation, timeout, lost worker, source drift, collision, failed gate or risk escalation must stop dependent work and preserve a resumable handoff. For an unavailable worker/sandbox, use serial or `BLOCKED` per policy, never silently weaken a mandatory check. Every task/phase still records the [nine universal stages](../.workflow/workflowSpecification.md#2-universal-nine-stage-execution-contract-plan-098), even if distinct independent subtasks run concurrently.
+
+## 9. PLAN-101 — Provider contract and AutoRun boundary
+
+This design extends [master `26](../.spec.md#26-plan-101--codexgeminiantigravity-documentation-integration-candidate), reusing F03/F04/F05/F07/F09/F10/F17/F19/F21/F30/F33/F38–F42/F44/F48/F52/F64, not a duplicate orchestrator. `.source/scripts/mcp_boundary.py` is a permission *library*, **not an installed MCP server**; `.source/.config/mcp.json` is not Google provider authentication.
+
+| Boundary | Proposed input/output | Fail-safe obligation |
+| --- | --- | --- |
+| Requester → Controller | task ID, approved paths, source SHA, budget, mode → scoped plan | Phase-A doc consent does not authorize B/shell/network |
+| Controller → Codex | actual CLI flag inventory, OS sandbox, allowed docs → exit/stderr/diff | One writer, no untested flag fallback, independent Path Guard |
+| Controller → MCP → Gemini/AGY | minimal redacted read-only source manifest/hash, time/token cap → findings, unreviewed paths, provider status | No automatic `npx -y` install, secrets, shell delegation or fictitious independent review |
+| Integrator → Git | approved Markdown, exact expected branch SHA → nonforced commit + readback | Reject stale parent, don't touch nine existing local changed files |
+| Reviewer → A.1 | exact Git+Google pair, tests, RTM, P0 risks → signed disposition | Only actual accountable independent review can decide A.1 |
+
+**Candidate protocol, not deployed JSON:** request `taskId, providerId, adapterVersion, operation(analyze|review), inputGitSha, sourceManifest(path,sha,range,dataClass), allowedTools, policyId, maxCalls, tokenBudget, deadline, approvalRef`; response `status(READY|DEGRADED|BLOCKED|UNAVAILABLE), sourceSha, providerVersion, findings(id,source,evidence,confidence,severity), unreviewedPaths, usage, errorCode, auditRef`. Reject malformed/extra-privilege response, stale source and model claims of human approval.
+
+**Modes:** Manual prompts each operation; Safe Auto limits vetted documentation writes; Sandbox Auto is an isolated, owner-approved future build/test workflow; Full Auto still requires sandbox, explicit authorization and strict budgets (not YOLO). No approval for CLI/runtime expansion is conferred by documenting them. A Codex MCP `tool_timeout_sec` does not itself enforce subprocess or whole-session deadlines. On tool/auth/quota failure report BLOCKED/DEGRADED and preserve handoff, never skip a mandatory gate.

@@ -92,3 +92,18 @@ After A/P9, a designated reviewer must use [A.1 Design Validation](validationSpe
 For **all** technology classes, including Python interpreter/requirements, PowerShell runtime/module edition, SQL DBMS+driver+dialect+migrations, .NET, CI images and project layout, complete a [technology assessment](../.documents/technologyAssessmentTemplate.md) using the [cross-stack policy](../.documents/technologyVersionPolicy.md). The **default** is currently supported, mature and widely adopted, not just the latest major. Preserve existing S2C support/CI and a host's approved structure until a separate change is authorized; do not retarget `pyproject.toml`, PowerShell scripts or migrations automatically.
 
 **Explicit User Override** takes priority over the conservative maturity preference: identify the user's exact requested technology/version/structure and scope, and document it with an [override record](../.documents/technologyOverrideTemplate.md), risk and compatibility/upgrade plan. Newly released supported major versions can be accepted as **design choices** if the requester expressly chooses them. Unsupported/EOL/preview/high-risk selections need a further safety/owner review and may remain blocked; higher-priority security, Path Guard and separate Git/write/release authorization cannot be waived. A.1 reviews the decision, B.1 later checks actually installed versions when implementation has been authorized. The current work remains design, not implementation.
+
+## 11. PLAN-101 — Codex AutoRun preflight
+
+**Current fact:** `--full-auto` failed on the tested Codex version, Gemini/AGY is unverified, and the GitHub-only documentation path does not prove local Path Guard.
+
+1. **Discover:** confirm checkout root, current `git status --porcelain=v1`, branch, AGENTS hierarchy, current docs/Spec Kit, and nine prior local modified/untracked files recorded in [checkpoint 1](../.handoffs/plan-100-documentation-checkpoint-1.md). If local checkout is inaccessible, status is NOT_OBSERVED.
+2. **Capability:** record observed `codex --version` and `codex exec --help`, exit/stderr, usable sandbox and writable state DB. On known `0.169.0-alpha.11.1` the full-auto flag exited 2; a separate read-only attempt exited 1 during app-server initialization. Do not guess a replacement flag or bypass sandbox.
+3. **Provider opt-in:** verify MCP package origin/pin/auth and actual tool names using synthetic read-only fixtures. Reject surprise provider commands, credentials, untrusted instructions and whole-repo data requests.
+4. **Plan:** bind approved documents, git/Google revisions and requirement/risk/AC mapping. Do not check Spec Kit T011/T012/T015 or enable B.
+5. **Execute only in approved boundary:** enforce OS sandbox, Path Guard, allowlisted Markdown, secrets filter, timeout, retries, token/cost cap, cancellation and one-writer rule. A GitHub connector commit is **not** a local CLI test.
+6. **Verify:** document changed-file scope, links, IDs, reverse trace and actual command evidence; keep planned MM-TCs as NOT_RUN unless actually exercised. Gemini independent review is only real when provider call and reviewer identity are evidenced.
+7. **Handoff and STOP:** save exact source/commit SHA, source pair, files, validations, blockers and next steps before another part. Stale ref, privilege error, P0, quota or budget exhaustion causes STOP and revalidation on RESUME.
+8. **Gate:** only independent A.1 and a separate B approval can authorize source implementation. Refer to [test cases](testingAndDelivery.md#plan-101--codexgemini-mcp-acceptance-design).
+
+No command in this document is claimed to have been newly run.

@@ -20,3 +20,9 @@ Source-linked static check of the 10 PLAN-102 files at `cc99d97`: 32 newly intro
 `AUTHORING_COMPLETE_CANDIDATE / READY_FOR_OWNER_REVIEW` is the strongest author-side result. Existing `A1_NOT_RUN`, `B_NOT_AUTHORIZED`, `B1_NOT_RUN` and mandatory P0 remain. Owner next actions: refresh/reconcile exact Git output SHA ↔ Google tab/revision with substantive BR/AC differences, settle DEC-091/101 and ADR-102 and P0 risk ownership, appoint independent A.1 reviewer to judge A1-VAL-01..09, then separately authorize B/host tests if signed. **No fabricated owner approval**.
 
 Resume by fetching current branch SHA, this handoff and Google revision; check source drift and pending local edits before any write. Keep PR #10 Draft, don't merge main; revert only this exact Markdown commit under review if required. STOP any affected mutation on mismatch or absence of approval.
+
+## Final source QA after draft mirror
+
+On remote Git source `2aa72893f17038b624c1f59d6b14ef2483c974fe`, author-side validation read 15 representative canonical/handoff/Spec Kit Markdown files: **361 relative Markdown references checked**, two stale `master Section 11` anchor targets found in AGENTS and PLAN-088 ledger, and both repaired in this follow-up commit. Requirement trace includes 12 distinct MM-REQ, 12 MM-TC and matching 12 RTM rows, six RM-047..052 risks, eight distinct ADR-102 rows and nine A1-VAL-01..09 reviewer slots; T011/T012/T015 remain explicitly unchecked. Also corrected three dangling inline-backtick labels in the PLAN-101/102 plan ledger and one pre-existing whitespace-only line. The final branch HEAD must be re-read before trusting this report.
+
+**Limits:** GitHub-source static QA (no local `git diff --check`, Codex CLI, tests, actual Gemini MCP or independent A.1). The Google mirror remains Draft, with exact observed revision recorded above; accepted BR/AC equivalence and owner P0 dispositions are still pending.

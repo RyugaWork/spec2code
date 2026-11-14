@@ -71,7 +71,7 @@ This catalogue is the **only** detailed planned acceptance-case source for BR-00
 | `TC-S2C-BR020-N` | BR-020 / M2/M3 | Source changes between worker and synthesis or output path unowned (adversarial) | Attempt use stale report or save outside reviewed scope | Status STALE/STOPPED_NOT_PERSISTED or BLOCKED; no normative automatic write | Two source hashes and no-write proof | DESIGNED / NOT_RUN |
 | `TC-S2C-BR021-P` | BR-021 / M4 | Reviewer-independent acceptance host with mixed software, data and BRD fixtures (positive) | Execute approved AC-REV-01..09 cases and obtain actual authorized signoff | Per-AC real host result, evidence/owner and A.1/B.1 decisions remain distinct | Exact SHA/OS, cases, signatures | DESIGNED / NOT_RUN |
 | `TC-S2C-BR021-N` | BR-021 / M4 | Same-model simulated reviewers, quota exhaustion or absent signer (adversarial) | Try to claim independent B1_PASS or release approval | Gate blocked/NOT_RUN; no fabricated worker count or signoff | Reviewer correlation and unrun cases | DESIGNED / NOT_RUN |
- 
+
 **Acceptance design precision:** Before B executes a TC, the responsible owner must bind an exact environment/fixture version and test adapter (source-level unit, integration, host security or manual review) to that ID. For acceptance decisions, compare the named expected result to the **actually captured result**; if the behavior is not yet an implemented or supported interface, the case stays `NOT_RUN` or `BLOCKED`. Every adverse test must preserve outside sentinels and cannot run against a production host without independent permission. `TC-S2C-BR017..021-P/N` remain proposed implementation tests, not a working multi-agent runtime.
 
 ### Test partition coverage and execution record template

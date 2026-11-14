@@ -22,3 +22,11 @@ This is a GitHub connector Markdown operation, **not** local CLI, Path Guard, Co
 - No main/PR merge, new branch, runtime/config/CI edit or deletion. Roll back through an owner-approved revert of the specific Markdown commit, preserving prior handoffs.
 
 **Proposed document status after verified final SHA:** `DOCS_PREPARED_FOR_A1` / **NOT IMPLEMENTATION_READY**.
+
+## Subsequent static verification and BRD drift finding
+
+Author-side readback at Git `9616e3de97969ca0c18b2dd4dfd3402195ea8bf1` confirmed exact fast-forward ancestry (checkpoint 3 → checkpoint 4), Markdown-only changed paths, 12 unique MM-REQ master/RTM rows, 12 unique MM-TC tests, six RM-047..052 entries, complete reverse mapping, **21 newly added relative links resolved** and no trailing whitespace in newly added sections. These are remotely inspected source checks; **not** a local `git diff --check` invocation, regression or independent reviewer.
+
+A fresh Google Docs connector read at revision `AHj4eMQuRcrydq5lKz89yU9OfReTA-9Br-Q7-Zv5JfPXDRgfv-muhutf_DPiXuW2yqr8eUmaoJ0h0czpGMaediW1vJmkbIT3SBcz8q80tQ` showed its last PLAN heading was PLAN-097 and found no PLAN-100/101. By contrast, Git master includes PLAN-098..101. **Heading-level source drift confirmed**, exact BR/AC content equivalence not determined. Governance and master contain the non-silent disposition; no Google edit, owner signature or A.1 carried out.
+
+This additional observation is persisted by the **commit containing these verification notes** (not the prior SHA); fetch HEAD and recheck the newest diff before using it as an A.1 source. Stop if branch advanced unexpectedly, and never claim readiness to implement without separately approved B.

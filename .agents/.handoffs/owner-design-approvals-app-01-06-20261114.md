@@ -16,3 +16,9 @@
 **Canonical register:** `/.agents/.documents/systemSpecificationPlan.md`, section APP-20261114; subordinate references in master SRS, architecture, risk, RTM, validation, technology policy, document governance and plans. No new feature identifiers, no per-ADR signature, no risk score changes, no runtime code/config/CI or host execution.
 
 **Post-commit check:** confirm expected fast-forward parent, changed files all Markdown, correct APP-01..06 table, source/Google revision and all A.1/P0/B/B.1 boundary text. If branch has moved, STOP, reconcile and never force-update. Earlier `.agents/.handoffs/a1-author-preflight-20261114.md` remains a historical author-only report, not retrospectively approved. PR #10 remains Draft and unmerged unless separately authorized.
+
+## A1 source-provenance erratum (2026-11-14)
+
+Original user statement in this chat: **“duyệt hết đi”** after a four-group approval checklist. The six APP items are a document-author mapping and conservative interpretation, **not literal six separately given approvals**. An earlier canonical passage misquoted the requester; the current [canonical register](../.documents/systemSpecificationPlan.md#app-20261114--owner-requester-design-approvals-app-01app-06-scope-limited) now corrects it. Google Draft 36.4 received the corresponding single-paragraph correction, verified at revision `AHj4eMSKkbKTc9Zi1U5aJD5rk8h3Wr1Feq5a3PffqRhb_JMd-unznzxEfoJkKG4KQTOEK2I5SWHHOp91UOVnGCMONc3Wd4i5pdVnAD76ig`. The prior handoff is historical; this erratum supersedes only its quotation/authority representation.
+
+The source comparison is in [document governance](../.documents/.documentGovernance.md#a1-src-20261114--gitgoogle-brd-semantic-screening-and-provenance-correction). Formal reviewer, security host authority and AC signatures are still absent; no P0 waived, no A1_PASS and no B permission.

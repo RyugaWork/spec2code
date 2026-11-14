@@ -1,6 +1,6 @@
 # Testing and delivery gates — PLAN-080
 
-Workflow: DISCOVER → SPECIFY_PLAN → IMPLEMENT → VERIFY → HANDOFF_REVIEW.
+**Universal process:** every phase/task records DISCOVER → PLAN → RISK MANAGEMENT → IMPLEMENT → TEST → VERIFY → OPTIMIZE → HANDOFF → DOCUMENT. The five machine phases below (`DISCOVER → SPECIFY_PLAN → IMPLEMENT → VERIFY → HANDOFF_REVIEW`) remain the current `workflow_guard.py` compatibility protocol; they do not remove the manual TEST/OPTIMIZE/DOCUMENT and risk checkpoints.
 
 Each stage has a machine-checkable preflight, explicit transition events, and external approval where necessary. Workflow Guard never invokes shell commands, Spec Kit stage executors, Git writes or tests. It cannot issue approval or PASS evidence for an external system.
 
@@ -87,3 +87,25 @@ AC-REV-01→TC-S2C-BR017-P/N and BR021-P; 02→BR017-P/N; 03→BR017-N; 04→BR0
 **Execution progression:** review at A.1 for design testability; write actual `.source/tests/` or host integration tests only in authorized B after M1 safety; verify on exact implementation HEAD; obtain B.1 independent host/user acceptance separately. Do not reclassify a planned TC as `PASS` without actual run artifact and reviewed AC applicability.
 
 **Documentation-only audit at PLAN-089:** check 21 BRs × 2 planned scenarios = 42 proposed TC IDs, not 42 automated tests. If the test catalogue changes, regenerate affected RTM references and inspect both directions for unreferenced BR/TC, while retaining historical test evidence rather than overwriting it.
+
+
+## PLAN-100 — L0 evidence and L1 bounded security/workflow regression specification
+
+**Status:** acceptance scenarios **DESIGNED / NOT_RUN**, unless a separate exact-SHA CI result specifically supports the existing regression suite. Baseline CI at `7746f3e1` succeeded twice (runs [43536002497](https://github.com/RyugaWork/spec2code/actions/runs/43536002497), [43535995646](https://github.com/RyugaWork/spec2code/actions/runs/43535995646)), 4/4 matrix jobs each, observed sample logs `124 tests` per OS configuration. These successes **do not** cover every new negative case below. No new Python tests are added by this design update.
+
+| Planned case | Input/precondition (disposable host, pinned SHA) | Action | Expected output and required evidence | Priority/status |
+| --- | --- | --- | --- | --- |
+| `L1-WF01` | One authorized scoped task, explicit trusted reviewer, complete five-machine-phase journal | Advance `DISCOVER→SPECIFY_PLAN→IMPLEMENT→VERIFY→HANDOFF_REVIEW→CLOSE` | CLOSE preserves exact `task/paths`, COMPLETE only after external check; no scope mismatch; event hashes verified | P0, NOT_RUN |
+| `L1-WF02` | Host policy with separately mandatory `required_for=verify` and `required_for=handoff` rules | Remove one phase-required policy then evaluate/advance | Relevant gate BLOCKS affected operation, not `implement` fallback; no unsafe next phase | P0, NOT_RUN |
+| `L1-WF03` | A verified source/Spec Kit `spec.md/plan.md/tasks.md` feature, fixed journal | Modify affected source or active feature artifact after VERIFY | Freshness check invalidates previous PASS and blocks HANDOFF/CLOSE; unchanged unrelated source does not overblock | P0, NOT_RUN |
+| `L1-WF04` | Scoped task begun with `--task` and `--paths` | Invoke read-only `status --task-id` without scope, then with scope | Consistent diagnostic/explicit scope requirement; no state mutation, not deceptive authorization | P1, NOT_RUN |
+| `L1-SC01` | Trusted owned checkout and an external read-only sentinel; negative symlink/junction/traversal fixture on each supported OS | Attempt scoped read/write/delete through escaping paths | DENY and external sentinel unchanged; report OS, ACL, hashes and no-privilege proof | P0, NOT_RUN |
+| `L1-SC02` | Protected Core Z0/Z1, writable normal Z3, caller/config indirect-modification fixture | Attempt direct and indirect protected mutation by an F64/untrusted worker | Trusted host denies, runner/caller cannot bypass; negative security reviewer evidence | P0, NOT_RUN |
+| `L1-SC03` | Concurrent safe/unsafe work unit identities, external sentinels | Apply stale SHA, conflicting writeSet/transitive impact or overbudget worker | Conflict BLOCKED, dependent nodes cancelled, no unowned write; STOP handoff and rollback verified | P0, NOT_RUN |
+| `L2-EV01` | Valid exact-SHA event log plus corrupt/replayed or interrupted session variants | Resume/replay and verify provenance with approved version | Corrupt/stale/foreign provenance BLOCKED, earlier evidence retained, no implicit CLOSE; reviewed recovery | P1, NOT_RUN |
+| `L3-INT01` | Three disjoint reviewed adapter changes on an approved stable source | Isolated serial then bounded-parallel test, integrate one combined revision | Functional and negative gates equivalent, no stale acceptance, total cost/runtime recorded without assumed speedup | P1, NOT_RUN |
+| `L5-ACC01` | Selected representative host, signed design authority and exact implementation SHA | Run full user journey SPEC→CODE→TEST→REVIEW→HANDOFF incl. error/STOP | Requirement↔source↔test↔evidence trace; B.1 positive/negative/OS/legacy; explicit human decision | P0, NOT_RUN |
+
+**Test evidence contract:** case ID, source SHA, config/policy/Spec Kit fingerprint, OS/runner, fixture and external sentinel pre/post hash, exact command/manual steps, outcome including skips, independent reviewer, risk BEFORE/AFTER, rollback and persistence. Mock approval does not satisfy actual independent A.1/B.1. CI `python -m unittest discover -s .source/tests -v` remains the native existing regression entrypoint; new tests are prerequisites for L1 gate PASS. No claim of >95% coverage or F64 completion is made without measured reports.
+
+**Proposed static documentation gate (L0):** all candidate IDs F43..64 unique, DES-099-A..F present, construction L0..L7 and nine universal stages mapped, draft BR-022..027/risk RM-042..046 referenced and no safety waiver; resolve relative Markdown paths against pinned Git tree; detect outdated/contradictory stage prose and broken anchors. This is document consistency only and cannot certify Python or Windows security.

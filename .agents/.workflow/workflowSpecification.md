@@ -25,7 +25,7 @@ Each task must have a stable task ID; actual task description; verified target r
 | IMPLEMENT | Approved action → only phase-appropriate scoped artifact with provenance |
 | TEST | Artifact → static/doc/build/security/mutation test evidence when applicable |
 | VERIFY | Observed result vs AC, source freshness and required independent approval |
-| OPTIMIZE | Baseline → bounded change or `NO_CHANGE`; re-T​​EST/VERIFY if changed, reassess risk |
+| OPTIMIZE | Baseline → bounded change or `NO_CHANGE`; re-TEST/VERIFY if changed, reassess risk |
 | HANDOFF | STOP-safe snapshot, risks, result/next owner and PERSISTED/NOT_PERSISTED |
 | DOCUMENT | Sync canonical BRD/RTM/feature/risk/decision records and final handoff links |
 
@@ -47,7 +47,7 @@ Normal phase graph: `DISCOVER → SPECIFY_PLAN → IMPLEMENT → VERIFY → HAND
 
 **Machine implementation today:** `workflow_guard.py` has `begin`, `advance`, `invalidate`, `reconcile`, `close` and read-only `status/evaluate`, with five fixed phases and statuses `PENDING/IN_PROGRESS/READY/NEEDS_REVIEW/BLOCKED/COMPLETE/INVALIDATED`. It has **no PAUSED status, STOP action or RESUME action**. Three P0 plus one P1 correctness findings in PR #7 must be repaired separately. These agent operating instructions do **not** alter the machine journal.
 
-## 3. Interruptible STOP path — applicable in every phase
+## 4. Interruptible STOP path — applicable in every phase
 
 `STOP` is a **request/agent behavior**, orthogonal to the five phases. It does not mean `COMPLETE`, `INVALIDATED`, or a closed session.
 
@@ -75,7 +75,7 @@ flowchart TD
 
 STOP triggers: requester says stop/pause/handoff; loss of permission; missing/contradicting approved source; path/scope/secret/collision anomaly; source drift or session mismatch; failed validation; tool outage; change in Spec Kit feature; token/context/time limit; unsafe destructive action; unexpected interruption. For an unexpected crash with no verified handoff, state is `INTERRUPTED_UNKNOWN`, not `STOPPED_WITH_HANDOFF`.
 
-## 4. STOP contract and required output
+## 5. STOP contract and required output
 
 An agent MUST:
 
@@ -88,24 +88,24 @@ An agent MUST:
 
 The [STOP protocol](stopAndHandoff.md) defines exact fields, replay protection, multiple-stop behavior and recovery.
 
-## 5. Resume contract — explicitly requested and revalidated
+## 6. Resume contract — explicitly requested and revalidated
 
 A subsequent agent may resume only after identifying the correct handoff/task/ref and re-reading the **current**, not historical, root/nested AGENTS, current requirements and current source. It must revalidate physical checkout and in-scope paths, identify active session ownership and drift, compare current HEAD/working tree/spec hashes to recorded evidence, revisit decisions/approvals, and re-run impacted tests or plans. It may continue the existing ACTIVE session if safely bound; it must not create a second ACTIVE session or assume handoff ownership permits writes.
 
 If current inputs changed, mark affected prior tests and approvals **STALE/NOT VERIFIED** and return to the earliest impacted phase. If missing a trusted approval, stop at NEEDS_REVIEW. An invalid/foreign/contradictory handoff is evidence to investigate, not authorization. Git commit, push, merge and release are always separately authorized.
 
-## 6. Acceptance criteria and trace
+## 7. Acceptance criteria and trace
 
 - `S2C-REQ-037` / `S2C-AC-037`: any phase can be interrupted without falsely marking COMPLETE, and a minimal handoff is emitted with persistence status. **Agent Markdown specified; runtime STOP/RESUME not implemented.**
 - `S2C-NFR-007` / `S2C-NAC-007`: the resume gate must reject stale/foreign checkout, unapproved source, missing approvals and stale test evidence. **Not validated by a machine integration test yet.**
 - `S2C-REQ-030` / `S2C-NFR-006`: underlying Workflow Guard integrity defects remain release-blocking. A STOP handoff is **not a fix** for their state transitions.
 - Intended future tests (not currently present): safe STOP at all five phases, user-requested STOP during IMPLEMENT, failed-test STOP, unauthorized handoff-write failure, repeated STOP without overwrite, checksum verification, interrupted/no file, resumed drift requiring new authorization, and rejecting close/merge on STOP.
 
-## 7. Evidence and change control
+## 8. Evidence and change control
 
 When implementation changes: update [system spec](../.spec.md), [feature register](../.features.md), [RTM](../.traceMatrix.md), plan/risk, tests and an exact-session handoff. Do not introduce a `PAUSED` enum or a new workflow event without a reviewed schema migration, replay compatibility, new negative tests and explicit user approval. Host installations must not rewrite existing AGENTS, Spec Kit artifacts, runtime state or prior handoffs.
 
-## 8. External B.1 acceptance validation after B (PLAN-085)
+## 9. External B.1 acceptance validation after B (PLAN-085)
 
 This document describes the future **B implementation lifecycle**, including its internal VERIFY phase. Once implementation is authorized and complete, the separately specified [B.1 System and Acceptance Validation](validationSpecification.md) is still required before any claim of integrated system acceptance or release. B.1 checks actual approved user/host scenarios, security/adversarial/path safety, Windows and migration applicability, integration, recovery, source/requirement version matching and independent acceptance using a [validation report](validationReportTemplate.md).
 
@@ -114,7 +114,7 @@ This document describes the future **B implementation lifecycle**, including its
 - No B.1 is currently running, and neither A.1 nor B.1 is a machine phase in `.source/.config/workflow.json`.
 
 
-## 9. PLAN-099 — Concurrency policy across mandatory nine-stage tasks
+## 10. PLAN-099 — Concurrency policy across mandatory nine-stage tasks
 
 Parallelism may exist **inside** a phase (independent work units) or **between unrelated tasks in the same ready dependency wave**, but each individual task still completes all nine universal stages with evidence. Never parallelize an approval decision with a write that depends on that approval. Use the [construction-layer roadmap](../.spec.md#24-plan-099--construction-layer-roadmap-and-bounded-parallel-execution) and [DAG contracts](../.documents/featureDesign.md#81-bounded-parallel-work-and-worker-compatibility). This is a **design protocol**, not implemented threading or autonomous agent execution.
 
@@ -123,3 +123,10 @@ Parallelism may exist **inside** a phase (independent work units) or **between u
 **Execution barrier:** only one trusted integrator applies reviewed patches to a stable baseline, records changed source/hash, invalidates dependent cached evidence and reruns affected and mandatory regression/negative checks. Failure/timeout/drift/P0 requires cancellation of dependent nodes, no speculative release or cleanup, and a STOP-safe evidence handoff. Contended shared documents, Path Guard, trusted policies and workflow journal use a **single write owner**, with parallel read-only reviews allowed. No new runtime phase, active daemon, Git branch-per-worker or automatic PR merge is introduced.
 
 **Validation:** compare serial versus bounded parallel runs for identical input and expected output: correctness/AC, source/review independence, runtime, token+CI costs, collision and fail-safe recovery. Until witnessed on an exact revision, report `NOT_RUN` and retain serial mode as a safe fallback where permissible.
+
+
+## 11. PLAN-100 — Implementation evidence gate and failure precedence
+
+Keep PLAN-099 concurrency a scheduler *inside* the universal nine-stage contract, not an independent lifecycle. The [L0/A.1 readiness ledger](../.plans.md#plan-100--l0-readiness-execution-and-b-gated-implementation-plan) and [L1 negative tests](testingAndDelivery.md#plan-100--l0-evidence-and-l1-bounded-securityworkflow-regression-specification) are the one implementation/verification route. This author-side preflight is not a certified A.1 report. **P0 path/policy/owner failures veto concurrency, quality score and stage closure.**
+
+On source/policy/Spec Kit drift, worker loss, invalid scope, test failure, missing signer or unknown write provenance, stop the affected DAG, retain original immutable evidence and create an auditable HANDOFF; DOCUMENT never retroactively invents a PASS. Runtime `workflow_guard.py` still has five phases and known defects; no new statuses, schema migration or native `PAUSED` are introduced by these Markdown rules.

@@ -68,3 +68,9 @@ This page is an **index**, not a new workflow implementation or a replacement fo
 4. On STOP/RESUME, use [the existing protocol](stopAndHandoff.md) and recheck the actual Git SHA, Google Draft revision, source-owner decisions, P0 risk and host/sandbox. Do not convert `NOT_RUN` into `PASS`.
 
 **Current gates:** `AUTHORING_COMPLETE_CANDIDATE`, `A1_NOT_RUN`, `B_NOT_AUTHORIZED`, `B1_NOT_RUN`, provider CLI/MCP and actual host security tests unverified. Any subsequent B work requires a separately scoped approval; no new machine phases, YAML/JSON, automatic CLI or agent worker are created by this index.
+
+## PLAN-110 / Z02 — Reviewer start-to-finish navigation
+
+Start from the [current master](../.spec.md), then use [design](../.documents/featureDesign.md), [RTM](../.traceMatrix.md), [negative/positive tests](testingAndDelivery.md), [risk scoring](../.riskMatrix.md), [role authority](agentRoles.md) and [real A.1 report form](validationReportTemplate.md). Read both existing STOP and feature-specific Spec Kit Web/native gates before asserting a workflow result. The five newest handoffs are `plan-106` through `plan-110` under `.agents/.handoffs/`; verify actual branch SHA before resuming.
+
+A reviewer should first report which documents and external tools were available, whether their assessment is independent, and what remains unexamined. If the source pair, owner BR/AC decision, actual tests or provider capability are absent, assign the correct `BLOCKED/NOT_RUN` value and return a source-linked finding, rather than silently substituting another model or unapproved host operation.

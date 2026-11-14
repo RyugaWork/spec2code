@@ -33,3 +33,9 @@
 | <actual engine/runtime version> | <vendor/date> | <dated evidence> | <real target> | <impact> | DEFAULT / OVR-ID | PROPOSED / BLOCKED |
 
 Rules: Do not hardcode a single default for every stack; `SQL` must name an engine and dialect. Support and adoption evidence must be current. New security patch ≠ new major. Popular old EOL ≠ secure. A user-requested stable newly GA version may bypass the **default maturity preference** with a documented override, not safety permissions or independent host review.
+
+## PLAN-110 / Z08 — Reproducible technology assessment
+
+For each candidate maintain a comparable decision row: `candidate/version, maintainerURL, checkedDate, supportEndDateIfKnown, hostCompatibility, dependencyMatrix, languageStyleAuthority, securityPatchAvailability, migrationCost, rollbackPlan, requiredTests, ownerDecision, evidenceRef`. Rank **only candidates that satisfy mandatory security and compatibility conditions**. Unknown support lifetime or unverified native installation is `NEEDS_RESEARCH`, not a numeric zero or an approved choice.
+
+The reviewer should document why the recommended conservative baseline is preferable to a newer stable or host-requested override and which tests could falsify the decision. A requested override requires a real OVR-ID/owner record; this blank assessment does not authorize altering build files, package lock, SQL schema or CI on the host.

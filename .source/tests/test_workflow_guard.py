@@ -154,5 +154,111 @@ class WorkflowGuardTests(unittest.TestCase):
         self.assertIn("WF_TASK_SCOPE_REQUIRED", decision["blocking_gates"])
 
 
+    def _advance_to(self, destination, *, scope):
+        steps = ("SPECIFY_PLAN", "IMPLEMENT", "VERIFY", "HANDOFF_REVIEW")
+        for phase in steps[:steps.index(destination) + 1]:
+            workflow_guard.transition(
+                self.request(phase, "advance", **scope),
+                trusted_gate_check=lambda gate, req: True)
+
+    def test_scoped_close_keeps_task_and_requires_trusted_review(self):
+        scope = {"task": "Update utility", "paths": ("src/main.py",)}
+        self.start()
+        workflow_guard.transition(self.request(action="begin", **scope))
+        self._advance_to("HANDOFF_REVIEW", scope=scope)
+        with self.assertRaisesRegex(RuntimeError, "WF_TASK_SCOPE_MISMATCH"):
+            workflow_guard.transition(self.request("HANDOFF_REVIEW", "close"))
+        outcome = workflow_guard.transition(
+            self.request("HANDOFF_REVIEW", "close", **scope),
+            trusted_gate_check=lambda gate, req: True)
+        self.assertEqual(outcome["phase_status"], "COMPLETE")
+        self.assertFalse(outcome["release_authorized"])
+
+    def test_verify_policy_cannot_be_approver_overridden(self):
+        policy_path = self.root / ".agents/policy-map.json"
+        mapping = json.loads(policy_path.read_text(encoding="utf-8"))
+        mapping["documents"].append({
+            "category": "governance", "path": "missing-verify.md",
+            "canonical": False, "required_for": ["verify"],
+            "applies_to_prefixes": ["src/"], "reason": "verify obligation"
+        })
+        policy_path.write_text(json.dumps(mapping), encoding="utf-8")
+        scope = {"task": "Update utility", "paths": ("src/main.py",)}
+        self.start()
+        workflow_guard.transition(self.request(action="begin", **scope))
+        self._advance_to("VERIFY", scope=scope)
+        decision = workflow_guard.evaluate(
+            self.request("VERIFY", "evaluate", **scope))
+        self.assertEqual(decision["policy_status"], "BLOCKED")
+        self.assertIn("GT-002", decision["blocking_gates"])
+        with self.assertRaisesRegex(RuntimeError, "WF_EXIT_GATE_BLOCKED"):
+            workflow_guard.transition(
+                self.request("HANDOFF_REVIEW", "advance", **scope),
+                trusted_gate_check=lambda gate, req: True)
+
+    def test_handoff_policy_refuses_scoped_close(self):
+        policy_path = self.root / ".agents/policy-map.json"
+        mapping = json.loads(policy_path.read_text(encoding="utf-8"))
+        mapping["documents"].append({
+            "category": "governance", "path": "missing-handoff.md",
+            "canonical": False, "required_for": ["handoff"],
+            "applies_to_prefixes": ["src/"], "reason": "handoff obligation"
+        })
+        policy_path.write_text(json.dumps(mapping), encoding="utf-8")
+        scope = {"task": "Update utility", "paths": ("src/main.py",)}
+        self.start()
+        workflow_guard.transition(self.request(action="begin", **scope))
+        self._advance_to("HANDOFF_REVIEW", scope=scope)
+        decision = workflow_guard.evaluate(
+            self.request("HANDOFF_REVIEW", "evaluate", **scope))
+        self.assertIn("GT-002", decision["blocking_gates"])
+        with self.assertRaisesRegex(RuntimeError, "WF_EXIT_GATE_BLOCKED"):
+            workflow_guard.transition(
+                self.request("HANDOFF_REVIEW", "close", **scope),
+                trusted_gate_check=lambda gate, req: True)
+
+    def test_scoped_source_file_drift_blocks_freshness(self):
+        scope = {"task": "Update utility", "paths": ("src/main.py",)}
+        self.start()
+        workflow_guard.transition(self.request(action="begin", **scope))
+        (self.root / "src/main.py").write_text("a = 200\n", encoding="utf-8")
+        decision = workflow_guard.evaluate(
+            self.request("DISCOVER", "evaluate", **scope))
+        self.assertIn("GT-014", decision["blocking_gates"])
+
+    def test_spec_kit_active_tasks_drift_blocks_freshness(self):
+        directory = self.root / "specs/001-test"
+        directory.mkdir(parents=True)
+        pointer = self.root / ".specify/feature.json"
+        pointer.parent.mkdir(parents=True)
+        pointer.write_text(json.dumps({"feature_directory": "specs/001-test"}),
+                           encoding="utf-8")
+        for name in ("spec.md", "plan.md", "tasks.md"):
+            (directory / name).write_text(f"# {name}\n", encoding="utf-8")
+        scope = {"task": "Update utility", "paths": ("src/main.py",)}
+        self.start()
+        workflow_guard.transition(self.request(action="begin", **scope))
+        (directory / "tasks.md").write_text("# changed task\n", encoding="utf-8")
+        decision = workflow_guard.evaluate(
+            self.request("DISCOVER", "evaluate", **scope))
+        self.assertIn("GT-014", decision["blocking_gates"])
+
+    def test_unscoped_status_reports_freshness_unknown_not_mismatch(self):
+        scope = {"task": "Update utility", "paths": ("src/main.py",)}
+        self.start()
+        workflow_guard.transition(self.request(action="begin", **scope))
+        decision = workflow_guard.evaluate(self.request("DISCOVER", "status"))
+        self.assertNotIn("WF_TASK_SCOPE_MISMATCH", decision["blocking_gates"])
+        self.assertIn("WF_SCOPE_REQUIRED_FOR_FRESHNESS",
+                      decision["review_gates"])
+        self.assertEqual(decision["gate_status"], "NEEDS_REVIEW")
+
+    def test_directory_scope_cannot_claim_recursive_freshness(self):
+        self.start()
+        scope = {"task": "Update utility", "paths": ("src",)}
+        with self.assertRaisesRegex(RuntimeError, "WF_UNBOUNDED_SOURCE_DIRECTORY"):
+            workflow_guard.transition(self.request(action="begin", **scope))
+
+
 if __name__ == "__main__":
     unittest.main()

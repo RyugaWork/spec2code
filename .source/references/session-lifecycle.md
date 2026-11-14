@@ -48,3 +48,9 @@ All records are **local observations**. A file existing or Compose declaring a s
 ## v0.4 safe handoff merge
 
 After a successful `finish`, call `merge --session-id <ID>` for the exact closed session. This verifies headers and SHA-256, appends content to `.agents/.handoffs/.buildnotes.handoff.md` and deletes only exactly matched pending files. See `references/hierarchy-layout.md`. Legacy root logs from v0.3 are not automatically migrated or deleted.
+
+## PLAN-109 / M04 — Resumable agent session integrity
+
+Every session identity must bind `sessionId, repositoryRoot, branch, sourceSha, taskIds, policySha, allowedPaths, budget, observedChanges, testEvidence, handoffRef`. STOP preserves facts about partial mutations and tool uncertainty, not a hypothetical successful state. On interruption, attempt a policy-approved durable handoff; if persistence cannot be verified, report `NOT_PERSISTED` rather than trusting a chat summary.
+
+RESUME re-reads current AGENTS, branch HEAD, local working-tree changes (if actually accessible), previous handoff and unconfirmed tool results. If source, sandbox, authority or feature pointer has drifted, replan the impacted scope and retain old evidence. Never garbage-collect unknown or pre-existing files; cleanup is limited to session-owned paths with exact SHA and explicit retention permission. These are portable lifecycle contracts, not deployed transaction guarantees.

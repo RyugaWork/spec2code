@@ -126,30 +126,60 @@ def _scope_digest(req: WorkflowRequest) -> str:
 
 
 def _source_snapshot(root: Path, req: WorkflowRequest) -> str:
-    """Digest consulted policy files; missing references are part of the snapshot."""
-    route = policy_resolver.resolve(policy_resolver.PolicyRequest(
-        root, req.task_id, req.task or "Unspecified task",
-        req.paths, "implement"))
+    """Pin scoped source, Spec Kit artifacts and all phase-policy inputs.
+
+    This digest is evidence freshness, never approval. A stable union of
+    phase policies prevents a later policy operation losing source identity.
+    """
     refs = {"AGENTS.md", ".agents/policy-map.json",
-            ".agents/state/context-pack.json"}
-    refs.update(item["path"] for item in route["root_agents"])
-    refs.update(item["path"] for item in route["selected_documents"])
-    refs.update(item["path"] for item in route["candidate_documents"])
+            ".agents/state/context-pack.json", ".specify/feature.json",
+            ".specify/memory/constitution.md"}
+    refs.update(req.paths)
+    refs.update((".source/.config/workflow.json",
+                 ".source/.config/governance.json",
+                 ".source/.config/security.json"))
+    reasons = []
+    for operation in ("plan", "implement", "verify", "handoff"):
+        route = policy_resolver.resolve(policy_resolver.PolicyRequest(
+            root, req.task_id, req.task or "Unspecified task",
+            req.paths, operation))
+        refs.update(item["path"] for item in route["root_agents"])
+        refs.update(item["path"] for item in route["selected_documents"])
+        refs.update(item["path"] for item in route["candidate_documents"])
+        reasons.extend(operation + ":" + reason for reason in
+                       route["blocking_reasons"] + route["review_reasons"])
+    pointer = path_guard.check_path(root, ".specify/feature.json")
+    if pointer.is_file():
+        try:
+            data = json.loads(scope_io.read_bytes(
+                root, pointer, max_bytes=8192).decode("utf-8"))
+            feature = data["feature_directory"] if isinstance(data, dict) else None
+            if not isinstance(feature, str) or not feature.startswith("specs/"):
+                raise ValueError("invalid active feature")
+            schema.safe_path(feature, suffixes=())
+            if not path_guard.check_path(root, feature).is_dir():
+                raise ValueError("missing active feature")
+        except (OSError, RuntimeError, ValueError, KeyError, UnicodeError) as err:
+            raise RuntimeError("WF_INPUT_INVALIDATED") from err
+        refs.update(f"{feature}/{name}" for name in
+                    ("spec.md", "plan.md", "tasks.md"))
     result = []
     for rel in sorted(refs):
         path = path_guard.check_path(root, rel)
-        if path.is_symlink():
-            raise RuntimeError("WF_INPUT_INVALIDATED")
+        if path.is_dir():
+            raise RuntimeError("WF_UNBOUNDED_SOURCE_DIRECTORY")
         if not path.is_file():
+            if path.exists():
+                raise RuntimeError("WF_INPUT_INVALIDATED")
             result.append((rel, None))
             continue
         if path.stat().st_size > 4 * 1024 * 1024:
             raise RuntimeError("WF_INPUT_INVALIDATED")
-        result.append((rel, hashlib.sha256(
-            scope_io.read_bytes(root, path, max_bytes=4 * 1024 * 1024)).hexdigest()))
+        result.append((rel, hashlib.sha256(scope_io.read_bytes(
+            root, path, max_bytes=4 * 1024 * 1024)).hexdigest()))
     return hashlib.sha256(_json_bytes({
         "scope": _scope_digest(req), "files": result,
-        "missing": route["blocking_reasons"] + route["review_reasons"]
+        "policy_reasons": sorted(set(reasons))
     })).hexdigest()
 
 
@@ -260,6 +290,12 @@ def _state(root: Path, req: WorkflowRequest):
     return events, state, state != cache
 
 
+def _policy_operation(phase: str) -> str:
+    return {"DISCOVER": "plan", "SPECIFY_PLAN": "plan",
+            "IMPLEMENT": "implement", "VERIFY": "verify",
+            "HANDOFF_REVIEW": "handoff"}[phase]
+
+
 def evaluate(req: WorkflowRequest) -> dict:
     root = _input(req)
     events, current, stale = _state(root, req)
@@ -281,7 +317,7 @@ def evaluate(req: WorkflowRequest) -> dict:
     try:
         policy = policy_resolver.resolve(policy_resolver.PolicyRequest(
             root, req.task_id, req.task or "Unspecified task", req.paths,
-            "implement" if phase in ("IMPLEMENT", "VERIFY", "HANDOFF_REVIEW") else "plan"))
+            _policy_operation(phase)))
         if policy["policy_status"] == "BLOCKED":
             blocking.append("GT-002")
         elif policy["policy_status"] == "NEEDS_REVIEW":
@@ -295,10 +331,16 @@ def evaluate(req: WorkflowRequest) -> dict:
         if session and (current["session_id"] != session["id"] or
                         current["binding_fingerprint"] != binding):
             blocking.append("WORKFLOW_SESSION_MISMATCH")
-        if current.get("scope_sha256") != _scope_digest(req):
-            blocking.append("WF_TASK_SCOPE_MISMATCH")
-        if current["context_snapshot_sha256"] != _source_snapshot(root, req):
-            blocking.append("GT-014")
+        if (req.operation == "status" and not req.task and not req.paths
+                and current.get("scope_sha256") != _scope_digest(req)):
+            # A previously scoped workflow cannot be re-fingerprinted without
+            # its raw request; do not manufacture a mismatch or a PASS.
+            review.append("WF_SCOPE_REQUIRED_FOR_FRESHNESS")
+        else:
+            if current.get("scope_sha256") != _scope_digest(req):
+                blocking.append("WF_TASK_SCOPE_MISMATCH")
+            if current["context_snapshot_sha256"] != _source_snapshot(root, req):
+                blocking.append("GT-014")
         if current["phase_status"] == "INVALIDATED":
             blocking.append("GT-014")
     if phase in ("SPECIFY_PLAN", "IMPLEMENT", "VERIFY", "HANDOFF_REVIEW"):
@@ -420,7 +462,8 @@ def transition(req: WorkflowRequest, *,
             if current["current_phase"] != "HANDOFF_REVIEW":
                 raise RuntimeError("WF_ILLEGAL_TRANSITION")
             decision = evaluate(WorkflowRequest(root, req.task_id, "HANDOFF_REVIEW",
-                                                "evaluate", session["id"]))
+                                                "evaluate", session["id"],
+                                                task=req.task, paths=req.paths))
             if decision["gate_status"] == "BLOCKED":
                 raise RuntimeError("WF_EXIT_GATE_BLOCKED")
             if decision["gate_status"] == "NEEDS_REVIEW":

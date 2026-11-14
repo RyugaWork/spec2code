@@ -1,9 +1,9 @@
 # Spec2Code — Planning & Specification Workflow (PLAN-084)
 
-> **Current baseline: PLAN-088 / unified BRD v1.3 (PLAN-087 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](../.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
+> **Current baseline: PLAN-092 / unified BRD/SRS v1.5 + Spec Kit bootstrap (PLAN-087..091 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](../.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
 
 
-> **Current project phase: DESIGN_IN_PROGRESS.** This nine-stage **design lifecycle** is distinct from the existing five-phase **runtime-assisted implementation workflow** in [workflowSpecification.md](workflowSpecification.md). This document instructs a human-directed ChatGPT/Codex planning process. It does not add runtime transitions, run tests, modify code or grant permission to merge a PR.
+> **Current project phase: DESIGN_IN_PROGRESS.** The P1–P9 **Phase-A design content substeps** are nested inside the universal nine-stage *per-phase/per-task execution contract* in [workflowSpecification.md](workflowSpecification.md#2-universal-nine-stage-execution-contract-plan-098). Both are distinct from the existing five-phase machine journal. This document instructs a human-directed ChatGPT/Codex planning process. It does not add runtime transitions, run tests, modify code or grant permission to merge a PR.
 
 ## 1. Purpose and boundary
 
@@ -14,6 +14,8 @@ Plan a universal, repository-scoped S2C agent system from evidence before implem
 **Lifecycle B (LATER):** authorized code changes → tests → runtime-safe STOP/RESUME implementation → security/OS acceptance → delivery. Existing [five-stage implementation specification](workflowSpecification.md) remains a **design input**, not an instruction to start coding now.
 
 Planning work may be paused and handed off without changing local `.agents/state/workflow-*` or calling `session_guard finish/merge`. A paused design effort is `DESIGN_PAUSED` in human-readable governance only; it is **not** a machine Workflow Guard status.
+
+For **every Phase-A planning task**, record DISCOVER → PLAN → RISK MANAGEMENT → IMPLEMENT (author design artifact) → TEST (static/document checks) → VERIFY (AC/trace) → OPTIMIZE (measurement or `NO_CHANGE`) → HANDOFF → DOCUMENT. P1–P9 below are content substeps, **not** a competing lifecycle or nine `workflow_guard.py` machine phases. A.1 remains an external independent validation boundary.
 
 ## 2. Nine planning stages and explicit gates
 

@@ -1,8 +1,19 @@
 # AGENTS.md — Spec2Code agent operating contract (v0.8.0 candidate)
 
-> **CURRENT AUTHORIZED WORKSTREAM — PLAN-087: BRD and implementation-plan consolidation.** Read the [unified baseline](.agents/.spec.md) first, then the [RTM](.agents/.traceMatrix.md), current risk matrix and task-relevant procedure. A → A.1 → B → B.1 is the lifecycle; runtime implementation remains future authorized work.
+> **CURRENT OBSERVED BASELINE — PLAN-111 targeted P0 patch is a source candidate requiring return to A; independent A.1 NOT_RUN and B NOT_AUTHORIZED.** Re-pin current branch/source and owner approvals before each task; this statement is not live Codex, Path Guard or Windows safety evidence.
 
 > Applies to **development of this repository**, not automatically to projects where the portable skill is installed. The v0.8.0 governance/workflow work is a **candidate**, not a stable release. Instructions guide a human-supervised ChatGPT/Codex agent; they do not themselves enforce filesystem containment or grant permissions.
+
+## Active agent contract — read first
+
+1. **Authority and source:** read current root/nested AGENTS and scope, approved requirements, canonical S2C [BRD](.agents/.spec.md), [RTM](.agents/.traceMatrix.md), [plans](.agents/.plans.md) and [risk matrix](.agents/.riskMatrix.md). Historical PLAN/handoff notes cannot supersede actual current evidence or human owner decisions.
+2. **Pre-edit review:** pin exact branch/SHA, identify affected paths, owner and risk; create a matrix with gap, impact, executor, expected and failed result, rollback and acceptance evidence before material edits. [Current audit record](.agents/.handoffs/audit-20261114-agents-compatibility.md) contains the matrix and historical GOV review.
+3. **Task routing:** [GPTWEB] owns analysis, review and explicitly authorized connector-document changes; [CODEX] owns local code/shell/tests/Git work; [AUTO] routes only when a real authorized connection exists. Otherwise HANDOFF_REQUIRED. See [roles](.agents/.workflow/agentRoles.md) and [runbook](.agents/.workflow/agentRunbook.md).
+4. **Lifecycle and quality:** A/P1–P9 → independent A.1 → separately authorized B → B.1. Failed or blocked A.1 returns to A and fresh A.1. For each executable mandatory measurable group require unrounded R > 99.99%, no open P0, complete evidence and actual independent A1-VAL-01..09 verdicts. A.1 is a design gate, not a substitute for runtime reliability or B permission.
+5. **Security and concurrency:** exact checkout, physical Path Guard plus OS sandbox for local operations, bounded budget/STOP, secrets exclusions, one writer per file, SHA lease on writes, no automatic commit/merge/release permission. The host owns its AGENTS, Spec Kit owns its native feature artifacts.
+6. **Checkpoint:** after each phase/failure report unique remaining/reopened/new/blocked task IDs and GPTWEB/CODEX split, evidence source SHA and next owner. Do not report hypothetical execution as PASS. Use [A.1 rules](.agents/.workflow/validationSpecification.md) and the [report template](.agents/.workflow/validationReportTemplate.md).
+
+**Scope note:** PLAN-111 P0 code remediation and historical PR #7 findings require fresh host tests and independent review. This Markdown cleanup does not alter Workflow Guard machine phases, close P0 risks, execute Codex or authorize B. Older PLAN headings are historical/proposed until checked against pinned source evidence.
 
 ## 1. Mission, entrypoints and boundaries
 
@@ -41,19 +52,13 @@ Authority is **by subject**, not a single blanket file hierarchy: approved busin
 
 Use the **actual task description and observed repository-relative paths** consistently for Policy Resolver, Context Router and Workflow Guard. Never create a fake path just to make a gate pass. A budget setting (`minimal`, `balanced`, `deep`) may reduce optional context but not mandatory security/requirement reading.
 
-## 4. Five-stage human-directed workflow
+## 4. Nine universal stages, five actual machine phases
 
-| S2C stage | Required reasoning / evidence | Failure path |
-| --- | --- | --- |
-| **DISCOVER** | Exact checkout, current worktree state, root/nested AGENTS, applicable canonical references; find source without assuming domain | Unknown root/policy → stop affected operation |
-| **SPECIFY_PLAN** | Requirement authority, scope, acceptance criteria, plan, risk, Spec Kit artifacts when used | Conflict/unapproved behavior → `NEEDS_REVIEW` |
-| **IMPLEMENT** | Only approved file changes; preserve other work; record self-authored edits separately from external drift | Changed scope or missing policy → re-evaluate |
-| **VERIFY** | Actual build/test/security evidence with command, platform, revision and outcome | Fail/stale evidence → return to IMPLEMENT explicitly |
-| **HANDOFF_REVIEW** | Traceable changed paths, remaining risks, exact session handoff and independent reviewer decision | No approval → keep open; do not assert release |
+For **every phase and task**, record DISCOVER → PLAN → RISK MANAGEMENT → IMPLEMENT → TEST → VERIFY → OPTIMIZE → HANDOFF → DOCUMENT. Each stage has input, expected output, observed evidence and status. In Phase A, IMPLEMENT means authoring authorized design documents; OPTIMIZE may return `NO_CHANGE`. STOP does not silently CLOSE. [Exact stage contract](.agents/.workflow/workflowSpecification.md#2-universal-nine-stage-execution-contract-plan-098).
 
-These are responsibilities, **not** a promise that `workflow_guard.py` executes the stages or grants approval. Its current machine gate only evaluates/records state and has unresolved v0.8.0 correctness defects; see section 7 and PLAN-081. A `READY` policy/context status does not mean the implementation is approved, tested or safe.
+Phase A's P1–P9 are separate *content substeps*, A.1/B.1 require independent approval, and `workflow_guard.py` still has **five machine phases** `DISCOVER, SPECIFY_PLAN, IMPLEMENT, VERIFY, HANDOFF_REVIEW` with known P0/P1 blockers. No runtime schema migration or auto-approval.
 
-When Spec Kit is present, its native agent skills own `constitution → specify → clarify? → plan → checklist? → tasks → analyze? → implement → converge`. Confirm the integration actually installed; the commands are *agent instructions*, not shell executables. The read-only S2C bridge may discover an active feature through `.specify/feature.json` or `SPECIFY_FEATURE_DIRECTORY`; it never chooses by branch name, rewrites `specs/` or substitutes for artifact review. The minimum S2C implementation bridge gate checks `spec.md`, `plan.md`, `tasks.md`, but file existence is not approval.
+[One F43–F64 integration matrix](.agents/.documents/featureDesign.md#11-f43f64-relation-and-feasibility-matrix) controls relationship/compatibility decisions; use existing path, policy, context, session and proposed F38–F42 review mechanisms instead of duplicate engines. Sequential role-lenses are not independent workers. F58 SAFE cleanup is proposed only and cannot delete unowned/legacy/active/historical/source/evidence files. No automatic merge/release.
 
 ## 5. Mandatory security and data-preservation rules
 
@@ -73,7 +78,7 @@ Git writes (branch creation, commit, push, merge, force, deletion), code edits, 
 
 ## 7. Known v0.8.0 blockers — do not paper over with instructions
 
-PR [#7](https://github.com/RyugaWork/spec2code/pull/7) currently has unresolved review findings: `CLOSE` loses task scope, VERIFY/HANDOFF policy operations are misrouted, source/Spec Kit changes are incompletely fingerprinted, and scope-free `status` may incorrectly report mismatch. These are **runtime defects**; updating AGENTS cannot fix them. Do not claim the five-stage guard is end-to-end validated or use its output as independent approval until corrected with regression tests. Windows TOCTOU/junction and legacy migration review also remain open.
+Historical PR [#7](https://github.com/RyugaWork/spec2code/pull/7) review reported these defects (PLAN-111 is a candidate patch, not independently verified closure): `CLOSE` loses task scope, VERIFY/HANDOFF policy operations are misrouted, source/Spec Kit changes are incompletely fingerprinted, and scope-free `status` may incorrectly report mismatch. These are **runtime defects**; updating AGENTS cannot fix them. Do not claim the five-stage guard is end-to-end validated or use its output as independent approval until corrected with regression tests. Windows TOCTOU/junction and legacy migration review also remain open.
 
 Agent-facing policy: be specific about what was **read**, **changed**, **tested**, **not tested**, and **blocked**. Handoff must never upgrade a missing gate to PASS.
 
@@ -109,7 +114,7 @@ Keep document ownership explicit; no host/upstream artifact consolidation or des
 
 ## 13. Weighted review, synthesis and source-of-truth rule — PLAN-088
 
-**First source:** [master BRD + execution plan](.agents/.spec.md#11-one-connected-capability-system-plan-088) owns BR-001..021, DES-088 and T087/T088 dependency ordering; the [RTM](.agents/.traceMatrix.md), [feature status](.agents/.features.md), [risk matrix](.agents/.riskMatrix.md) and [current task ledger](.agents/.plans.md) each own their *distinct* data. Google BRD is a stakeholder review mirror; detect and report revision/BR-ID DRIFT rather than treating either unapproved draft as automatic stakeholder authorization. The [feature design catalogue](.agents/.documents/featureDesign.md) expands interfaces; [agent roles](.agents/.workflow/agentRoles.md) expands worker behavior, not user permissions. Historical plans and handoffs must remain preserved and linked, never copied into a new competing BRD.
+**First source:** [master BRD + execution plan](.agents/.spec.md#11-one-integrated-capability-flow--plan-088--plan-098) owns BR-001..021, DES-088 and T087/T088 dependency ordering; the [RTM](.agents/.traceMatrix.md), [feature status](.agents/.features.md), [risk matrix](.agents/.riskMatrix.md) and [current task ledger](.agents/.plans.md) each own their *distinct* data. Google BRD is a stakeholder review mirror; detect and report revision/BR-ID DRIFT rather than treating either unapproved draft as automatic stakeholder authorization. The [feature design catalogue](.agents/.documents/featureDesign.md) expands interfaces; [agent roles](.agents/.workflow/agentRoles.md) expands worker behavior, not user permissions. Historical plans and handoffs must remain preserved and linked, never copied into a new competing BRD.
 
 For document/code/test review requests, check if this host permits multi-agent execution. If not, do **not** invent workers or claim independent or simultaneous reviews. Perform explicitly labeled sequential role-lens analysis or report capability GAP. If available and authorized, freeze identical source revision and policy, classify domain/risk, derive mandatory expertise, then assign requested `n` workers with recorded normalized expertise/task/persona/coverage/cost weights and budget/quorum. Reviewer personas (skeptical/adversarial/constructive/pragmatic/compliance/exploratory) guide checklists, **not** credibility or approval. Domain tags/weights are **configuration**, never hardcoded protected logic.
 
@@ -118,3 +123,141 @@ Each worker must have bounded read scope and an independent evidence report with
 Review writes and logs require separately authorized ownership/collision-safe paths, source fingerprints, redaction and scope checks; Google Docs/connector reads use connector authorization rather than claiming OS Path Guard protection. On STOP, drift, partial failure or budget exhaustion capture honest PARTIAL/STALE/BLOCKED evidence and handoff; re-run affected checks on RESUME. Existing `.source/scripts` and runtime five-phase configuration remain unchanged by this documentation contract. See proposed acceptance AC-REV-01..09 in the [master plan](.agents/.spec.md#13-one-consolidated-dependency-plan-plan-088-maps-into-m0m5).
 
 **No self-approval:** documentation edits under PLAN-088 do not themselves complete A.1; implementation tasks T088-05..09 and host adoption remain separately gated. Keep root AGENTS (development policy) distinct from portable `.source/SKILL.md` and every host-owned AGENTS.
+
+## 14. PLAN-089 staged documentation-to-implementation handoff
+
+Use [master SRS-01..12 and interface contracts](.agents/.spec.md) as the sole requirement/design authority for this development workstream; [planned test catalogue](.agents/.workflow/testingAndDelivery.md) and [RTM](.agents/.traceMatrix.md) are distinct operational indexes, not duplicate BRDs.
+
+**Stages in order:** A0 inspect exact branch/source and permissions → A1 write all 12 substantive SRS sections and label unknown owner details → A2 define contracts, failure/STOP and compatibility rules → A3 map all 21 BRs to planned positive/adverse cases in the RTM → A4 reassess existing risks and prepare handoff → A.1 independent reviewer checks A1-VAL-01..09 with real evidence → only after separate user/owner-approved B scope may code modifications begin → B.1 real host acceptance and separate release decision.
+
+A document author may perform **self-consistency preflight** but must label it `PREFLIGHT_ONLY`, not `A1_PASS`. A named real reviewer may sign only exact source revisions; never invent independent agent votes, green tests, version compatibility, budget results, or approval. Where host facts are absent, keep `UNKNOWN/BLOCKED` while continuing independent safe documentation tasks.
+
+There are 42 **planned** acceptance scenario identifiers (`TC-S2C-BR001..021-P/N`), not 42 automated tests. Every test execution claim must have command/procedure, exact SHA, platform and original result; RTM evidence remains `NOT_RUN` until then. A PR merge is not an A.1 or B.1 signoff. The current worker planner, orchestration service, native STOP/RESUME and reviewed host output namespace are not implemented by documenting them.
+
+
+## 15. PLAN-091 review-remediation and independent validation discipline
+
+[PLAN-090 technical preflight](https://github.com/RyugaWork/spec2code/blob/docs/plan-090-a1-review-findings/.agents/.handoffs/plan-090-a1-preflight-review.md) identified ten evidence-linked defects on the PLAN-089 pinned SHA. Continue remediation **in the latest existing PLAN-089 branch** and preserve the original report unchanged; do not open redundant branches or rewrite pre-fix review evidence.
+
+The [canonical master Section 18](.agents/.spec.md) owns proposed review lifecycle, manifest/finding/synthesis contracts, error states, budget constraints and `DEC-091-01..10` owner decisions. [Testing & Delivery](.agents/.workflow/testingAndDelivery.md) owns exact positive/negative case definitions; [RTM Section K](.agents/.traceMatrix.md) only maps findings to requirements, decisions, risk and test IDs. No new duplicate BRD, SRS, test catalogue or silently authoritative worker config is permitted.
+
+**Security and authority continue to override writing progress:** no auto-A.1 PASS; no worker review synthesis can waive a P0, provide independent human signature or authorize host writes. Only an actual, accountable reviewer can independently validate `A1-VAL-01..09` at the exact post-fix revision. Absent approved host/OS support, worker cost/quorum, repository integration target or business requirement owner, record `UNKNOWN/BLOCKED` and produce a durable safe handoff. The 42 test cases are still `DESIGNED/NOT_RUN`; do not claim test execution from enriched prose. Source-code and host-risk changes remain B-phase work requiring separate authorization.
+
+
+## 16. PLAN-092 — Spec Kit adoption inside this S2C development repository
+
+The user has chosen **official Spec Kit** as the feature-level specification/plan/task workflow for developing S2C itself. Always load current `.specify/feature.json` (and any *explicitly authorized* override) rather than guessing the active feature from a Git branch. For this checkout, the initial active feature is `specs/001-s2c-speckit-integration`. Read [Constitution](.specify/memory/constitution.md), then feature `spec.md`, `plan.md`, `tasks.md` and its checklist. Root AGENTS and the S2C master BRD/RTM/risk **retain higher authority**; do not copy them into `specs/` or create shadow requirements.
+
+**Web/GitHub mode:** read and write only GitHub-authorized Markdown and reviews; execute no fictitious CLI, local Path Guard, `specify init` or coding-agent skills. Record exact branch SHA, Google BRD revision if relevant, owner/scope, changed paths, planned versus executed verification. The current bootstrap files are native-compatible *artifacts*, not proof of upstream CLI installation.
+
+**Native coding-agent mode:** a real environment must first install a reviewed official Spec Kit release and its selected agent integration. Inspect versions, collisions with `.agents/skills/` and `.specify/` and the actual generated diff in a disposable checkout. Use upstream skills as documented by the pinned version; do not silently copy scripts or enable optional git extension/feature branches. Upstream commands cannot grant B-phase permission or bypass host policy/security.
+
+On every feature transition update [RTM](.agents/.traceMatrix.md), [master contract Section 19](.agents/.spec.md), [feature tasks](specs/001-s2c-speckit-integration/tasks.md), risk and factual handoff; require source freshness. `speckit_bridge.py --stage implement` returning `READY` only proves artifact existence. STOP does not imply a closed runtime session. A.1 independent validation, explicit B authority, B.1 and merge/release decisions stay separate. Standalone S2C hosts without Spec Kit remain supported.
+
+## 17. PLAN-094 — Full Spec Kit feature design read order and status vocabulary
+
+When developing **S2C itself** with the selected Spec Kit feature, read feature `spec.md`, `research.md`, `plan.md`, `data-model.md`, `contracts/web-native-interface.md`, `tasks.md`, `quickstart.md`, `checklists/requirements.md` and `checklists/integrationAcceptance.md` under `specs/001-s2c-speckit-integration/`. Root AGENTS, master SRS, RTM and risk remain authoritative; no new duplicate business registry is created.
+
+The 12 feature requirements `SKI-FR-001..012` map to 24 distinct planned cases `SKI-TC-001-P/N..012-P/N` in [RTM Section L](.agents/.traceMatrix.md). Static connector checks may be labelled `STATIC_INSPECTED` with exact Git SHA and what was actually checked. Do **not** convert them into `NATIVE_EXECUTED`, Python test PASS, a signed checklist, A1_PASS, B authorization or B1_PASS. No source code, host data, CLI/skill installer or CI is implicitly authorized; the active feature pointer continues to be independent of the Git branch.
+
+## 18. PLAN-095 — Native Spec Kit implementation safety
+
+**Required agent rule:** Before using official `$speckit-implement`, `$speckit-converge`, or an equivalent native mutating stage, read [Spec Kit Native Execution Gate](.agents/.workflow/specKitNativeExecutionGate.md), root/host AGENTS, active feature tasks, signed independent A.1 and the separate scoped B authorization. Official upstream `implement` may let users proceed past unchecked requirements checklists; a user's “yes” to that prompt **does not grant S2C implementation or host write authority**. A fully checked feature checklist is likewise not A.1 or B permission.
+
+The feature `tasks.md` is a **mixed governance/document/operator/approval/code backlog**. T011 (independent A.1), T012 (B authorization) and T015 (independent B.1/release) must never be checked by the coding agent itself. T013 is only a candidate executable source task under signed A.1, B scope, Path Guard and tested host controls. `converge` may expand a task list; new tasks still require approved scope.
+
+**Enforcement limitation:** This paragraph and its safety-gate document are procedural instructions only. No deployed upstream interception hook or new runtime Path Guard was installed here. When the actual agent/host cannot enforce them, do not invoke a mutating stage; STOP and record missing controls. ChatGPT Web may use its GitHub connector to draft or inspect authorized Markdown, but cannot claim native CLI/agent-skill execution.
+
+## 19. PLAN-095 — Web/GitHub Spec Kit staged operation
+
+For tasks using ChatGPT Web, follow [Spec Kit Web/GitHub Workflow](.agents/.workflow/specKitWebWorkflow.md). It defines **document-only** versions of Constitution, Specify, Clarify, Checklist, Plan, Tasks and static Analyze. These are provider-authorized Markdown edits/reviews, never claims that the official upstream agent skills ran. Preserve exact branch HEAD and provider revision, and record every sequential GitHub file commit; multi-file Contents API edits are **not atomic**. On partial failure, record `PARTIAL_PERSISTENCE`, not a fabricated successful stage.
+
+Before any native source mutation, follow [Spec Kit Native Execution Gate](.agents/.workflow/specKitNativeExecutionGate.md): current A.1 and separate B permission are mandatory, even if an upstream checklist prompt offers to continue. No official CLI/skill interception is installed by this Markdown rule. These two documents do not relax root/host AGENTS, Path Guard, owner signoff or release authority.
+
+
+## 20. PLAN-097 — Native environment feature-selection boundary
+
+**Required native-agent rule:** Before launching official Spec Kit scripts, do not trust inherited `SPECIFY_FEATURE_DIRECTORY` or `SPECIFY_FEATURE` as scope authority. [Source audit](.agents/.documents/specKitUpstreamEnvAudit097.md) confirms official upstream `get_feature_paths` accepts absolute paths and may automatically rewrite `.specify/feature.json`, while `setup_plan.py` may write files at the selected path without invoking S2C's Path Guard.
+
+For **read-only** preflight on an authorized disposable worktree: clear those untrusted feature override values, set `SPECIFY_FEATURE_NO_PERSIST=1`, verify feature pointer and all ancestor paths under root/host guard, and compare pointer/full diff after invocation. This flag prevents *pointer persistence only*, not arbitrary script writes, symlink TOCTOU, independent authorization or CI. Do not run upstream write-producing stages until separate approval and real host controls exist. The current source only contains this **Markdown instruction**; no runtime hook is installed or tested. Five `SK97-NEG` cases remain NOT_RUN.
+
+
+## 21. PLAN-099 — Foundation-first planning, scoped parallelism and no duplicate features
+
+The six [gap closures](.agents/.documents/featureDesign.md#8-plan-099--gap-closures-integrated-into-existing-functions-design_proposed) **extend F01–F64**, not F65–F70. Use the [construction-layer roadmap](.agents/.spec.md#24-plan-099--construction-layer-roadmap-and-bounded-parallel-execution): survey/blueprint → trusted foundation → source/evidence frame → independent functional modules → optional adapters → integration acceptance → authorized release → deferred self-evolution. Do not construct a write-capable upper layer before mandatory lower-layer security/workflow gates. Current activity remains **Phase A design**; runtime changes and approval require separate authority.
+
+**Parallel is conditional:** independent reads/review and disjoint, separately authorized work units may run on host-supported workers with a frozen revision, explicit DAG prerequisites, read/write/**transitive impact** sets, OS-enforced permissions, resource limits and cancellation. Path Guard, policy, shared canonical spec/RTM, workflow journal, protected core, migration and release/approval decisions have **single write owner** and independent read-only reviewers. Same-model role-lenses are `SEQUENTIAL_NONINDEPENDENT`, not genuine n-worker concurrency. Use isolated temporary worktrees/jobs as needed, **not a branch for each worker**; one trusted integration barrier checks combined output and runs exact-SHA regression. Consolidate approved related Git changes on the existing scoped branch; no unapproved commit/merge.
+
+Every phase/task still records all nine stages, including TEST/VERIFY after an optimization; a P0, conflict, stale source, unauthorized write or exhaustion cancels downstream work, preserves evidence and creates STOP-safe handoff. No runtime DAG scheduler, new quality score or verification PASS is claimed by this planning entry. See [workflow concurrency contract](.agents/.workflow/workflowSpecification.md#10-plan-099--concurrency-policy-across-mandatory-nine-stage-tasks).
+
+
+## 22. PLAN-100 — Mandatory entry and verification gate for construction work
+
+Begin with [one PLAN-100 task ledger](.agents/.plans.md#plan-100--l0-readiness-execution-and-b-gated-implementation-plan) and [master construction gate design](.agents/.spec.md#25-plan-100--gate-driven-implementation-and-verification-blueprint-l0-readiness--l7). The six DES-099 proposals remain **integrations of F01–F64**, not new feature IDs. Never treat PLAN-100 source inspection, linked documentation or successful Python CI as independent A.1/B.1 or a fully secure operating system boundary.
+
+**Before B write-capable work:** require actual owner-signed A.1 on the exact approved requirements/design revision; explicit scoped implementation permission; Path Guard/host trust disposition; requirements-to-test contract, input/expected output, rollback and independent negative security cases. T100-06/07 are a first bounded high-risk fix package **only after these gates**. Changes to `path_guard.py`, `scope_io.py`, `policy_resolver.py`, `workflow_guard.py`, canonical AGENTS/RTM and protected core are single-owner writes. Parallel readers/reviewers and isolated unrelated feature adapters remain conditional; no worker may approve its own code or merge PRs.
+
+**After B work:** run exact SHA/OS/unit/integration/adversarial tests and the appropriate independent B.1 checks. Report every unrun case as `NOT_RUN`; if approval, policy, source identity or resource budget is missing, STOP, preserve handoff and return `BLOCKED`, not a synthetic success. Keep one development branch where permitted and consolidate related changes; do not auto-merge or delete previous evidence.
+
+## 23. PLAN-101 — Documentation-only Codex/Gemini collaboration
+
+For authoring S2C follow [master Section 26](.agents/.spec.md#26-plan-101--codexgeminiantigravity-documentation-integration-candidate), [provider contract](.agents/.documents/featureDesign.md#9-plan-101--provider-contract-and-autorun-boundary), [runbook](.agents/.workflow/agentRunbook.md#11-plan-101--codex-autorun-preflight), [RTM](.agents/.traceMatrix.md#s-plan-101--multi-model-trace), [tests](.agents/.workflow/testingAndDelivery.md#plan-101--codexgemini-mcp-acceptance-design) and [risks](.agents/.riskMatrix.md#21-plan-101--multi-model-documentation-risks).
+
+Codex writes only authorized documentation; Gemini/AGY may review read-only **only after real MCP/provider authentication and scope are verified**. Do not assume tool access from a TOML sample. Prior Codex `0.169.0-alpha.11.1` rejected `--full-auto` (exit 2) and a separate read-only probe failed state/app-server initialization (exit 1). Never replace with unapproved YOLO, disable Path Guard, imply locally executed `git status` from a remote connector, auto-check T011/T012/T015, self-approve A.1 or B, or merge Draft PR #10. Preserve nine existing local changes. Per-part handoff, one writer, bounded retries and non-forced branch lease are mandatory.
+
+## 24. PLAN-102 — Documentation authoring exit and A.1 evidence
+
+Continue from [the unified master Section 27](.agents/.spec.md#27-plan-102--documentation-authoring-closure-and-bounded-implementation-blueprint), [PLAN-102 ledger](.agents/.plans.md#plan-102--documentation-authoring-exit-and-a1-review-handoff) and [A.1 evidence matrix](.agents/.workflow/validationSpecification.md#9-plan-102--independent-a1-review-packet-and-criteria). Keep the original business SRS/BRD and 5 machine phases authoritative, preserve Spec Kit upstream file ownership and limit Phase-A writes to specifically approved documentation. Real approval cannot be inferred from a Markdown completeness check. Record evidence, diff, any unknown owner/signature, and a handoff before switching task. Treat `AUTHORING_COMPLETE_CANDIDATE` as documentation authored, **not** safe or permitted to implement.
+
+## 25. PLAN-103 — Final author-side review boundary
+
+Use the [canonical review findings](.agents/.workflow/validationSpecification.md#10-plan-103--author-side-technical-review-and-findings-not-independent-a1), [master Section 28](.agents/.spec.md#28-plan-103--technical-review-closeout-and-remaining-authority-boundary), [RTM U](.agents/.traceMatrix.md#u-plan-103--technical-review-finding-trace-and-gate-consistency) and [final handoff](.agents/.handoffs/plan-103-documentation-final-handoff.md). Seven review findings have distinct dispositions; document fixes do not represent independent reviewer acceptance or implemented features. Maintain `A1_NOT_RUN`, `B_NOT_AUTHORIZED`, unexecuted tests and open P0 until separate owner evidence. Never infer permission for a Gemini/AGY MCP session or unsupported Codex CLI flag.
+
+## PLAN-106 / R01 — File-specific authority resolution
+
+Agent instructions are applied hierarchically: host safety and authorization boundaries; the current checkout's root and nested AGENTS scopes; the user-approved task boundaries; then the linked specifications and role templates. **Higher-priority policy cannot be overridden by a lower-priority Markdown file, model reply, MCP output or task note.** If two same-priority instructions conflict, record each source path and immutable SHA, identify the affected operation, and return `BLOCKED_CONFLICT` for the disputed action rather than guessing.
+
+A review must identify the exact checkout root, effective relevant AGENTS files, approved write paths, protected paths, commands, budget and source SHA. For a GitHub-only docs update, state explicitly that local path containment and `git status` are `NOT_OBSERVED`. An exception record requires specific requesting authority, affected requirement, original and replacement rule, expiry and a verified owner decision. No exception grants OS privilege or authorizes B by implication.
+
+
+## PLAN-111 — Scoped P0 remediation and return to A (2026-11-14)
+
+This paragraph is the latest **candidate-source** status on `docs/plan-089-a1-readiness`; it does not rewrite historical PR #7 or author-side A.1 records. The requester explicitly directed a bounded `A.1 review → Path Guard/Workflow Guard P0 repairs → return to A` cycle. Source patch `78c65b278fbd2ec384301c88abfdf6c84d388a29` addresses scope preservation at CLOSE, phase-specific VERIFY/HANDOFF policy routing, scoped-file and active Spec Kit freshness, and Windows reparse-point preflight; regression tests were added. A CI regression for legacy unscoped status exposed a real compatibility case; the next code revision retains unscoped-source freshness when the stored empty-scope digest actually matches, and labels otherwise unprovable freshness as `NEEDS_REVIEW`. See [PLAN-111 handoff](.agents/.handoffs/plan-111-a1-p0-return-to-a.md).
+
+Do not infer from static Windows reparse detection that hostile TOCTOU or non-anchored writes are OS-safe. Independent A.1 signoff remains **NOT_RUN**; this targeted requester-directed security remediation does **not** constitute general Phase-B authorization, host risk acceptance, B.1, release or permission to merge. Re-enter A/P4, P6, P7, P8 and P9 for owner decisions, threat model, exact acceptance checks and independent review.
+
+## GOV-20261114 — Pre-update review matrix and GPT Web–Codex A↔A.1 control
+
+**Status: AGENT CONTRACT / PREFLIGHT_ONLY.** This is not runtime enforcement, an independently signed A.1 PASS, functioning Codex dispatch, or B authorization. The canonical BRD/spec, RTM, plans, risk matrix and A.1 review criteria stay in .agents/.spec.md, .agents/.traceMatrix.md, .agents/.plans.md, .agents/.riskMatrix.md and .agents/.workflow/validationSpecification.md. Do not create another authoritative BRD or change the five Workflow Guard machine phases.
+
+### G1 — Mandatory pre-update review and impact matrix
+
+Before each material AGENTS/spec/plan/source/config/test modification, inspect the exact branch/ref, applicable root/nested policies, owner, paths, current evidence and risks. Record a pre-edit matrix with columns: review ID; requirement and source SHA; gap/conflict; impact/risk; affected files; planned treatment; executor; expected result; failed result and rollback; acceptance evidence; decision. No matrix, unresolved policy conflict, missing permission or contested file owner means BLOCKED_REVIEW for affected writes. Review the exact diff against the matrix afterward; the author may report PREFLIGHT_ONLY, never independent approval.
+
+**Historical matrix retained:** The original GOV-20261114 eight-row author pre-edit matrix is preserved in [agent compatibility audit](.agents/.handoffs/audit-20261114-agents-compatibility.md); it is not independent approval.
+
+### G2 — Per-task executor and routing protocol
+
+- [GPTWEB]: requirements, planning, research, risk/trace matrices, review, evidence interpretation, stage checkpoints and GO/NO-GO recommendations. Connector-based Markdown writes are permitted only with explicit scope and connector authority. Never claim local Path Guard evidence for remote-only writes.
+- [CODEX]: any local checkout inspection/change, executable code, tests/build/security/fault injection, command execution and Git operations. Verify real Codex/host capability, sandbox, checkout root, allowlist, budget and the separate authorization for each sensitive action. A missing Codex is not permission for GPTWEB to pretend it executed a command.
+- [AUTO]: a routing directive, not an executor or blanket permission. If a task is READY, authorized and an actual Codex connection is verified, send its full scoped instruction and retain the dispatch receipt. Otherwise mark HANDOFF_REQUIRED and provide a complete copyable Codex request; continue only unrelated safe tasks. Never claim an unseen chat was synchronized or a tool call succeeded.
+- Every task must have task_id, phase, requirement/AC, executor tag, owner, priority, dependencies, target branch/commit SHA, owned paths and exclusions, permissions, inputs, expected_result, failed_result, test plan, timeout/retry/cost budgets, evidence, rollback and status. Never infer commit/push/merge authority from the executor tag.
+- Reconcile per-file ownership and task IDs against parallel workstreams before dispatch. One writer per path; reviewers operate on immutable source revisions. Do not duplicate already-running A.1 tasks or create new branches merely for assignment.
+
+### G3 — A → A.1 feedback loop and failure recovery
+
+A consists of P1–P9 design/planning. A.1 is separate independent design validation, including review of evidence from only specifically authorized P0 repairs; it is not general Phase-B implementation permission. On FAIL, BLOCKED, stale source, missing mandatory evidence, or unresolved P0: record defect/root cause and affected risk/RTM IDs; return to the relevant A step (requirements/AC, architecture, threat model or treatment); re-authorize and perform scoped remediation if needed; freeze a fresh source pair; rerun all mandatory A.1 criteria and affected regressions. Even if A design is unchanged, record the return and rationale. Use bounded time/attempts/cost; at budget exhaustion stop safely with a handoff, never loop without limit. A.1 PASS cannot automatically authorize B, merge, release, deployment or any elevated permission. B and B.1 retain separate owner and acceptance gates.
+
+### G4 — Strict >99.99% quality and authority gate
+
+For every required executable test group at the same pinned revision, R = valid_passes / all_valid_executions × 100%. The gate requires **R > 99.99%** in EACH mandatory measurable group, without rounding up or compensating a weak security group with other groups. Track retry attempts, failures, skipped/quarantined tests and exclusions explicitly; do not cherry-pick results or treat retries as independent tests unless the defined sampling protocol allows it. Zero executed or insufficiently evidenced tests mean NOT_MEASURABLE/BLOCKED, not 100%.
+
+Additional hard requirements: zero unresolved P0/security bypass; 100% of required evidence traceable to exact source SHA, platform, command and observed outcome; every applicable A1-VAL-01..09 independently evaluated PASS at the same pinned Git/Google source pair; accountable owner approvals for outstanding risks/ADR and separate B entry authority. Missing one condition means NO_GO and return to A; document-only preflight cannot attain a numeric runtime PASS. Passing test percentages alone are not proof of 99.99% production reliability; a statistical reliability claim requires separately justified sampling/confidence.
+
+### G5 — Mandatory checkpoint and remaining-task report
+
+After EACH phase, batch, failure and return cycle, record: phase, source SHA, task_total, done_verified, ready, in_progress, failed, blocked, reopened, newly_discovered, task_remaining, gptweb_remaining, codex_remaining, P0_open, gate_result, evidence_refs, next_task, handoff_ref. Task remaining is the number of UNIQUE current ledger task IDs not verified DONE, including reopened and newly discovered tasks. Do not subtract from a fixed initial count when scope grows. Distinguish PLANNED/READY/IN_PROGRESS/FAILED/BLOCKED/REOPENED/DONE_VERIFIED/NOT_RUN and UNKNOWN; do not turn a proposal into a completion. Count an ID once regardless of executor or retry. When a gate fails, reopen affected tasks, add explicit RCA/remediation/regression tasks, recalculate counts and checkpoint before selecting the next READY task.
+
+### G6 — Collision safety, permissions and closeout
+
+For each write, re-read the current path/blob SHA and approved policy; on drift or another chat's ownership, stop and re-review before overwriting. Maintain explicit reviewed allowlists, preserve secrets, host Spec Kit ownership, source, tests and evidence. Prefer the existing work branch and a small coherent change; commit only when separately authorized and do not auto-merge or force-push. Record BEFORE/matrix/action/AFTER, exact file diff, test outcomes as PASS/FAIL/NOT_RUN, remaining counts, rollback, and handoff. Mark this AGENTS-only governance change RUNTIME_NOT_RUN until independently observed tests and a real host evaluation exist.

@@ -16,6 +16,12 @@ This is a **role protocol for a single human-directed ChatGPT/Codex agent or exp
 
 These roles may be fulfilled sequentially by one agent. For high-risk changes, an **independent human reviewer** must make the acceptance decision; repeating a review in the same model conversation is not independence.
 
+## GOV-20261114 — Executor routing and reviewer independence
+
+Each task has one executor label, [GPTWEB] for requirements, reviews, impact/risk matrix, checkpoints and authorized remote documentation, or [CODEX] for actual local repository inspection/edits, commands, tests, security probes and Git execution. [AUTO] is a routing directive, not a third executor or permission tier. It may dispatch an authorized READY Codex task only through a verified live provider; otherwise issue HANDOFF_REQUIRED, preserving task IDs and evidence. See [root contract](../../AGENTS.md#active-agent-contract--read-first).
+
+The coordinator requires task ID, phase, source SHA, requirements/AC, dependencies, priority, assigned writer, permitted and forbidden paths, action permissions, expected result, failed result/rollback, budgets, evidence and status. Parallel reviewers use immutable source; a single integrator owns shared writes. Independent A.1 review, owner risk acceptance and Phase-B authorization are external decisions, not GPTWEB/CODEX self-certifications. A simulated persona or sequential same-model review has independentWorkers=0.
+
 ## Assignment and escalation
 
 1. Classify the request as READ, PLAN, IMPLEMENT, VERIFY or DELIVERY. An ambiguous action cannot be elevated to a write merely to complete a workflow.
@@ -70,3 +76,30 @@ The role catalogue supports a **future** multi-agent review service and present-
 Review personalities: skeptical (test assumptions), adversarial (find abuse/negative cases), constructive (improve completeness), pragmatic (feasibility/cost), compliance-first (governance/security), exploratory (edge cases). Selection combines expertise fit 35%, task fit 25%, perspective 15%, marginal coverage 15% and budget feasibility 10% **as proposed design defaults**, subject to versioned config and A.1 review. Constraints (mandatory role coverage/security, ownership, permissions, quota) are not traded for score. Worker uniqueness and correlation must be disclosed.
 
 The **Review Coordinator** freezes the policy/source revision, plans n and authenticates constraints; **Reviewer Workers** produce independent source-linked findings without reading each other's draft; the **Synthesis Reviewer** aggregates immutable results while retaining dissent/P0 blockers; the **Human Validator** alone makes A.1/B.1 or approval decisions in the proper gate. No coordinator/workers have been executed from this documented flow. Do not self-grade a simulated reviewer as independent. See [master](../.spec.md#12-weighted-multi-agent-review-requirements-and-design) and [RTM](../.traceMatrix.md#i-plan-088--unified-review-service-requirement-and-evidence-crosswalk-draft).
+
+
+## PLAN-099 — Multi-worker scheduling versus reviewer roles (design only)
+
+Retain the existing F33 logical responsibilities and proposed weighted F38–F42 profiles. Introduce **no new independent reviewer/coordinator authority**: a `Scheduler` responsibility may distribute ready, scoped units; a `Module Owner` is the sole writer for a shared component; a `Trusted Integrator` performs source-SHA, contract, conflict and regression checks; an `Independent Reviewer` evaluates evidence but cannot self-approve; an `Approval Owner` holds an explicit external human decision. These are **roles, not running services**.
+
+| Role / work type | Concurrency permissions | Output and stop condition |
+| --- | --- | --- |
+| Discovery/research/QA/security reviewer | Parallel read-only on same pinned source, with independent worker execution explicitly evidenced | Evidence-linked findings; unverified/partial dissent preserved |
+| Scoped implementation worker | Parallel only if approved DAG dependencies and nonoverlapping write + transitive impact sets, isolated environment with OS policy | Staged patch, exact source SHA, observed checks, resource budget; no shared master/Protected Core write |
+| Integration owner | Serial writes to shared contract, canonical BRD/RTM/AGENTS, workflow journal and merge target | One combined source SHA, regression/contract outcome; BLOCK on conflicts |
+| Security/quality gate | Can parallelize isolated checks but cannot be authored/approved by the same untrusted worker | Independent mandatory gate evidence; reject stale or P0 |
+| External approver | No automated authority delegation to workers or models | Explicit recorded approval only after independent A.1/B.1 evidence |
+
+The proposed [WorkUnit/WorkerResult contract](../.documents/featureDesign.md#81-bounded-parallel-work-and-worker-compatibility) carries task, parent stage, dependencies, source SHA, read/write/impact sets, budget, expected output and result. Worker count is **bounded by available host, budget and mandatory expert coverage**, not hardcoded globally. If no real worker runtime is available, use serial, explicitly labeled `SEQUENTIAL_NONINDEPENDENT`; fail closed when independence is a mandatory acceptance condition. A stage/task still traverses all nine universal steps, with safe STOP/handoff on collision or worker loss.
+
+## DOC-A08 — Reviewer weighting, independence and veto rules
+
+The existing **proposed** reviewer allocation (expertise 35%, task fit 25%, perspective 15%, marginal coverage 15%, budget 10%) must be computed only among candidates that first meet mandatory role coverage, verified provider availability, approved data-access scope and resource limits. Weights are design defaults, not measured calibration. For each selected review worker or sequential analytical lens, record `reviewerId, actualProvider/sessionOrLens, expertiseEvidence, perspective, scope, inputSha, budget, observedFindings, confidence, correlatedWith`.
+
+If all roles are simulated within one model/context, declare `independentWorkers=0` and `correlatedReview=true`; do not treat different personalities as independent votes. Synthesis retains separate adverse findings, disagreements and unknown coverage; it must not average away a security P0, missing mandatory BA/QA role, data/privacy issue or source revision mismatch. Only a separately authorized real reviewer/owner can sign A.1. Model/provider availability failure becomes `PARTIAL_COVERAGE`, never silent acceptance.
+
+## PLAN-106 / R10 — Reviewer composition and dissent aggregation
+
+Proposed specialist weights only rank candidates **after** hard constraints (authorized scope, actually available provider, required BA/developer/QA/security/data expertise and bounded budget) are satisfied. Report selected `n`, each actor's provider/session evidence, expertise match, personality lens, source SHA and possible correlation. If workers are simulated sequentially inside one conversation, label `independentWorkers=0` regardless of how different their prompts sound.
+
+The synthesis reviewer retains all minority P0 findings as separate issues; it must never remove a veto through weighted averaging or self-appoint the business/security owner. On worker outage or disagreement, return `PARTIAL_REVIEW/UNRESOLVED`, name the missing discipline and assign a human decision owner. Real A.1 identity and accepted risk remain external gates.

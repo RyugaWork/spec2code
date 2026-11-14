@@ -36,3 +36,9 @@ python -m unittest discover -s tests -v
 ```
 
 Regression tests cover cross-repository session reuse, root replacement, client-provided MCP roots, symlink escape, verified unlink, stale HEAD, and context-pack invalidation. These checks do not substitute end-to-end security testing on Windows, network mounts or a real MCP server.
+
+## PLAN-107 / S02 — Per-operation guard coverage
+
+For each potentially dangerous action, declare **path discovery, physical containment, policy decision, execution boundary and postcondition** as independent checkpoints. Cover direct read/write, directory listing, generated files, Git staging, helper/subprocess cwd and argv, MCP delegated tool, archive extraction, symlink replacement, feature-pointer changes and cleanup. The same permission budget must follow nested operations; a tool response cannot mint a new root or escape by changing the base path.
+
+A guard gap is any operation that can execute between checking and applying the scope without a trusted enforcement point. Mark it `P0_REVIEW_REQUIRED`, link a negative sentinel fixture, and deny automatic execution rather than assuming path-normalization success. On Windows and network-mounted filesystems document OS-specific containment limitations and known TOCTOU windows; never claim an E2E PASS from isolated unit tests.

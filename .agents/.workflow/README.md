@@ -1,6 +1,10 @@
 # Spec2Code workflow index — planning before implementation
 
-> **Now:** [Planning & Specification Workflow P1–P9](planningSpecificationWorkflow.md) and [design handoff](designHandoffTemplate.md). The historical change workflow and the five-stage runtime-assisted implementation model described below apply **only after planning review and explicit implementation authorization**. STOP in the current design phase is an ordinary planning handoff, not a Workflow Guard machine state.
+> **Current state:** PLAN-103 documentation is an **author-complete candidate for independent A.1**, not an A.1 PASS or code authorization. [Planning & Specification P1–P9](planningSpecificationWorkflow.md) and [design handoff](designHandoffTemplate.md) are the recorded Phase-A process. The implementation flow described below is future and only applicable following independent review, host/security approval and a separately authorized B task. STOP/handoff is an agent procedure, not a newly deployed Workflow Guard machine state.
+
+**Active current entry:** [root contract](../../AGENTS.md#active-agent-contract--read-first), [executor roles](agentRoles.md#gov-20261114--executor-routing-and-reviewer-independence), [runbook](agentRunbook.md#gov-20261114--matrix-routing-execution-and-checkpoint), [validation](validationSpecification.md), [audit](../.handoffs/audit-20261114-agents-compatibility.md). PLAN-111 P0 patch is a candidate; formal A.1 NOT_RUN and B NOT_AUTHORIZED.
+
+**The numbered implementation sequence below is Phase-B-only**, requiring a separate scoped approval; do not use it to start code work during the current Phase A.
 
 1. **Requirement:** update `../.spec.md` as required and set the feature's status in `../.features.md`.
 2. **Plan first:** record scope, owner, changed files, rollback, acceptance tests in `../.plans.md`.
@@ -38,7 +42,7 @@ Workflow Guard evaluates requirements and records user-authorized transitions. I
 - [Domain authorities](../.documents/.documentGovernance.md) and [policy routing](../.documents/.policyRouting.md): identify owners and required operation without turning a discovered reference into permission.
 - [Test/delivery gates](testingAndDelivery.md) and [Git rules](../.git.workflow.md): explicit evidence and external acceptance before merge/release.
 
-These agent documents guide ChatGPT/Codex interactions and do not implement missing Workflow Guard controls. PR #7 retains three P0 and one P1 review findings; active Windows TOCTOU, OneDrive and legacy-migration risks are unchanged.
+These agent documents guide ChatGPT/Codex interactions and do not implement missing Workflow Guard controls. PR #7 contains historical P0/P1 review findings; PLAN-111 has candidate corrections but lacks independent exact-head host/security confirmation. This is not a current verified open-defect count.
 
 ## PLAN-083 interruptible work protocol
 
@@ -57,3 +61,20 @@ These agent documents guide ChatGPT/Codex interactions and do not implement miss
 ## PLAN-085 — validation boundaries
 
 Overall process: **A (P1–P9 planning) → [A.1](validationSpecification.md) (design validation) → separately authorized B (implementation) → [B.1](validationSpecification.md) (system and stakeholder acceptance) → separately authorized release**. A.1 and B.1 have their own [validation report](validationReportTemplate.md) and explicit FAIL/BLOCKED feedback into the impacted previous lifecycle. Current status: **A active, A.1 NOT RUN, B NOT AUTHORIZED, B.1 NOT RUN**. A green CI run or RTM link audit does not constitute A.1 or B.1 PASS.
+
+## Current authoring and review entrypoints — PLAN-103
+
+This page is an **index**, not a new workflow implementation or a replacement for the original nine-stage PLAN-084 planning workflow. For the current **authoring candidate**:
+
+1. Read [master BRD/SRS/architecture §28](../.spec.md#28-plan-103--technical-review-closeout-and-remaining-authority-boundary) and [the existing architecture decisions](../.documents/featureDesign.md#10-plan-102--architecture-decision-records-for-a1-disposition). Preserve the host's own AGENTS and the official Spec Kit ownership of `.specify/` and `specs/`.
+2. Read [RTM P](../.traceMatrix.md#p-plan-098--draft-integration-trace-crosswalk-not-implementation) and [test catalogue](testingAndDelivery.md#plan-100-candidate-feature-acceptance-cases); BR-022..027 now have **44 explicitly named designed cases**, not 44 executed or approved outcomes.
+3. Read [A.1 validation definitions and PLAN-103 author-review findings](validationSpecification.md#10-plan-103--author-side-technical-review-and-findings-not-independent-a1), [risk matrix](../.riskMatrix.md), and [source-bound handoffs](../.handoffs/plan-103-traceability-review-checkpoint.md). A technical author review is *not* independent approval.
+4. On STOP/RESUME, use [the existing protocol](stopAndHandoff.md) and recheck the actual Git SHA, Google Draft revision, source-owner decisions, P0 risk and host/sandbox. Do not convert `NOT_RUN` into `PASS`.
+
+**Current gates:** `AUTHORING_COMPLETE_CANDIDATE`, `A1_NOT_RUN`, `B_NOT_AUTHORIZED`, `B1_NOT_RUN`, provider CLI/MCP and actual host security tests unverified. Any subsequent B work requires a separately scoped approval; no new machine phases, YAML/JSON, automatic CLI or agent worker are created by this index.
+
+## PLAN-110 / Z02 — Reviewer start-to-finish navigation
+
+Start from the [current master](../.spec.md), then use [design](../.documents/featureDesign.md), [RTM](../.traceMatrix.md), [negative/positive tests](testingAndDelivery.md), [risk scoring](../.riskMatrix.md), [role authority](agentRoles.md) and [real A.1 report form](validationReportTemplate.md). Read both existing STOP and feature-specific Spec Kit Web/native gates before asserting a workflow result. The five newest handoffs are `plan-106` through `plan-110` under `.agents/.handoffs/`; verify actual branch SHA before resuming.
+
+A reviewer should first report which documents and external tools were available, whether their assessment is independent, and what remains unexamined. If the source pair, owner BR/AC decision, actual tests or provider capability are absent, assign the correct `BLOCKED/NOT_RUN` value and return a source-linked finding, rather than silently substituting another model or unapproved host operation.

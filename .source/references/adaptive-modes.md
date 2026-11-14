@@ -48,3 +48,9 @@ When official Spec Kit is initialized, use `speckit_bridge.py --stage plan` befo
 - `context-pack.json` contains no task description, source body, env values or external request payload.
 
 Bundled defaults and task stopwords are defined in `.config/routing.json`; host runtime overrides at `.agents/state/context-policy.json` are merged under the security floor and cannot remove high-risk indicators.
+
+## PLAN-109 / M06 — Adaptive context-budget safety floor
+
+`Minimal` is allowed only for bounded, low-risk tasks with full required policy and affected requirements present; `Balanced` includes cross-layer dependencies; `Deep` is compulsory for P0, sensitive data, external provider, schema migration, multi-repo or stale source. Dynamic mode choice must not omit security constraints, a mandatory AGENTS instruction, critical business AC, negative fixture or risk owner decision to save tokens.
+
+Track budget estimates and observed token use separately; cap context size, retries and calls. On truncation or inaccessible required source return `CONTEXT_INCOMPLETE` and STOP before a write. A model proposal for a new mode or an external MCP helper cannot expand allowed paths. Cache only source-hash-scoped redacted context, with invalidation on revision/policy change; do not persist secrets or independent review signatures in context cache.

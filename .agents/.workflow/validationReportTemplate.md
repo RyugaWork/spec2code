@@ -58,3 +58,37 @@
 - Explicit separate permission to modify code, schema, CI or host data (or `NOT_AUTHORIZED`):
 
 Use [cross-stack technology policy](../.documents/technologyVersionPolicy.md) and [override template](../.documents/technologyOverrideTemplate.md). A user-approved version preference is **not** independent release acceptance or a waiver of host safety controls.
+
+## DOC-B06 — Evidence completeness before any signed validation result
+
+A real review report must fill the existing template's nine per-gate rows with **reviewer identity independent of the author**, authority evidence, exact Git SHA and Google BRD doc/tab/revision, expected requirement/AC/risk result, actual cited evidence, reviewer verdict and any dissent. Do not populate these fields with generated approvals, guessed timestamps, stale CI runs or a single-model multi-role simulation. For any mandatory `NOT_RUN` or missing owner/P0 decision, aggregate `A1_BLOCKED/NOT_RUN` with a precise rework owner.
+
+Distinguish four different records: `AUTHOR_STATIC_REVIEW` (can be model-produced), `BUSINESS_OWNER_DECISION` (must be authenticated), `INDEPENDENT_A1_REPORT` (actual separately accountable reviewer), `PHASE_B_AUTHORIZATION` (distinct requester/maintainer consent). Never reuse a signoff across materially changed SHA/BRD revisions without an impact re-review. The template is not itself a completed report or approval.
+
+## PLAN-110 / Z09 — Nine-gate independent evidence sheet (blank by design)
+
+Populate the following only when an **actual independent authorized reviewer** has evidence on the current Git+Google revision pair. Each row requires `gateId, reviewerIdentity, authorityEvidence, gitSha, googleRevision, impactedRequirements, observedEvidenceUri, result(PASS|FAIL|BLOCKED|NOT_RUN), dissent, correctiveOwner`. The author-model must not create a forged signoff.
+
+| Required gate | Actual reviewer verdict | Evidence and owner |
+| --- | --- | --- |
+| A1-VAL-01 Source authority | NOT_RUN | Owner parity/signature pending |
+| A1-VAL-02 Requirements and AC | NOT_RUN | Business AC pending |
+| A1-VAL-03 Bidirectional RTM | NOT_RUN | Runtime/test evidence pending |
+| A1-VAL-04 Feature design | NOT_RUN | Independent review pending |
+| A1-VAL-05 Architecture and workflow | NOT_RUN | Host and native compatibility pending |
+| A1-VAL-06 Risk discovery | NOT_RUN | Security owner pending |
+| A1-VAL-07 Risk management | NOT_RUN | P0 residual UNKNOWN |
+| A1-VAL-08 Design handoff | NOT_RUN | Output pair/source validation pending |
+| A1-VAL-09 Independent signoff | NOT_RUN | Named reviewer/signature absent |
+
+An A.1 PASS requires the reviewer to replace all applicable mandatory entries with real evidence and reach an independently authorized aggregate outcome; the packet's template rows do not award PASS. Phase-B approval and B.1 remain separate decisions.
+
+## GOV-20261114 — Quantitative evidence and checkpoint (blank until observed)
+
+| Group/source SHA | Valid PASS | Valid total | Fail/retry/skip/exclusion policy | Unrounded R | Exact host/command/evidence | Verdict |
+| --- | ---: | ---: | --- | ---: | --- | --- |
+| NOT_RUN / specify group | UNKNOWN | UNKNOWN | UNKNOWN | NOT_MEASURABLE | NOT_RUN | BLOCKED |
+
+Require strict R > 99.99% in every mandatory measured executable group, zero unresolved P0, all applicable real independent A1-VAL-01..09 and full required evidence. Keep design validation distinct from runtime test percentage. Any missing requirement means NO_GO, not inferred signoff.
+
+Task checkpoint after each phase: total unique task IDs; done_verified; ready; in_progress; failed; blocked; reopened; newly discovered; remaining; gptweb_remaining; codex_remaining; P0_open; next task/owner; handoff/evidence refs. This template itself is NOT_RUN.

@@ -2,6 +2,16 @@
 
 Applies to development of Spec2Code and, as **guidance only**, to an installed skill in another Git checkout. Select the relevant mode; do not assume every user request authorizes runtime state writes. Examples use `<skill>` as an explanation placeholder, **not** a literal shell path. In a host installation, the actual script path is `.agents/skills/spec-to-code/scripts/`; in this development repository it is `.source/scripts/`.
 
+## GOV-20261114 — Matrix, routing, execution and checkpoint
+
+- **Before material change:** pin branch/SHA, read applicable policies, map requirement/AC and affected files, publish a pre-edit review matrix with gap, risk/P0, owner, GPTWEB/CODEX executor, expected result, failed result/rollback and test/evidence. If authorization or path ownership is unknown, BLOCKED_REVIEW.
+- **Route:** [GPTWEB] handles analysis/review and expressly allowed connector docs; [CODEX] handles local code, shell, tests and Git. [AUTO] is conditional dispatch, not automatic permission. Without a verified authorized Codex interface, return HANDOFF_REQUIRED with a complete task envelope and do not invent execution receipts.
+- **Codex preflight:** actual checkout and local status, canonical root, branch SHA, root/nested AGENTS, validated Spec Kit feature, single file owner, allowlist/denials, approved OS sandbox, CLI capability, timeout/retry/cost budget, expected/failed result and verification steps. Remote connector writes never establish local Path Guard proof.
+- **After each phase/failure:** checkpoint unique IDs by done_verified, ready, in_progress, failed, blocked, reopened, newly discovered and remaining; split remaining between GPTWEB and CODEX, preserving unknown evidence, P0 risk and handoff/next owner. Reopened/new tasks increase remaining; do not count the same ID twice.
+- **Quality/recovery:** A.1 FAIL/BLOCKED returns to affected A design/risk stages before a fresh A.1 run. Each executable mandatory measurable group needs strict unrounded R > 99.99%, no unresolved P0, full evidence, independent applicable A1-VAL-01..09 and separate owner decisions. Unknown test denominator or absent host runner is NOT_MEASURABLE/BLOCKED. STOP on bounded-budget exhaustion; never infer B/merge authorization from A.1.
+
+See [root G1–G6](../../AGENTS.md), [roles](agentRoles.md) and [validation](validationSpecification.md). These instructions do not implement a Codex transport or machine PAUSED state.
+
 ## 0. Decide what is allowed
 
 | Request type | Permitted initial work | Not implied |
@@ -25,7 +35,7 @@ If there is no local checkout or no execution tool, perform a repository-source 
 ## 2. Spec Kit branch (only when truly installed)
 
 - Official Spec Kit tools and skills run in the **coding agent's chat**, not as subprocess calls made by S2C. `specify` CLI is for installation/integration management. Confirm the installed agent integration and invoke its native syntax (for Codex skills: `$speckit-specify`, `$speckit-plan`, `$speckit-tasks`, etc.).
-- Select the active feature from `SPECIFY_FEATURE_DIRECTORY` or `.specify/feature.json`; never infer it from the Git branch.
+- Resolve the active feature from validated `.specify/feature.json` in the exact physical checkout. Inherited `SPECIFY_FEATURE_DIRECTORY` and `SPECIFY_FEATURE` are untrusted and must be sanitized; only an explicit reviewed override may be canonicalized and accepted inside scope. Never infer it from a branch name.
 - Read-only inspection: `python .agents/skills/spec-to-code/scripts/speckit_bridge.py --root . --stage status`. Use `--stage plan` when `spec.md` is ready; `--stage implement` only when **all three** `spec.md`, `plan.md`, `tasks.md` exist.
 - Normal agent sequence: establish constitution when needed; `specify` → optional `clarify` → `plan` → optional `checklist` → `tasks` → optional `analyze` → `implement` → `converge`. The checklist is reviewer-owned evidence, not a way for S2C to approve requirements. Rework only impacted phases when a meaningful change invalidates them.
 - S2C does **not** own/write `.specify/` or `specs/` via its bridge. An authorized agent may edit active Spec Kit artifacts using upstream commands, subject to the host's policies and the relevant session provenance.
@@ -55,7 +65,7 @@ These filenames and task are **illustrations**; replace them with observed value
 
 ## 5. Workflow Guard caveats at PR #7
 
-The `workflow_guard.py` five-stage journal is a **pre-release advisory machine gate**, not an orchestrator or approval provider. Use identical `--task` and `--paths` for a scoped task. There are known open findings on the PR #7 head: missing scope in `CLOSE`, VERIFY/HANDOFF operation mapping, missing source/Spec Kit snapshot inputs and scope-free `status` mismatch. Do not represent `CLOSE` as verified, skip a security review, or assert release authorization merely because an event was written. `status` with full scope may be used for diagnosis, but this does not fix the underlying regression.
+The `workflow_guard.py` five-stage journal is a **pre-release advisory machine gate**, not an orchestrator or approval provider. Use identical `--task` and `--paths` for a scoped task. Historical PR #7 review observed: missing scope in `CLOSE`, VERIFY/HANDOFF operation mapping, missing source/Spec Kit snapshot inputs and scope-free `status` mismatch. Do not represent `CLOSE` as verified, skip a security review, or assert release authorization merely because an event was written. `status` with full scope may be used for diagnosis, but this does not fix the underlying regression.
 
 ## 6. Report format
 
@@ -92,3 +102,30 @@ After A/P9, a designated reviewer must use [A.1 Design Validation](validationSpe
 For **all** technology classes, including Python interpreter/requirements, PowerShell runtime/module edition, SQL DBMS+driver+dialect+migrations, .NET, CI images and project layout, complete a [technology assessment](../.documents/technologyAssessmentTemplate.md) using the [cross-stack policy](../.documents/technologyVersionPolicy.md). The **default** is currently supported, mature and widely adopted, not just the latest major. Preserve existing S2C support/CI and a host's approved structure until a separate change is authorized; do not retarget `pyproject.toml`, PowerShell scripts or migrations automatically.
 
 **Explicit User Override** takes priority over the conservative maturity preference: identify the user's exact requested technology/version/structure and scope, and document it with an [override record](../.documents/technologyOverrideTemplate.md), risk and compatibility/upgrade plan. Newly released supported major versions can be accepted as **design choices** if the requester expressly chooses them. Unsupported/EOL/preview/high-risk selections need a further safety/owner review and may remain blocked; higher-priority security, Path Guard and separate Git/write/release authorization cannot be waived. A.1 reviews the decision, B.1 later checks actually installed versions when implementation has been authorized. The current work remains design, not implementation.
+
+## 11. PLAN-101 — Codex AutoRun preflight
+
+**Current fact:** `--full-auto` failed on the tested Codex version, Gemini/AGY is unverified, and the GitHub-only documentation path does not prove local Path Guard.
+
+1. **Discover:** confirm checkout root, current `git status --porcelain=v1`, branch, AGENTS hierarchy, current docs/Spec Kit, and nine prior local modified/untracked files recorded in [checkpoint 1](../.handoffs/plan-100-documentation-checkpoint-1.md). If local checkout is inaccessible, status is NOT_OBSERVED.
+2. **Capability:** record observed `codex --version` and `codex exec --help`, exit/stderr, usable sandbox and writable state DB. On known `0.169.0-alpha.11.1` the full-auto flag exited 2; a separate read-only attempt exited 1 during app-server initialization. Do not guess a replacement flag or bypass sandbox.
+3. **Provider opt-in:** verify MCP package origin/pin/auth and actual tool names using synthetic read-only fixtures. Reject surprise provider commands, credentials, untrusted instructions and whole-repo data requests.
+4. **Plan:** bind approved documents, git/Google revisions and requirement/risk/AC mapping. Do not check Spec Kit T011/T012/T015 or enable B.
+5. **Execute only in approved boundary:** enforce OS sandbox, Path Guard, allowlisted Markdown, secrets filter, timeout, retries, token/cost cap, cancellation and one-writer rule. A GitHub connector commit is **not** a local CLI test.
+6. **Verify:** document changed-file scope, links, IDs, reverse trace and actual command evidence; keep planned MM-TCs as NOT_RUN unless actually exercised. Gemini independent review is only real when provider call and reviewer identity are evidenced.
+7. **Handoff and STOP:** save exact source/commit SHA, source pair, files, validations, blockers and next steps before another part. Stale ref, privilege error, P0, quota or budget exhaustion causes STOP and revalidation on RESUME.
+8. **Gate:** only independent A.1 and a separate B approval can authorize source implementation. Refer to [test cases](testingAndDelivery.md#plan-101--codexgemini-mcp-acceptance-design).
+
+No command in this document is claimed to have been newly run.
+
+## DOC-A09 — Host CLI evidence and safe documentation fallback
+
+The operator must capture exact `codex --version`, `codex exec --help`, OS, sandbox policy, writable Codex state location, permitted commands, repository root, and actual stderr/exit **on the approved host** before claiming Auto Run. Prior Codex `0.169.0-alpha.11.1` rejected `--full-auto` (exit 2) and a separate read-only probe failed state/app-server initialization (exit 1). These failures are evidence of **incompatibility in that tested environment**, not successful model execution. Do not guess alternate flags, set unrestricted `--yolo`, auto-install unverified MCP packages or place state outside the approved sandbox without host consent.
+
+If the host cannot run the tool, stop automated execution and publish only independently authorized read/write **documentation through the GitHub connector**, identifying this as a distinct path. Before any remote commit check expected HEAD, allowed files, diff and actual result; never overwrite pre-existing uncommitted local work. Explicitly label `CLI_NOT_RUN / PROVIDER_NOT_VERIFIED / LOCAL_PATH_GUARD_NOT_TESTED` and preserve a per-batch handoff for resume. A GitHub document commit cannot satisfy native OS negative tests.
+
+## PLAN-107 / S07 — Safe Auto versus host sandbox authorization
+
+`Manual` requires permission for each sensitive action; `Safe Auto` is limited to explicitly reviewed docs-only allowlisted operations; `Sandbox Auto` requires a separately approved disposable host, verified OS containment and bounded tool commands; `Full Auto` still requires a sandbox and explicit authorization, not unrestricted host YOLO. These design terms do **not** assert that the tested Codex CLI implements these flags or supports a particular mapping.
+
+Host preflight checklist: actual `codex --version` and `codex exec --help`, writable state directory, process isolation, physical checkout root, current `git status`, allow/deny commands, cumulative deadline/retry/cost/size budgets, provider/MCP capability and auth, cancellation and rollback. Unsupported CLI flag (previous exit 2), failed state bootstrap (previous exit 1) or absent Gemini credentials => `BLOCKED` and handoff. No fallback that weakens permissions; GitHub connector publication is a separate verified pathway.

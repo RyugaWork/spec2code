@@ -31,3 +31,9 @@ No duplicate spec bodies, architecture graphs, task lists or Git histories are g
 - Python 3.10+ core. Spec Kit is an external dependency; official process agent skills do not run merely because the bridge finds `spec.md`.
 - Spec Kit feature paths outside the checkout and symlinked feature pointers are rejected by this adapter, even though upstream Spec Kit supports broader overrides. This protects tool isolation.
 - Do not overlay a live v0.6 installation; complete existing sessions and archive state first. Managed document markers and Session IDs changed in this release.
+
+## PLAN-107 / S10 — Integration trust topology and host ownership
+
+The intended integration has **three distinct boundaries**: source-controlled S2C Markdown/portable skill; an optional trusted local operator/orchestrator (CLI, Antigravity IDE or Codex host) with separately approved execution rights; and remote provider/MCP services returning untrusted analysis. S2C documentation by itself is not a privileged local agent. Only the host OS security boundary can enforce machine filesystem/process restrictions; a prompt or MCP schema alone cannot.
+
+Each adapter contract must state owned path and state store, transport, credentials owner, network export scope, tool/protocol version, request/response schema, errors, timeout/retry limits and audit record. On source or provider unavailability, preserve a static docs-only fallback that cannot call host shell or update external paths. Compatible integration must be demonstrated on the actual approved host before marking any workflow as released.

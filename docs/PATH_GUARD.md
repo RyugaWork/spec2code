@@ -55,3 +55,9 @@ See [CONTINUOUS_SCOPE_ENFORCEMENT.md](CONTINUOUS_SCOPE_ENFORCEMENT.md) for check
 Windows 8.3 short-name paths and different casing can refer to the same physical Git worktree without being filesystem links. Root verification now detects actual symlink/junction ancestors, while comparing canonical resolved roots when validating the Git worktree and installed skill ownership. Session scope stores a normalized physical root path to avoid false drift between path spellings.
 
 The containment boundary **still blocks** linked/junction ancestors and any path resolving outside the checkout. POSIX anchored file operations and Windows fallback have different TOCTOU guarantees; passing Windows CI does not establish race-free file writes or permission to operate on untrusted paths. Migration of previously persisted session bindings is not automatic.
+
+## PLAN-107 / S01 — Physical path containment acceptance
+
+The trust root is the **operator-approved resolved checkout**, not a string supplied by a model or MCP client. A future write-capable host must resolve and compare paths against this root, including case-folded Windows volumes, drive-relative paths, alternate separators, UNC/network aliases, junctions, symlinks and indirect helper working directories. Apply the policy at the time of each operation; a single prompt preflight is not enforcement.
+
+Required negative fixtures: an outside-root read sentinel, outside-root write sentinel, symlink/junction to each, traversal and renamed path after validation, and a delegated subprocess with an untrusted cwd. Record sentinel hashes before/after, exact executable OS and denial reason. The *planned* result is zero unauthorized reads/writes; an error message alone is insufficient if the sentinel changed. Existing Python tests do not certify OS-level sandbox escape resistance; these fixtures remain `NOT_RUN` until authorized host execution.

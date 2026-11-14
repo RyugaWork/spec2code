@@ -58,3 +58,9 @@ The installed skill's `.config/architecture.json` declares `output_root: "s2c"`;
 ## PLAN-080 runtime configuration
 
 Two required v0.8.0 sections are bundled adjacent to installed scripts: `governance.json` (read-only host policy routing) and `workflow.json` (five-phase non-autonomous state protocol). The strict loader validates them and rejects missing/mixed bundles. Neither configuration may grant approvals, change repository root, invoke shell, write host AGENTS, enable a GitHub action or add MCP permissions.
+
+## PLAN-107 / S03 — Configuration trust and migration rules
+
+Separate **static configuration values** (model/provider preferences, budgets, supported language list, path aliases) from **authorization evidence** (approved root, actual allowed commands, owner decisions, data export consent). A YAML/JSON/TOML override, environment variable, or MCP-supplied preference is lower trust than host security and cannot grant tool execution, modify repository root or mark A.1 approved. Document effective-config provenance: source path, SHA, load order, last applicable override, schema/version and validation errors.
+
+On missing/mixed/unknown schema fields, fail closed with an actionable error. On migration, preserve the original file, generate a diff preview and require owner approval before overwriting; never silently auto-upgrade a live session. Redact tokens/passwords from output, logs and handoffs. This is an intended contract, not evidence that the deployed loader enforces every property.

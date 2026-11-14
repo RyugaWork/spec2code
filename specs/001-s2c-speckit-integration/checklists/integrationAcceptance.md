@@ -79,3 +79,9 @@ Five additional cases from [v1.2.6/v1.4.0 upstream source review](../../../.agen
 | `SK97-NEG-05` | Owner-authorized detached worktree running `setup_plan.py` | Exact generated artifacts/changed paths constrained to reviewed owned scope | DESIGN_NOT_RUN |
 
 A local S2C guard or GitHub static path check cannot be substituted for actual upstream native-script execution. All five require authorized host and negative evidence; A.1/B/B.1 remain outstanding. Original feature cases remain 4 narrow Web/static PASS, 20 NOT_RUN; SK96-NEG cases remain 4 NOT_RUN.
+
+## PLAN-108 / K07 — Spec Kit acceptance evidence audit
+
+Review each previously recorded narrow Web PASS against its **exact historical SHA, fixture and observed output**; do not extrapolate to unexecuted native cases, different versions or a different source pair. Maintain distinct counts for scoped Web/static cases, native feature cases, bridge negative partitions `SK96-NEG-01..04` and upstream pointer/override negatives `SK97-NEG-01..05`.
+
+Before any native case can pass, record actual OS, checkout root, command line, feature selection environment, hash of `.specify/feature.json`, whole target-tree inventory before/after, symlink/junction external sentinel and observed stderr/exit. Missing proof is `NOT_RUN`, not a waiver. Protected-file mutation or out-of-root access is P0 FAIL requiring security owner decision. No checkbox in this checklist is automatically approved by this document-only batch.

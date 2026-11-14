@@ -125,3 +125,9 @@ Requester / ChatGPT Web / native Codex or Copilot
 ## PLAN-097 — Native source override/persistence review
 
 [Upstream v1.2.6/v1.4.0 source inspection](../../.agents/.documents/specKitUpstreamEnvAudit097.md) confirms feature-directory environment overrides can be absolute, `get_feature_paths` can persist `.specify/feature.json` without NO_PERSIST, and `setup_plan.py` writes under the chosen directory. Native upstream commands do not inherit the S2C bridge's Path Guard. Add strict pre-invocation containment and environment sanitation to any future B-authorized adapter/runner, including before/after pointer and outside sentinel checks. This is a **design requirement, not deployed enforcement**. Five tests `SK97-NEG-01..05` are all NOT_RUN. No feature/task IDs changed, and no product code or CLI changed in PLAN-097.
+
+## PLAN-108 / K02 — Contract-first dependency and rollback plan
+
+Order the future native pilot as **environment discovery → official version compatibility → host/path sandbox proof → feature/pointer readback → bounded generation on disposable checkout → negative cases → independent validation**. Each stage has a named owner and input/output SHA; a failed earlier stage blocks later mutating steps. Do not conflate generating Markdown with executing `implement` or repository code changes.
+
+Rollback must retain pre-run inventory, pointer JSON and SHA, affected file list and branch parent, then restore only owned files with an owner-approved action. For GitHub-only edit rollback use a scoped reviewed revert of the exact commit; no forced reset of unrelated work. The staged implementation plan is a proposal until owner risk acceptance, A.1 and separate B authorization exist.

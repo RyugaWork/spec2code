@@ -40,3 +40,9 @@ Feature-local [test design](checklists/integrationAcceptance.md) contains exact 
 - Actual CI and host data are not implicitly authorized; optional Spec Kit workflows are not guaranteed to be available on ChatGPT Web.
 
 **References:** [Spec Kit project](https://github.com/github/spec-kit), [upstream tasks template at v1.2.6](https://github.com/github/spec-kit/blob/v1.2.6/templates/tasks-template.md), [existing-project guide](https://github.com/github/spec-kit/blob/v1.2.6/docs/guides/existing-projects.md), [S2C current source](../../.source/integrations/speckit/README.md).
+
+## PLAN-108 / K04 — Repeatable upstream research decision
+
+When selecting an official Spec Kit release, preserve the exact upstream tag/commit, release date and publication URL, source files inspected (especially feature selection and pointer persistence), supported host/runtime, last security/compatibility check, and a reason for rejecting alternative versions. Previously observed v1.2.6 or v1.4.0 source behavior is **historical evidence**, not proof of a newer installed runtime or a blanket security guarantee.
+
+Record `SOURCE_INSPECTED`, `CLI_INSTALLED`, `HOST_TESTED` and `APPROVED_FOR_B` separately. For uncertain fields (native tool availability, provider authorization, Windows junction behavior), set UNKNOWN and add a bounded negative fixture, not a guessed default. Cite maintainer documentation when a future pilot actually refreshes versions; no external installation is implied by this research update.

@@ -77,3 +77,9 @@ Upstream `implement` can offer a continuation prompt when requirements checklist
 ### PLAN-095 — User story label crosswalk
 
 Upstream task tokens `[US1]`, `[US2]`, `[US3]`, `[US4]` refer respectively to stable feature story headings `US-01`, `US-02`, `US-03`, `US-04` in `spec.md`. The bracketed syntax is a **task classification label**, not a permission to execute; Tnnn prefixes remain unchanged and 6 documentary task checkboxes retain their source-bound state. See [Web-mode source evidence](../../.agents/.documents/specKitWebModeEvidence095.md) for the actual S2C bridge-regex compatibility inspection.
+
+## PLAN-108 / K03 — Task checkbox authority and test provenance
+
+A task checkbox is not an authorization primitive. `T011/T012/T015` remain as they were at the source revision and are **not** checked by an agent because a Markdown acceptance plan exists. For every later task completion attach: actual tool/host version, starting and ending SHA, changed-path diff, command/fixture, observed result, review authority and any rollback. An unsupported native CLI yields `NOT_RUN/UNAVAILABLE`, not a completed task.
+
+Keep Web-only source-reading/provisional pass evidence separate from native mutating task outcomes; do not promote an upstream Spec Kit step from a GitHub bridge `READY` flag. On plan/spec revision drift, re-evaluate dependencies, invalidate affected proof and record a new handoff rather than rewriting historical task execution claims.

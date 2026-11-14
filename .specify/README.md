@@ -44,3 +44,9 @@ The master [RTM Section L](../.agents/.traceMatrix.md) uses **12 explicit** SKI-
 Use the [Web/GitHub staged workflow](../.agents/.workflow/specKitWebWorkflow.md) for source-bound Markdown Specify/Clarify/Plan/Tasks/Analyze, partial-persistence handling and handoff. Before any native `implement`/`converge`, see the [S2C native gate](../.agents/.workflow/specKitNativeExecutionGate.md); the upstream unchecked-checklist continuation prompt is not A.1 or B authorization. The current T001..T015 register includes owner approval tasks and cannot be executed wholesale.
 
 Four narrowly scoped positive Web/Static GitHub cases are [documented with exact commit/blob evidence](../.agents/.documents/specKitWebModeEvidence095.md); twenty planned feature cases plus eight new native gate scenarios remain NOT_RUN. This is **not** official upstream CLI installation, independent A.1/B.1 or runtime security enforcement.
+
+## PLAN-108 / K09 — Official Spec Kit directory authority
+
+`.specify/` and `specs/` are **feature artifact locations**, not authorization to run arbitrary commands. Native `specify` script behavior depends on exact installed version and environment; a Web-mode user can only inspect/edit specifically approved Markdown via the connected GitHub tool. Feature directory and pointer JSON must not be trusted because they are inside the checkout: malicious overrides or symlinks can still change the effective physical path.
+
+A host pilot must obtain explicit repository/feature scope, verify the installed official executable and hash, check inherited environment, bound the command, record pre/post side effects and abort on unexpected writes. Do not advertise bundled Markdown templates as a native installation or a passed Windows sandbox test. Existing human-owned task approvals remain pending.

@@ -29,3 +29,9 @@
 ## Compatibility and migration
 
 No runtime migration now. A future **B-authorized** adapter addition must define explicit schemaVersion, old/unknown-field behavior, atomic/non-overwriting file ownership, timeout and failure semantics, tests across supported OS and rollback. Connector IO relies on provider permissions; local Path Guard does not secure GitHub-hosted reads/writes.
+
+## PLAN-108 / K05 — Logical feature identity and stale-write rejection
+
+A feature artifact reference must bind `repositoryIdentity, checkoutRootFingerprint, featureId, featureDirectory, relativePath, contentSha, branchHeadSha, schemaVersion, producer, approvalScope`. Separate the **Git logical path** from the **physical local resolved path**: a GitHub API update and an OS filesystem operation require different containment evidence. Feature identifiers and directory traversal from MCP or environment overrides are untrusted until validated.
+
+An update must reject stale SHA, missing ownership, unknown artifact kind, unsigned permission or a conflicting feature-pointer digest. Model each accepted edit as a non-force compare-and-update with a readback of all changed paths. On STOP retain both prior and observed new source tuples; never create a task-complete flag from a stored pointer alone. These are proposed data invariants, not a migrated schema.

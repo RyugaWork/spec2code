@@ -114,3 +114,9 @@ These are functional completeness targets, not arbitrary performance SLOs. Laten
 - **DESIGNED:** native feature files and repo-side governance/trace mapping.
 - **NOT_RUN:** actual upstream CLI initialization, native skill execution, installed-host tests, Python security/regression suite, A.1/B.1 and release.
 - **Owner decision pending:** accepted baseline, supported CLI release, candidate host environment and official native agent integration.
+
+## PLAN-108 / K01 — Mode-distinct feature acceptance
+
+The integration exposes two **non-equivalent** execution modes. `Web-authoring` reads and drafts named feature Markdown through the authorized GitHub connector and can prove exact fetched source, path and Git commit readback only. `Native execution` requires separately installed/verified upstream CLI, physical host checkout, sanitized feature selection, OS-enforced Path Guard, configured authority and allowed commands. Passing Web/static checks does **not** imply native safety, host ability or tool installation.
+
+Acceptance design must include: read-only identification of a pinned feature; document edits with changed-path allowlist and non-force branch lease; refusal for stale SHA, unknown feature and missing owner; and separate negative host cases for absolute `SPECIFY_FEATURE_DIRECTORY` escape, silent pointer persistence, junction/symlink and unexpected generated files. Actual outputs, command versions and sentinels are mandatory before native cases may pass. The feature remains document-ready but `A1_NOT_RUN/B_NOT_AUTHORIZED`.

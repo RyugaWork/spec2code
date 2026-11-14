@@ -48,3 +48,9 @@ The gate exists **as Markdown guidance only**, not as a deployed runtime hook. F
 When transferring from a GitHub Web-selected feature to a real Spec Kit CLI process, **do not pass raw user or inherited environment values** for `SPECIFY_FEATURE_DIRECTORY` or `SPECIFY_FEATURE`. Upstream `get_feature_paths` (v1.2.6 and v1.4.0) resolves absolute feature directories and may persist the feature pointer; it does not call S2C's Path Guard. Native read-only preflight requires real root/feature containment verification, clean environment, `SPECIFY_FEATURE_NO_PERSIST=1`, pointer hash and no-write inventory. Native write commands such as `setup_plan.py` require an explicit scoped executor and approved disposable worktree.
 
 The no-persist setting protects only feature-pointer persistence; the **OS filesystem boundary and authority gate** remain separate. See [source audit](../../../.agents/.documents/specKitUpstreamEnvAudit097.md) and `SK97-NEG-01..05`. All are DESIGN_NOT_RUN.
+
+## PLAN-108 / K06 — Web/native adapter failure contract
+
+Proposed adapter responses distinguish `READY_READ_ONLY`, `UNAVAILABLE`, `STALE_SOURCE`, `SCOPE_DENIED`, `APPROVAL_REQUIRED`, `PARTIAL_OUTPUT` and `HOST_ERROR`. Every response carries a request ID, source SHA, selected feature tuple, actual side effects list, authorization provenance and evidence location. A tool-provided `approved=true` cannot substitute for trusted host approval. Do not assume remote GitHub validation is native OS execution evidence.
+
+Repeat requests must be idempotent for reads and compare-and-set for writes. On timeout after a possible write, first discover the **actual** source/side-effect state instead of blindly retrying; exhausted retry budget stops. Unknown wire fields that may expand authority are rejected. Host-side mutation must be denied unless tool version, sandbox, command allowlist and feature scope are actually verified and accepted.

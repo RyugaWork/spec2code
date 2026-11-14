@@ -41,3 +41,9 @@ The official upstream [Spec Kit v1.2.6 specification template](https://github.co
 - [ ] Confirm a real selected native agent host has the required controls and records actual negative-case test evidence; do not infer safe execution merely because documentation exists.
 
 **All items remain unchecked.** This is a requirements-quality checklist, not a native interception hook or executed security test.
+
+## PLAN-108 / K08 — Feature-spec quality rejection criteria
+
+A reviewer must flag any feature story that omits a specific actor, authorized source/feature, positive and negative observable output, version/host requirement, immutable handoff, explicit rejection condition or linkage to an owner-approved AC. Also reject language suggesting that optional native CLI, Gemini provider or full-auto flag is preinstalled or already authorized. Negative tests must cover stale revision, wrong feature selection, outside-root pointer, missing approval and failed rollback.
+
+The feature spec quality checklist may be complete as **authoring**, yet remain unsigned for A.1 and B. No test execution, risk reduction or business owner consent follows from checked documentation-quality boxes. Keep the current source-bound unchecked implementation decisions unchanged until a real reviewer and owner act.

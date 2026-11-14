@@ -112,7 +112,7 @@ No change to the five machine runtime phases, host permissions or existing A.1/B
 
 ## 9. PLAN-102 — Independent A.1 review packet and criteria
 
-**Source of truth:** [master `27](../.spec.md#27-plan-102--documentation-authoring-closure-and-bounded-implementation-blueprint), [RTM](../.traceMatrix.md#t-plan-102--gate-to-implementation-trace), [risks](../.riskMatrix.md#22-plan-102--risk-disposition-priority-and-handoff), and [design ADRs](../.documents/featureDesign.md#10-plan-102--architecture-decision-records-for-a1-disposition). This is an **author-prepared evidence index**, not a scored external A.1 review. Reviewer name/authority/signature **UNKNOWN**; every formal A1-VAL outcome remains `NOT_RUN`.
+**Source of truth:** [master Section 27](../.spec.md#27-plan-102--documentation-authoring-closure-and-bounded-implementation-blueprint), [RTM](../.traceMatrix.md#t-plan-102--gate-to-implementation-trace), [risks](../.riskMatrix.md#22-plan-102--risk-disposition-priority-and-handoff), and [design ADRs](../.documents/featureDesign.md#10-plan-102--architecture-decision-records-for-a1-disposition). This is an **author-prepared evidence index**, not a scored external A.1 review. Reviewer name/authority/signature **UNKNOWN**; every formal A1-VAL outcome remains `NOT_RUN`.
 
 | Gate | Required evidence and reviewer assertion | Author-preflight finding | Formal reviewer |
 | --- | --- | --- | --- |
@@ -129,3 +129,7 @@ No change to the five machine runtime phases, host permissions or existing A.1/B
 **Required review result envelope:** `reviewId, reviewerIdentity, authorityEvidence, gitSha, googleDocId, googleTabId, googleRevision, requirementScope, A1-VAL-01..09 dispositions(PASS|FAIL|BLOCKED|NOT_RUN), ADR decisions, P0 risks, dissent, evidenceLinks, reviewedAt, signatureRef, nextActions`. Only an authorized real reviewer may create a formal decision; an agent cannot backfill identity or sign on behalf of a reviewer. A.1 PASS requires all mandatory applicable checks PASS with evidence, plus separate owner dispositions for blocking requirements/risks. Any unreviewed mandatory case => A1_BLOCKED/NOT_RUN. A.1 does not itself authorize B.
 
 **Candidate authoring exit:** content cross-references, explicit owner queue and static ID/link checks may be `AUTHORING_COMPLETE_CANDIDATE` while formal A.1 remains NOT_RUN. A review outcome must be source-pair stable: if Git SHA or Google revision changes materially, re-evaluate impacted A.1 gates instead of reusing a prior signature.
+
+### 9.1 Source-pair update after PLAN-102 draft mirror append
+
+For a future independent A.1, start from Git **output SHA containing the [final checkpoint](../.handoffs/plan-102-documentation-checkpoint-6.md)**, not the prior input SHA, and Google `BRD_Spec2Code` tab `t.0` revision `AHj4eMQimSgt3E4kP8uig3zv8Q17mG5pt07xMNpj8odRfcWIbWyujdly0nTK1zFCwwC0sk4SNMvBMMyTrKR8sGWDzNtgFpQvC7j_fF0PeA` (or a newer verified revision). Sections 31–35 are now present in the draft mirror; **business-level equivalence and approval remain pending**. Therefore A1-VAL-01 and A1-VAL-09, and the formal A.1 as a whole, remain `NOT_RUN`. The previous evidence that Google lacked those headings at its former revision is historical and must not be misreported as current.

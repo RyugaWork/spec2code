@@ -183,7 +183,7 @@ The parallel pilot must compare serial vs bounded n-worker execution for correct
 
 ## 9. PLAN-101 — Provider contract and AutoRun boundary
 
-This design extends [master `26](../.spec.md#26-plan-101--codexgeminiantigravity-documentation-integration-candidate), reusing F03/F04/F05/F07/F09/F10/F17/F19/F21/F30/F33/F38–F42/F44/F48/F52/F64, not a duplicate orchestrator. `.source/scripts/mcp_boundary.py` is a permission *library*, **not an installed MCP server**; `.source/.config/mcp.json` is not Google provider authentication.
+This design extends [master Section 26](../.spec.md#26-plan-101--codexgeminiantigravity-documentation-integration-candidate), reusing F03/F04/F05/F07/F09/F10/F17/F19/F21/F30/F33/F38–F42/F44/F48/F52/F64, not a duplicate orchestrator. `.source/scripts/mcp_boundary.py` is a permission *library*, **not an installed MCP server**; `.source/.config/mcp.json` is not Google provider authentication.
 
 | Boundary | Proposed input/output | Fail-safe obligation |
 | --- | --- | --- |
@@ -199,7 +199,7 @@ This design extends [master `26](../.spec.md#26-plan-101--codexgeminiantigravity
 
 ## 10. PLAN-102 — Architecture Decision Records for A.1 disposition
 
-These are **proposed decisions** linked to the existing [master `27](../.spec.md#27-plan-102--documentation-authoring-closure-and-bounded-implementation-blueprint), not approved ADRs or new runtime modules. Each alternative must be reconsidered under actual host/tool evidence. `Proposed` is a drafting recommendation only.
+These are **proposed decisions** linked to the existing [master Section 27](../.spec.md#27-plan-102--documentation-authoring-closure-and-bounded-implementation-blueprint), not approved ADRs or new runtime modules. Each alternative must be reconsidered under actual host/tool evidence. `Proposed` is a drafting recommendation only.
 
 | ADR | Decision under review | Proposed default and rationale | Alternative/rejection condition | Owner / status |
 | --- | --- | --- | --- | --- |

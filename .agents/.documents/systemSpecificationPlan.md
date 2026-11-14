@@ -72,7 +72,7 @@ A supported newly GA stable major may be a user-designated choice when the user 
 
 ## 8. PLAN-102 — Authoring exit checklist and ownership queue
 
-The SRS and system planning content is **author-complete as a candidate** when every active design item has one canonical home, a requirement/feature and risk owner (or explicit UNKNOWN), planned positive/negative observables, reverse RTM, version/host assumptions, recovery/STOP and a bounded handoff. [Master `27](../.spec.md#27-plan-102--documentation-authoring-closure-and-bounded-implementation-blueprint) contains the unified exit rule; [A.1 packet](../.workflow/validationSpecification.md#9-plan-102--independent-a1-review-packet-and-criteria) contains the independent test.
+The SRS and system planning content is **author-complete as a candidate** when every active design item has one canonical home, a requirement/feature and risk owner (or explicit UNKNOWN), planned positive/negative observables, reverse RTM, version/host assumptions, recovery/STOP and a bounded handoff. [Master Section 27](../.spec.md#27-plan-102--documentation-authoring-closure-and-bounded-implementation-blueprint) contains the unified exit rule; [A.1 packet](../.workflow/validationSpecification.md#9-plan-102--independent-a1-review-packet-and-criteria) contains the independent test.
 
 | Remaining non-authoring decision | Accountable party needed | Current result |
 | --- | --- | --- |

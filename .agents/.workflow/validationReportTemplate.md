@@ -58,3 +58,9 @@
 - Explicit separate permission to modify code, schema, CI or host data (or `NOT_AUTHORIZED`):
 
 Use [cross-stack technology policy](../.documents/technologyVersionPolicy.md) and [override template](../.documents/technologyOverrideTemplate.md). A user-approved version preference is **not** independent release acceptance or a waiver of host safety controls.
+
+## DOC-B06 — Evidence completeness before any signed validation result
+
+A real review report must fill the existing template's nine per-gate rows with **reviewer identity independent of the author**, authority evidence, exact Git SHA and Google BRD doc/tab/revision, expected requirement/AC/risk result, actual cited evidence, reviewer verdict and any dissent. Do not populate these fields with generated approvals, guessed timestamps, stale CI runs or a single-model multi-role simulation. For any mandatory `NOT_RUN` or missing owner/P0 decision, aggregate `A1_BLOCKED/NOT_RUN` with a precise rework owner.
+
+Distinguish four different records: `AUTHOR_STATIC_REVIEW` (can be model-produced), `BUSINESS_OWNER_DECISION` (must be authenticated), `INDEPENDENT_A1_REPORT` (actual separately accountable reviewer), `PHASE_B_AUTHORIZATION` (distinct requester/maintainer consent). Never reuse a signoff across materially changed SHA/BRD revisions without an impact re-review. The template is not itself a completed report or approval.

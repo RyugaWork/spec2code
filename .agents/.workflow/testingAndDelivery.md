@@ -109,3 +109,32 @@ AC-REV-01→TC-S2C-BR017-P/N and BR021-P; 02→BR017-P/N; 03→BR017-N; 04→BR0
 **Test evidence contract:** case ID, source SHA, config/policy/Spec Kit fingerprint, OS/runner, fixture and external sentinel pre/post hash, exact command/manual steps, outcome including skips, independent reviewer, risk BEFORE/AFTER, rollback and persistence. Mock approval does not satisfy actual independent A.1/B.1. CI `python -m unittest discover -s .source/tests -v` remains the native existing regression entrypoint; new tests are prerequisites for L1 gate PASS. No claim of >95% coverage or F64 completion is made without measured reports.
 
 **Proposed static documentation gate (L0):** all candidate IDs F43..64 unique, DES-099-A..F present, construction L0..L7 and nine universal stages mapped, draft BR-022..027/risk RM-042..046 referenced and no safety waiver; resolve relative Markdown paths against pinned Git tree; detect outdated/contradictory stage prose and broken anchors. This is document consistency only and cannot certify Python or Windows security.
+
+## PLAN-100 candidate feature acceptance cases
+
+These proposed cases address the [RTM R crosswalk](../.traceMatrix.md#r-plan-100--l0-evidence-and-first-b-implementation-acceptance-links). Apply the [feature design](../.documents/featureDesign.md) and the test evidence contract above. Each feature row defines two planned acceptance cases, `TC-Fxxx-P` and `TC-Fxxx-N`, where `xxx` is the zero-padded feature number. Record the exact fixture, source, owner, expected and observed outcome, evidence and rollback. Select supported hosts, provider, thresholds and scope with the responsible owners. Status for all cases is `DESIGNED / NOT_RUN`.
+
+| Feature | Candidate BR | Positive fixture and expected result | Adverse fixture and expected result |
+| --- | --- | --- | --- |
+| F43 | BR-022 | Parse one owner-approved language fixture and produce a minimal patch preserving unrelated bytes and comments. | Reject unsupported grammar or ambiguous edit without a patch. |
+| F44 | BR-023 | Allow only the named action for the bound identity and exact checkout. | Deny replay, prompt-injected permission and access outside scope; sentinel and audit attribution remain intact. |
+| F45 | BR-022 | Report planted spec-to-code mismatch with exact source IDs and versions. | Report uncertain semantic matches as unresolved; never rewrite sources. |
+| F46 | BR-022 | Changed requirement invalidates precisely the dependent approvals and emits an impact list. | Reject stale revision or unowned scope before applying the candidate. |
+| F47 | BR-024 | Report planted lint violation with rule ID, analyzer version and location. | Missing analyzer or unsupported dialect records coverage gap and cannot yield a clean gate. |
+| F48 | BR-023, BR-027 | On injected mandatory gate failure, stop dispatch and preserve last verified checkpoint. | No dependent write, approval promotion or session close after failure. |
+| F49 | BR-025 | Round-trip a scoped Web/Codex handoff with matching sources and mandatory policy. | Reject stale feature revision or absent required policy before execution. |
+| F50 | BR-025 | Run a bounded read-only synthetic job with exact source and usage evidence. | Deny repository credentials, write attempts and over-budget dispatch. |
+| F51 | BR-025 | On a frozen corpus, retain every mandatory rule and record recall, latency and token use against baseline. | If mandatory context is missing or budget exhausted, block the dependent action. |
+| F52 | BR-024, BR-027 | Preview exact approved patch digest; for a separately accepted isolated runner capture scoped output. | Deny path escape and stale patch and verify external/protected sentinels. |
+| F53 | BR-022, BR-026 | Detect planted divergences in both API contract directions and propose the owner-selected patch. | Reject ambiguous direction, mismatched revision or unapproved schema write. |
+| F54 | BR-025 | Route one authorized tool action through the pinned identity and capability contract. | Deny replay and unregistered actions; verify unauthorized process receives no checkout access. |
+| F55 | BR-022, BR-026 | Trace each step in one approved UI-to-code slice to owner, revision and patch digest. | Reject missing lineage or drift before generating an applicable patch. |
+| F56 | BR-024, BR-026 | On synthetic data exercise dialect-specific migration and rollback; compare restored schema/data fingerprints. | Block unsupported dialect and unsafe data-loss migration before application. |
+| F57 | BR-022, BR-024 | Identify a forbidden dependency with policy version and exact source location. | Reject stale or unsigned waiver and surface unsupported analysis coverage. |
+| F58 | BR-023, BR-027 | Stage a reversible archive of one owned eligible item with manifest and restore evidence. | Leave unknown, active, held or digest-changed items untouched on retry. |
+| F59 | BR-026 | Recover a hosted synthetic job after crash with exactly one accepted result. | Reject replay or stale credentials without duplicate write or orphaned active job. |
+| F60 | BR-026 | Exercise default-off activation, kill switch and restoration for the named host slice. | Deny expired or cross-host flag and verify no rollout outside selection. |
+| F61 | BR-024, BR-027 | Record seeded killed, surviving and reviewed equivalent mutants with exact denominators. | Incomplete or exhausted run reports partial coverage and cannot satisfy a mandatory gate. |
+| F62 | BR-023 | Record lock, provenance and decision evidence for one pinned dependency. | Deny unpinned, tampered or stale approval and record unavailable advisory coverage. |
+| F63 | BR-026 | Attribute synthetic usage to a run and stop new dispatch at the configured cap. | Missing telemetry or budget records keep acceptance blocked; sanitized evidence contains no secrets. |
+| F64 | BR-023, BR-027 | For an authorized isolated trial verify protected bytes, independent evidence, all mandatory AC and the pinned PLAN-100 thresholds. | Reject direct or indirect protected change, stale evidence, missing reviewer or any result at or below a strict threshold. |

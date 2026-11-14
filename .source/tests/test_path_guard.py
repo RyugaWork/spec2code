@@ -250,5 +250,16 @@ class RepositoryBoundaryTests(unittest.TestCase):
         self.assertEqual(out.returncode, 0, out.stderr)
 
 
+    @unittest.skipUnless(os.name == 'nt', 'Windows all-reparse-point guard')
+    def test_windows_non_junction_reparse_attribute_is_denied(self):
+        from unittest.mock import patch
+        suspect = self.repo / 'src'
+        with patch.object(path_guard, '_windows_reparse',
+                          side_effect=lambda part: part == suspect):
+            with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):
+                path_guard.check_path(self.repo, 'src/app.py')
+        self.assertEqual((self.outside / 'keep.txt').read_text(), 'DO-NOT-TOUCH')
+
+
 if __name__ == '__main__':
     unittest.main()

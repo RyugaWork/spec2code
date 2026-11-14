@@ -117,8 +117,8 @@ No change to the five machine runtime phases, host permissions or existing A.1/B
 | Gate | Required evidence and reviewer assertion | Author-preflight finding | Formal reviewer |
 | --- | --- | --- | --- |
 | A1-VAL-01 Source authority | Exact Git SHA and Google doc/tab/revision, accepted BRD semantics and accountable approvers | Google draft headings 31–35 now exist; line-level BR/AC parity and owner approval remain unknown | NOT_RUN |
-| A1-VAL-02 Requirement testability | Each active BR/REQ, actor/precondition, positive/negative AC and ambiguous default disposition | SRS-01..12 drafted; BR-022..027 candidate, F43..64 not approved | NOT_RUN |
-| A1-VAL-03 Bidirectional trace | Requirement → feature → task → test → risk/evidence and reverse; no orphan identifiers | Candidate RTM covers 44 F cases and 12 MM test IDs; execution NOT_RUN | NOT_RUN |
+| A1-VAL-02 Requirements and AC | Each active BR/REQ, actor/precondition, positive/negative AC and ambiguous default disposition | SRS-01..12 drafted; BR-022..027 candidate, F43..64 not approved | NOT_RUN |
+| A1-VAL-03 Bidirectional RTM | Requirement → feature → task → test → risk/evidence and reverse; no orphan identifiers | Candidate RTM covers 44 F cases and 12 MM test IDs; execution NOT_RUN | NOT_RUN |
 | A1-VAL-04 Feature design | Main/alternate/error/STOP paths, input/output/data ownership, permissions and contract compatibility for each scoped feature | F43–F64 designs and cases exist; executable host fixtures and owner choices remain proposed | NOT_RUN |
 | A1-VAL-05 Architecture and workflow | Five runtime machine phases versus nine agent work stages, Spec Kit ownership, Path Guard/host enforcement, state/version/migration and STOP/RESUME | Logical boundaries described; native enforcement, Windows hostile-host tests and workflow P0 repairs unverified | NOT_RUN |
 | A1-VAL-06 Risk discovery | Enumerated security/privacy/policy/OS, data loss, provider, integration, test and recovery threats with owner roles and sources | RM-001..052 include known and candidate threats; host-specific discovery and ownership remain open | NOT_RUN |

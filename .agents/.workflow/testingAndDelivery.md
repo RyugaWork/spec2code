@@ -138,3 +138,24 @@ These proposed cases address the [RTM R crosswalk](../.traceMatrix.md#r-plan-100
 | F62 | BR-023 | Record lock, provenance and decision evidence for one pinned dependency. | Deny unpinned, tampered or stale approval and record unavailable advisory coverage. |
 | F63 | BR-026 | Attribute synthetic usage to a run and stop new dispatch at the configured cap. | Missing telemetry or budget records keep acceptance blocked; sanitized evidence contains no secrets. |
 | F64 | BR-023, BR-027 | For an authorized isolated trial verify protected bytes, independent evidence, all mandatory AC and the pinned PLAN-100 thresholds. | Reject direct or indirect protected change, stale evidence, missing reviewer or any result at or below a strict threshold. |
+
+## PLAN-101 — Codex/Gemini MCP acceptance design
+
+**Twelve cases DESIGN_ONLY / NOT_RUN**; separate from 44 F43–F64 PLAN-100 candidate cases and the official Spec Kit feature tests. Actual B execution must record: source SHA, OS/host, CLI and provider versions, command/fixture, policy, original external sentinel hash, exit/stderr, result, reviewer and cost. Case descriptions are not evidence of execution.
+
+| Test | Owns | Proposed negative/positive observable experiment | Expected result | Status |
+| --- | --- | --- | --- | --- |
+| MM-TC-01 | MM-REQ-001 | Host CLI reports unsupported full-auto flag | Exact error/exit recorded; no automatic execution | NOT_RUN |
+| MM-TC-02 | MM-REQ-002 | Malformed/unknown MCP provider/tool response and unverified package | Reject tool, no privilege expansion, UNAVAILABLE | NOT_RUN |
+| MM-TC-03 | MM-REQ-003 | Synthetic secret plus external path in context request | Deny/exclude both, redact audit | NOT_RUN |
+| MM-TC-04 | MM-REQ-004 | External sentinel via Windows junction and Linux symlink/indirect helper | No unauthorized read/write/execute; sentinel unchanged | NOT_RUN |
+| MM-TC-05 | MM-REQ-005 | Hanging/overbudget worker and bounded retries | STOP, cancel/cleanup and durable checkpoint | NOT_RUN |
+| MM-TC-06 | MM-REQ-006 | Concurrent conflicting/stale reviewer patch | Only authorized integrator writes; conflict rejected | NOT_RUN |
+| MM-TC-07 | MM-REQ-007 | Move branch HEAD between diff and commit | Non-force lease rejects stale write; no data loss | NOT_RUN |
+| MM-TC-08 | MM-REQ-008 | Six single-model role lenses plus one open P0 | A1_NOT_RUN; no independent approval claim | NOT_RUN |
+| MM-TC-09 | MM-REQ-009 | Provider quota/auth denial or state DB initialization failure | BLOCKED/DEGRADED and no unsafe fallback | NOT_RUN |
+| MM-TC-10 | MM-REQ-010 | STOP mid-document; change source before RESUME | Handoff preserved, stale run rejected | NOT_RUN |
+| MM-TC-11 | MM-REQ-011 | Unsupported flag from observed Codex CLI help | No inferred replacement option; error evidence stored | NOT_RUN |
+| MM-TC-12 | MM-REQ-012 | Mismatched Git/Google BRD source pair + missing reviewer | Owner discrepancy remains OPEN; cannot mark A.1 PASS | NOT_RUN |
+
+A doc-only link/ID/changed-file check can justify `DOCS_PREPARED_FOR_A1` but **must not** promote these tests to PASS, native Spec Kit tests to executed, or S2C to IMPLEMENTATION_READY.

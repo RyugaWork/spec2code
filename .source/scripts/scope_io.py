@@ -6,7 +6,7 @@ Hosts without that support, including native Windows, fail closed.
 """
 from __future__ import annotations
 
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 import hashlib
 import os
 from pathlib import Path
@@ -77,11 +77,17 @@ def exclusive_output(root: Path):
         yield
 
 
-def atomic_text(root: Path, destination: Path | str, content: str) -> None:
+def atomic_text(root: Path, destination: Path | str, content: str, *,
+                staging_dir: Path | None = None) -> None:
     """Atomic in-root text replacement. Does not follow symlink targets."""
     root = _verified_local_root(root)
     path = guard.check_path(root, destination)
-    with _parent_fd(root, path, create=True) as (fd, name):
+    with ExitStack() as stack:
+        fd, name = stack.enter_context(_parent_fd(root, path, create=True))
+        stage_fd = fd
+        if staging_dir is not None:
+            staging_path = guard.check_path(root, staging_dir / '.s2c-staging')
+            stage_fd, _ = stack.enter_context(_parent_fd(root, staging_path, create=True))
         try:
             old = os.stat(name, dir_fd=fd, follow_symlinks=False)
             if not stat.S_ISREG(old.st_mode):
@@ -90,7 +96,7 @@ def atomic_text(root: Path, destination: Path | str, content: str) -> None:
             pass
         tmp = '.s2c-' + secrets.token_hex(12) + '.tmp'
         handle = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
-                         0o600, dir_fd=fd)
+                         0o600, dir_fd=stage_fd)
         try:
             with os.fdopen(handle, 'w', encoding='utf-8', newline='\n') as stream:
                 stream.write(content)
@@ -104,11 +110,13 @@ def atomic_text(root: Path, destination: Path | str, content: str) -> None:
                     raise RuntimeError('PATH_GUARD_BLOCKED: target replaced by non-file')
             except FileNotFoundError:
                 pass
-            os.rename(tmp, name, src_dir_fd=fd, dst_dir_fd=fd)
+            os.rename(tmp, name, src_dir_fd=stage_fd, dst_dir_fd=fd)
             os.fsync(fd)
+            if stage_fd != fd:
+                os.fsync(stage_fd)
         finally:
             try:
-                os.unlink(tmp, dir_fd=fd)
+                os.unlink(tmp, dir_fd=stage_fd)
             except FileNotFoundError:
                 pass
 

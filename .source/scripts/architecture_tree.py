@@ -202,7 +202,8 @@ def evidence_graph(root: Path, manifest: dict, graph: dict, old_cache: dict) -> 
     return components, symbols
 
 
-def guarded_write(root: Path, path: Path, content: str) -> None:
+def guarded_write(root: Path, path: Path, content: str, *,
+                  staging_dir: Path | None = None) -> None:
     guard.check_path(root, path)
     if path.is_symlink():
         raise RuntimeError(f'Refusing symlinked architecture file: {path}')
@@ -219,7 +220,7 @@ def guarded_write(root: Path, path: Path, content: str) -> None:
         if parent.is_symlink():
             raise RuntimeError(f'Refusing symlinked architecture directory: {parent}')
         parent = parent.parent
-    infra.atomic_text(path, content, root=root)
+    scope_io.atomic_text(root, path, content, staging_dir=staging_dir)
 
 
 def graph_distance(src: str, target: str, edges: list[dict]) -> int | None:
@@ -418,8 +419,11 @@ def _publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
             a=a.parent
         if p.exists() and (not p.is_file() or not scope_io.read_bytes(root, p, max_bytes=1024*1024).decode('utf-8').startswith(GENERATED)):
             raise RuntimeError(f'Non-managed architecture path collision: {p}')
-    for p, content in planned:
-        guarded_write(root,p,content)
+    for path, content in planned:
+        # A crash before the first rename may leave its temporary file behind.
+        # Keep it out of the unclaimed output tree so retry still passes preflight.
+        staging_dir = STATE_FILE.parent if path == output / SUMMARY_NAME else None
+        guarded_write(root, path, content, staging_dir=staging_dir)
     infra.atomic_text(root / SYMBOL_CACHE, json.dumps(symbols,ensure_ascii=False,indent=2)+'\n', root=root) if symbols!=old_symbols else None
     new_state={'schema_version':VERSION,'functions':funcs_new,'notes_by_path':old_notes,
                'component_count':len(components),'function_count':sum(len(c['functions']) for c in components.values()),

@@ -44,7 +44,6 @@ class HandoffTreeTests(unittest.TestCase):
     def test_architecture_publish_retries_at_each_write_boundary(self):
         sys.path.insert(0, str(GUARD.parent))
         import architecture_tree as arch
-        import scan_infrastructure as infra
         import session_guard as session
 
         head = self.run_git('rev-parse', 'HEAD')
@@ -54,13 +53,21 @@ class HandoffTreeTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'ARCH_OUTPUT_BUSY'):
                 arch.publish(self.root, manifest, graph, set())
         self.assertFalse((self.root / arch.OUTPUT_ROOT).exists())
-        with patch.object(infra, 'atomic_text', wraps=infra.atomic_text) as write:
+        with patch.object(arch.scope_io, 'supports_anchoring', return_value=True), \
+             patch.object(arch.scope_io.os, 'rename', side_effect=OSError('interrupted rename')), \
+             patch.object(arch.scope_io.os, 'unlink', side_effect=OSError('interrupted cleanup')):
+            with self.assertRaisesRegex(OSError, 'interrupted cleanup'):
+                arch.publish(self.root, manifest, graph, set())
+        self.assertFalse(any((self.root / arch.OUTPUT_ROOT).iterdir()))
+        self.assertEqual(len(list((self.root / arch.STATE_FILE.parent).glob('.s2c-*.tmp'))), 1)
+
+        with patch.object(arch.scope_io, 'atomic_text', wraps=arch.scope_io.atomic_text) as write:
             expected = arch.publish(self.root, manifest, graph, set())
         self.assertGreater(write.call_count, 2)
-        outputs = {args.args[0].relative_to(self.root): args.args[0].read_bytes()
+        outputs = {args.args[1].relative_to(self.root): args.args[1].read_bytes()
                    for args in write.call_args_list}
 
-        original_write = infra.atomic_text
+        original_write = arch.scope_io.atomic_text
         for index in range(len(outputs)):
             with self.subTest(interrupted_write=index), tempfile.TemporaryDirectory() as temp:
                 root = Path(temp)
@@ -68,14 +75,14 @@ class HandoffTreeTests(unittest.TestCase):
                                check=True, timeout=15, capture_output=True)
                 calls = 0
 
-                def interrupt(path, content, *, fail_at=index + 1, **kwargs):
+                def interrupt(root, path, content, *, fail_at=index + 1, **kwargs):
                     nonlocal calls
                     calls += 1
                     if calls == fail_at:
                         raise OSError('injected publish failure')
-                    original_write(path, content, **kwargs)
+                    original_write(root, path, content, **kwargs)
 
-                with patch.object(infra, 'atomic_text', side_effect=interrupt):
+                with patch.object(arch.scope_io, 'atomic_text', side_effect=interrupt):
                     with self.assertRaisesRegex(OSError, 'injected publish failure'):
                         arch.publish(root, manifest, graph, set())
                 self.assertEqual(arch.publish(root, manifest, graph, set()), expected)

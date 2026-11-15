@@ -15,7 +15,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: python -m pip install --disable-pip-version-check --only-binary=:all: ruff==0.11.13
+      - run: >-
+          python -m pip install --disable-pip-version-check
+          --only-binary=:all: ruff==0.11.13
       # Existing S603/S607 call sites are tracked in the PLAN-112 security continuation.
       - run: python -m ruff check --no-cache --select S --ignore S603,S607 .source/scripts
   unittest:

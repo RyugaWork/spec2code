@@ -48,3 +48,7 @@ Source and tests at `9a49f6bf361f83864f341fe7dbf4bb32d04b418b`. Both suites used
 | Native Windows build 10.0.26200.0, bundled Python 3.12.14 | `python.exe -B -m unittest discover -s .source/tests -v` | 0 | 146 collected, 43 passed, 103 platform skips, 45.833s. Both explicit unanchored-I/O and session-start denial tests passed. |
 
 Windows run was ordinary regression coverage. Hostile isolation/ACL/canary evidence and independent approval remain NOT_RUN. The source commit and this documentation evidence may have distinct SHAs. GitHub CI should be evaluated at the published branch HEAD.
+
+## CI startup correction
+
+The first published HEAD `8b3151cf55d2eda37b2f0a69a26cf22a4422754d` produced [a failed push run before scheduling any jobs](https://github.com/RyugaWork/spec2code/actions/runs/43684146191). PyYAML 6.0.3 reproduced the parsing failure on the plain scalar that contained `--only-binary=:all:`. The follow-up uses a folded scalar and verifies the parsed install command. The Python source/test tree is identical to the tested source commit.

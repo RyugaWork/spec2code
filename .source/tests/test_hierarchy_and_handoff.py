@@ -89,6 +89,44 @@ class HandoffTreeTests(unittest.TestCase):
                 for path, content in outputs.items():
                     self.assertEqual((root / path).read_bytes(), content)
 
+    def test_architecture_update_recovers_after_documents_are_written(self):
+        sys.path.insert(0, str(GUARD.parent))
+        import architecture_tree as arch
+        import session_guard as session
+
+        head = self.run_git('rev-parse', 'HEAD')
+        manifest, _ = session.collect(self.root, None, head, verify=True)
+        arch.publish(self.root, manifest, session.graph_for(self.root, manifest), set())
+        state_path = self.root / arch.STATE_FILE
+        before = state_path.read_bytes()
+        self.write('.source/web/src/MemberPage.tsx',
+                   'export function MemberPage() { return "changed"; }\n')
+        manifest, _ = session.collect(self.root, None, head, verify=True)
+        graph = session.graph_for(self.root, manifest)
+        original_write = arch.scope_io.atomic_text
+
+        def interrupt(root, path, content, **kwargs):
+            if path == state_path:
+                raise OSError('interrupted state commit')
+            if path.is_relative_to(root / arch.OUTPUT_ROOT):
+                self.assertEqual(kwargs.get('staging_dir'), arch.STATE_FILE.parent)
+            original_write(root, path, content, **kwargs)
+
+        with patch.object(arch.scope_io, 'atomic_text', side_effect=interrupt):
+            with self.assertRaisesRegex(OSError, 'interrupted state commit'):
+                arch.publish(self.root, manifest, graph, set())
+        self.assertEqual(state_path.read_bytes(), before)
+        arch.publish(self.root, manifest, graph, set())
+        after = json.loads(state_path.read_bytes())
+        previous = json.loads(before)
+        changed = [entry for key, entry in after['functions'].items()
+                   if entry['version'] != previous['functions'][key]['version']]
+        self.assertEqual(len(changed), 1)
+        self.assertEqual(changed[0]['version'], 2)
+        self.assertFalse(list((self.root / arch.OUTPUT_ROOT).rglob('.s2c-*.tmp')))
+        arch.publish(self.root, manifest, graph, set())
+        self.assertEqual(json.loads(state_path.read_bytes()), after)
+
     def test_layer_controller_function_tree_and_matrix(self):
         self.call('start')
         self.assertTrue((self.root/'s2c/.summerize.md').exists())

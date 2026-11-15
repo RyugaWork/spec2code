@@ -98,6 +98,86 @@ class WorkflowGuardTests(unittest.TestCase):
             workflow_guard.evaluate(self.request())
 
     @requires_anchored_io
+    def test_metadata_only_snapshot_never_reads_contents(self):
+        paths = ("src/appsettings.json", "src/privatekey.json")
+        appsettings, excluded = (self.root / path for path in paths)
+        appsettings.write_bytes(b"synthetic")
+        excluded.write_bytes(b"synthetic")
+        request = self.request(paths=paths)
+        original_read = workflow_guard.scope_io.read_bytes
+
+        def guarded_read(root, path, **kwargs):
+            self.assertNotIn(Path(path).name, {appsettings.name, excluded.name})
+            return original_read(root, path, **kwargs)
+
+        with patch.object(workflow_guard.scope_io, "read_bytes", side_effect=guarded_read):
+            before = workflow_guard._source_snapshot(self.root, request)
+            excluded.write_bytes(b"excluded change")
+            self.assertEqual(before, workflow_guard._source_snapshot(self.root, request))
+            appsettings.write_bytes(b"synthetic metadata change")
+            self.assertNotEqual(before, workflow_guard._source_snapshot(self.root, request))
+
+    @requires_anchored_io
+    def test_journal_rejects_rehashed_history_and_truncation(self):
+        self.start()
+        workflow_guard.transition(self.request(action="begin"))
+        workflow_guard.transition(self.request("SPECIFY_PLAN", "advance"))
+        path = self.root / workflow_guard.PATHS["events"]
+        original = path.read_bytes()
+        events = [json.loads(line) for line in original.splitlines()]
+        events[0]["source_snapshot"] = "f" * 64
+        events[0]["event_sha256"] = workflow_guard._digest(events[0])
+        events[1]["prev_event_sha256"] = events[0]["event_sha256"]
+        events[1]["event_sha256"] = workflow_guard._digest(events[1])
+        rewritten = b"".join(workflow_guard._json_bytes(event) + b"\n" for event in events)
+        for journal in (rewritten, original.splitlines(keepends=True)[0], b""):
+            with self.subTest(length=len(journal)):
+                path.write_bytes(journal)
+                with self.assertRaisesRegex(RuntimeError, "EVENT_LOG_CORRUPT"):
+                    workflow_guard.transition(self.request(action="reconcile"))
+
+    @requires_anchored_io
+    def test_journal_rejects_permissive_or_hardlinked_state(self):
+        self.start()
+        workflow_guard.transition(self.request(action="begin"))
+        path = self.root / workflow_guard.PATHS["events"]
+        path.chmod(0o640)
+        with self.assertRaisesRegex(RuntimeError, "private state file access"):
+            workflow_guard.evaluate(self.request())
+        path.chmod(0o600)
+        os.link(path, path.with_suffix(".alias"))
+        with self.assertRaisesRegex(RuntimeError, "private state file access"):
+            workflow_guard.evaluate(self.request())
+
+    @requires_anchored_io
+    def test_begin_denies_writable_state_directory_before_journal_creation(self):
+        self.start()
+        path = self.root / workflow_guard.PATHS["events"]
+        path.parent.chmod(0o770)
+        with self.assertRaisesRegex(RuntimeError, "private state directory ownership or mode"):
+            workflow_guard.transition(self.request(action="begin"))
+        self.assertFalse(path.exists())
+
+    @requires_anchored_io
+    def test_reconcile_recovers_one_interrupted_cache_write(self):
+        self.start()
+        workflow_guard.transition(self.request(action="begin"))
+        original_write = workflow_guard.scope_io.atomic_text
+
+        def fail_cache_write(root, path, content, **kwargs):
+            if path == workflow_guard.PATHS["state"]:
+                raise OSError("interrupted cache write")
+            original_write(root, path, content, **kwargs)
+
+        with patch.object(workflow_guard.scope_io, "atomic_text", side_effect=fail_cache_write):
+            with self.assertRaisesRegex(OSError, "interrupted cache write"):
+                workflow_guard.transition(self.request("SPECIFY_PLAN", "advance"))
+        self.assertTrue(workflow_guard.evaluate(self.request())["state_stale"])
+        result = workflow_guard.transition(self.request(action="reconcile"))
+        self.assertTrue(result["reconciled"])
+        self.assertFalse(workflow_guard.evaluate(self.request())["state_stale"])
+
+    @requires_anchored_io
     def test_invalidate_and_explicit_resume(self):
         self.start()
         workflow_guard.transition(self.request(action="begin"))

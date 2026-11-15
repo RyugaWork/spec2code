@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 import hashlib
 import json
-import os
+import stat
 from pathlib import Path
 import re
 import sys
@@ -23,6 +23,7 @@ import config_loader
 import governance_schema as schema
 import path_guard
 import policy_resolver
+import scan_infrastructure as scan
 import scope_io
 import speckit_bridge
 
@@ -90,15 +91,15 @@ def _input(req: WorkflowRequest) -> Path:
     return root
 
 
-def _read_json(root: Path, rel: Path | str, limit: int) -> dict | None:
+def _read_json(root: Path, rel: Path | str, limit: int, *, private: bool = False) -> dict | None:
     path = path_guard.check_path(root, rel)
-    if not path.is_file():
+    if not path.exists():
         return None
-    if path.is_symlink():
+    if not path.is_file():
         raise RuntimeError("WF_UNOWNED_STATE")
     try:
-        data = scope_io.read_bytes(root, path, max_bytes=limit)
-        value = json.loads(data.decode("utf-8"))
+        data = scope_io.read_bytes(root, path, max_bytes=limit, private=private)
+        value = json.loads(data.decode("utf-8"), object_pairs_hook=policy_resolver._unique_pairs)
     except (RuntimeError, OSError, ValueError, UnicodeError) as err:
         raise RuntimeError("WF_STATE_INVALID") from err
     if not isinstance(value, dict):
@@ -158,15 +159,22 @@ def _source_snapshot(root: Path, req: WorkflowRequest) -> str:
                     for name in speckit_bridge.ARTIFACTS)
     result = []
     for rel in sorted(refs):
+        if any(scan.is_excluded(part) for part in Path(rel).parts):
+            continue
         path = path_guard.check_path(root, rel)
-        if path.is_dir():
-            raise RuntimeError("WF_UNBOUNDED_SOURCE_DIRECTORY")
-        if not path.is_file():
-            if path.exists():
-                raise RuntimeError("WF_INPUT_INVALIDATED")
+        try:
+            metadata = path.lstat()
+        except FileNotFoundError:
             result.append((rel, None))
             continue
-        if path.stat().st_size > 4 * 1024 * 1024:
+        if stat.S_ISDIR(metadata.st_mode):
+            raise RuntimeError("WF_UNBOUNDED_SOURCE_DIRECTORY")
+        if not stat.S_ISREG(metadata.st_mode):
+            raise RuntimeError("WF_INPUT_INVALIDATED")
+        if scan.metadata_only(path.name):
+            result.append((rel, ["metadata-only", metadata.st_size, metadata.st_mtime_ns]))
+            continue
+        if metadata.st_size > 4 * 1024 * 1024:
             raise RuntimeError("WF_INPUT_INVALIDATED")
         result.append((rel, hashlib.sha256(scope_io.read_bytes(
             root, path, max_bytes=4 * 1024 * 1024)).hexdigest()))
@@ -180,10 +188,10 @@ def _events(root: Path) -> list[dict]:
     path = path_guard.check_path(root, PATHS["events"])
     if path.is_symlink():
         raise RuntimeError("EVENT_LOG_CORRUPT")
-    if not path.is_file():
+    if not path.exists():
         return []
     raw = scope_io.read_bytes(root, path, max_bytes=LIMITS["max_events"] *
-                              LIMITS["max_event_bytes"] + 1)
+                              (LIMITS["max_event_bytes"] + 1), private=True)
     if raw and not raw.endswith(b"\n"):
         raise RuntimeError("EVENT_LOG_CORRUPT")
     lines = raw.splitlines()
@@ -197,15 +205,20 @@ def _events(root: Path) -> list[dict]:
             event = json.loads(line.decode("utf-8"))
         except (ValueError, UnicodeError) as err:
             raise RuntimeError("EVENT_LOG_CORRUPT") from err
-        if (not isinstance(event, dict) or event.get("schema_version") != 1 or
-                event.get("sequence") != i or event.get("event_id") != f"WF-{i:06d}" or
+        if (not isinstance(event, dict) or type(event.get("schema_version")) is not int or
+                event["schema_version"] != 1 or type(event.get("sequence")) is not int or
+                event["sequence"] != i or event.get("event_id") != f"WF-{i:06d}" or
                 event.get("prev_event_sha256") != prev or
                 event.get("event_sha256") != _digest(event) or
                 _json_bytes(event) != line):
             raise RuntimeError("EVENT_LOG_CORRUPT")
         if (event.get("phase") not in schema.PHASES or
                 event.get("action") not in ("BEGIN", "ADVANCE", "INVALIDATE", "CLOSE") or
-                not isinstance(event.get("session_id"), str)):
+                any(not isinstance(event.get(key), str) or not event[key]
+                    for key in ("task_id", "session_id", "from_status", "to_status")) or
+                any(not isinstance(event.get(key), str) or
+                    not re.fullmatch(r"[0-9a-f]{64}", event[key])
+                    for key in ("source_snapshot", "binding_fingerprint", "scope_sha256"))):
             raise RuntimeError("EVENT_LOG_CORRUPT")
         events.append(event)
         prev = event["event_sha256"]
@@ -228,6 +241,7 @@ def _replay(events: list[dict]) -> dict | None:
     for event in events[1:]:
         if (event.get("task_id") != task or event.get("session_id") != session or
                 event.get("scope_sha256") != scope or
+                event["binding_fingerprint"] != first["binding_fingerprint"] or
                 event.get("from_status") != status or status == "COMPLETE"):
             raise RuntimeError("EVENT_LOG_CORRUPT")
         action, target, new_status = event["action"], event["phase"], event["to_status"]
@@ -252,7 +266,7 @@ def _replay(events: list[dict]) -> dict | None:
             completed.difference_update(invalidated)
         elif action == "CLOSE":
             if (phase != "HANDOFF_REVIEW" or target != phase or
-                    new_status != "COMPLETE"):
+                    status != "IN_PROGRESS" or new_status != "COMPLETE"):
                 raise RuntimeError("EVENT_LOG_CORRUPT")
             status = new_status
             completed.add(phase)
@@ -275,9 +289,16 @@ def _replay(events: list[dict]) -> dict | None:
 def _state(root: Path, req: WorkflowRequest):
     events = _events(root)
     state = _replay(events)
-    cache = _read_json(root, PATHS["state"], LIMITS["max_state_bytes"])
-    if cache and cache.get("managed_by") != MARKER:
-        raise RuntimeError("WF_UNOWNED_STATE")
+    cache = _read_json(root, PATHS["state"], LIMITS["max_state_bytes"], private=True)
+    if cache is not None:
+        if cache.get("managed_by") != MARKER:
+            raise RuntimeError("WF_UNOWNED_STATE")
+        sequence = cache.get("last_sequence")
+        if (type(sequence) is not int or not 1 <= sequence <= len(events) or
+                len(events) - sequence > 1 or cache != _replay(events[:sequence])):
+            raise RuntimeError("EVENT_LOG_CORRUPT")
+    elif len(events) > 1:
+        raise RuntimeError("EVENT_LOG_CORRUPT")
     if state and state["task_id"] != req.task_id:
         raise RuntimeError("WF_DIFFERENT_TASK_ACTIVE")
     return events, state, state != cache
@@ -358,42 +379,30 @@ def evaluate(req: WorkflowRequest) -> dict:
 @contextmanager
 def _lock(root: Path):
     path = path_guard.check_path(root, PATHS["lock"])
-    if path.exists() or path.is_symlink():
-        raise RuntimeError("WORKFLOW_LOCKED")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY |
-                     getattr(os, "O_NOFOLLOW", 0), 0o600)
-    except FileExistsError as err:
-        raise RuntimeError("WORKFLOW_LOCKED") from err
-    try:
-        with os.fdopen(fd, "wb") as output:
-            output.write(MARKER.encode())
+    # Respect a lock left by an older installation. The directory lock is
+    # released by the OS if this process exits before completing a write.
+    with scope_io.exclusive_output(root, busy_error="WORKFLOW_LOCKED"):
+        if path.exists():
+            raise RuntimeError("WORKFLOW_LOCKED")
         yield
-    finally:
-        if path.is_file():
-            raw = scope_io.read_bytes(root, path, max_bytes=1024)
-            if raw != MARKER.encode():
-                raise RuntimeError("WORKFLOW_LOCK_CORRUPT")
-            scope_io.unlink_verified(root, path, hashlib.sha256(raw).hexdigest())
 
 
 def _write(root: Path, old: list[dict], record: dict) -> dict:
     path = path_guard.check_path(root, PATHS["events"])
     if len(old) >= LIMITS["max_events"]:
         raise RuntimeError("WF_EVENT_CAP")
-    if not path.exists():
-        scope_io.atomic_text(root, path, "")
-    scope_io.append_text(root, path, _json_bytes(record).decode("utf-8") + "\n")
+    pending = [*old, record]
+    state = _replay(pending)
+    content = json.dumps(state, sort_keys=True, indent=2) + "\n"
+    if len(content.encode()) > LIMITS["max_state_bytes"]:
+        raise RuntimeError("WF_STATE_TOO_LARGE")
+    scope_io.atomic_text(root, path, "".join(
+        _json_bytes(event).decode("utf-8") + "\n" for event in pending), private=True)
     verified = _events(root)
     if (len(verified) != len(old) + 1 or
             verified[-1]["event_sha256"] != record["event_sha256"]):
         raise RuntimeError("WF_JOURNAL_WRITE_UNVERIFIED")
-    state = _replay(verified)
-    content = json.dumps(state, sort_keys=True, indent=2) + "\n"
-    if len(content.encode()) > LIMITS["max_state_bytes"]:
-        raise RuntimeError("WF_STATE_TOO_LARGE")
-    scope_io.atomic_text(root, PATHS["state"], content)
+    scope_io.atomic_text(root, PATHS["state"], content, private=True)
     return state
 
 
@@ -417,7 +426,8 @@ def transition(req: WorkflowRequest, *,
             if not current:
                 raise RuntimeError("WF_RECONCILE_BLOCKED")
             scope_io.atomic_text(root, PATHS["state"],
-                                 json.dumps(current, sort_keys=True, indent=2) + "\n")
+                                 json.dumps(current, sort_keys=True, indent=2) + "\n",
+                                 private=True)
             return {"operation": "reconcile", "status": "READY", "reconciled": True}
         if stale:
             raise RuntimeError("STATE_STALE")
@@ -452,7 +462,8 @@ def transition(req: WorkflowRequest, *,
                         raise RuntimeError("WF_APPROVAL_REQUIRED")
             action, to_status = "ADVANCE", "IN_PROGRESS"
         else:
-            if current["current_phase"] != "HANDOFF_REVIEW":
+            if (current["current_phase"] != "HANDOFF_REVIEW" or
+                    current["phase_status"] != "IN_PROGRESS"):
                 raise RuntimeError("WF_ILLEGAL_TRANSITION")
             decision = evaluate(WorkflowRequest(root, req.task_id, "HANDOFF_REVIEW",
                                                 "evaluate", session["id"],

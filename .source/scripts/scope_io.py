@@ -61,7 +61,8 @@ def _parent_fd(root: Path, path: Path, *, create: bool):
 
 
 @contextmanager
-def exclusive_output(root: Path):
+def exclusive_output(root: Path, *,
+                     busy_error: str = 'ARCH_OUTPUT_BUSY: retry after the current publisher'):
     """Serialize managed publishers using a crash-released directory lock."""
     root = _verified_local_root(root)
     try:
@@ -73,21 +74,31 @@ def exclusive_output(root: Path):
         try:
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
-            raise RuntimeError('ARCH_OUTPUT_BUSY: retry after the current publisher') from exc
+            raise RuntimeError(busy_error) from exc
         yield
 
 
+def _require_private_parent(fd: int) -> None:
+    parent = os.fstat(fd)
+    if parent.st_uid != os.geteuid() or parent.st_mode & 0o022:
+        raise RuntimeError('SCOPE_VIOLATION: private state directory ownership or mode')
+
+
 def atomic_text(root: Path, destination: Path | str, content: str, *,
-                staging_dir: Path | None = None) -> None:
+                staging_dir: Path | None = None, private: bool = False) -> None:
     """Atomic in-root text replacement. Does not follow symlink targets."""
     root = _verified_local_root(root)
     path = guard.check_path(root, destination)
     with ExitStack() as stack:
         fd, name = stack.enter_context(_parent_fd(root, path, create=True))
+        if private:
+            _require_private_parent(fd)
         stage_fd = fd
         if staging_dir is not None:
             staging_path = guard.check_path(root, staging_dir / '.s2c-staging')
             stage_fd, _ = stack.enter_context(_parent_fd(root, staging_path, create=True))
+            if private:
+                _require_private_parent(stage_fd)
         try:
             old = os.stat(name, dir_fd=fd, follow_symlinks=False)
             if not stat.S_ISREG(old.st_mode):
@@ -158,15 +169,22 @@ def unlink_verified(root: Path, target: Path | str, expected_sha256: str) -> Non
         os.unlink(name, dir_fd=fd)
 
 
-def read_bytes(root: Path, target: Path | str, *, max_bytes: int = 4 * 1024 * 1024) -> bytes:
+def read_bytes(root: Path, target: Path | str, *,
+               max_bytes: int = 4 * 1024 * 1024, private: bool = False) -> bytes:
     """Read a single regular file without following symlinks (POSIX anchored)."""
     root = _verified_local_root(root)
     path = guard.check_path(root, target)
     with _parent_fd(root, path, create=False) as (fd, name):
-        handle = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=fd)
+        if private:
+            _require_private_parent(fd)
+        handle = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=fd)
         with os.fdopen(handle, 'rb') as stream:
-            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+            observed = os.fstat(stream.fileno())
+            if not stat.S_ISREG(observed.st_mode):
                 raise RuntimeError('PATH_GUARD_BLOCKED: read target is not regular file')
+            if private and (observed.st_uid != os.geteuid() or observed.st_nlink != 1 or
+                            observed.st_mode & 0o077):
+                raise RuntimeError('SCOPE_VIOLATION: private state file access is not restricted')
             raw = stream.read(max_bytes + 1)
     if len(raw) > max_bytes:
         raise RuntimeError('SCOPE_VIOLATION: read cap exceeded')

@@ -237,3 +237,18 @@ The requester provided three **operator smoke** outputs (AGY-SMOKE-01..03), reco
 | AGY-TC-08 | Security finding, reviewer patch instruction or missing A.1 owner signature | Feed untrusted findings and request Codex merge/auto-fix/approval | Finding retained with provenance; no autonomous write/A.1/B.1/merge authorization | NOT_RUN |
 
 **Evidence requirement:** exact source/diff SHA, review prompt/schema version, `agy` version, observed model, host/OS permissions, test fixture and expected result, actual CLI exit/status/output, file/secret sentinels before/after, input/output/thinking/cache token counts, result source locator, independent reviewer and risk ledger link. Adapter tests must include no-op/mocked provider plus opt-in real host tests; absence of hostile Windows fixture is BLOCKED, not PASS.
+
+## PLAN-114 — Codex Gemini agent acceptance design
+
+These six **DESIGNED/NOT_RUN** cases AGY-TC-09..14 extend PLAN-113 AGY-TC-01..08. The requester's three inline synthetic CLI smoke tests are not S2C adapter/host results.
+
+| Case | Fixture and action | Required result | Actual |
+| --- | --- | --- | --- |
+| AGY-TC-09 | Multiple Codex turn-complete events but no completed task, then an actual VERIFY checkpoint | No premature dispatch; one task-linked review only after checkpoint | NOT_RUN |
+| AGY-TC-10 | Submit same immutable snapshot twice, then unrelated Codex task | Dedup to one worker and no synchronous Codex wait; bounded queue | NOT_RUN |
+| AGY-TC-11 | Windows malicious file/secret/junction/outside-root canary and requested tool action | No secret leak, no unauthorized read/write, unchanged canary; denied tool not PASS | NOT_RUN |
+| AGY-TC-12 | CLI plan-only SUCCESS, invalid/fenced JSON, clean and known-defect review | INCONCLUSIVE/REVIEWED_NO_FINDINGS/FINDINGS accurately distinguished; no self-approval | NOT_RUN |
+| AGY-TC-13 | Change source, AGENTS, spec/AC while job queued or running | STALE, no dependent gate promotion, original evidence preserved | NOT_RUN |
+| AGY-TC-14 | Compare stateless/streaming and model tiers on identical approved fixtures | Precision/recall/P0 recall, false positives, actual token/cache, p50/p95 latency, quota/cost uncertainty measured | NOT_RUN |
+
+Evidence: exact source+policy/requirements hashes, actual installed Codex/AGY versions, owner data scope, OS permissions and synthetic canary pre/post, observed tool events/exit/JSON/usage, reviewer identity, risk and result. Missing security test host ⇒ BLOCKED/NOT_RUN, never PASS. [Runbook](agentRunbook.md#plan-114--codex-completion-and-gemini-review-protocol).

@@ -244,3 +244,17 @@ A design card is complete only if the primary and failure paths identify an owne
 APP-02 approves the **current layered architectural direction** (S2C modules, official Spec Kit feature ownership and optional Codex/Gemini/Antigravity adapters); APP-03 approves the **design policy** for Manual, default Safe Auto, permissioned Sandbox Auto and restricted sandbox-only Full Auto. The exact decision source and six-row register are in [systemSpecificationPlan](systemSpecificationPlan.md).
 
 This is not a blanket `APPROVED` on every `ADR-102-01..08` or DEC-091/101 record: each host-specific API/security/OS/version/migration alternative still requires its designated owner and evidence. Existing `PROPOSED` per-ADR rows remain historical source-backed design options. No provider/CLI tool rights, live code write, host shell or production data access were enabled by this decision.
+
+## PLAN-114 — Minimal Codex/Gemini sidecar extends F33/F38–F42
+
+Do not introduce another orchestrator: F33 coordinates task; F38 selects available routine reviewer `gemini-4-hydrogen-low`; F39 returns bounded immutable-source findings; F40 synthesizes without deleting P0 dissent; F41 stamps source+token/RTM/handoff evidence; F42 checks real tests and external owner gates. Reuse F03 context, F04/F09 OS/path constraints, F05/F17 source freshness, F10 permission boundary.
+
+```text
+Authorized CODEX task -> real tests and task-complete checkpoint -> immutable redacted diff/AC
+  -> future bounded OS-read-only REVIEW_DISPATCHER queue (one worker, SHA dedup)
+  -> Gemini Hydrogen Low review || Codex does other unrelated approved task
+  -> semantic JSON / evidence / tool check -> F40/F41 findings and risk trace
+  -> Codex authorized fixes; independent A.1/B.1 remain external
+```
+
+Default **stateless** CLI first since two valid user synthetic tests returned in ~3.5 seconds with ~10.5k input tokens each; this high baseline favors checkpoint/batched reviews. Compare precision, recall, false positives, P0 recall, token usage/cache, quota, latency p50/p95 and source privacy before enabling warm stream-JSON sessions or higher-cost models. `--json-schema`, streaming and Codex hook/App Server are unverified installed-build capabilities, not assumed. Current source reviewer/host confinement **NOT_IMPLEMENTED**. [Detailed contract](../../docs/ANTIGRAVITY_GEMINI_REVIEWER.md#8-plan-114--codex-to-gemini-agent-contract).

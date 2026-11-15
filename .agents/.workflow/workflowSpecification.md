@@ -151,3 +151,16 @@ Apply this sequence to every S2C feature addition or modification in B, includin
 Before the first write, pin a cumulative deadline and applicable execution/resource limits in the authorized task record. Allow at most **two remediation attempts after the initial implementation**, or fewer if the task budget specifies a tighter cap. Count each authorized re-entry for remediation when it starts. Keep earlier failures and attempt history across handoffs, retries and RESUME. Invalidate affected checks and independent review when relevant source, policy, fixture, host or artifact identity changes. Re-run impacted checks and obtain a fresh independent verdict on the new candidate. At the first budget limit, or if retries make no evidenced progress, STOP for owner disposition and return to A if the design or controls need revision. A new session or executor does not reset the budget.
 
 For STOP, freeze new mutations and follow the [STOP protocol](stopAndHandoff.md). Capture the exact task, phase and step, baseline and candidate SHA/digest, paths, verified and stale evidence, risk/approval gaps, attempt count and limits, remaining tasks, next owner and safe action. Resume only on explicit request after revalidating authority, scope, evidence and remaining budget. Use [validation](validationSpecification.md) for the quality calculation and independent gates and the [runbook](agentRunbook.md#security-first-execution-and-checkpoints) for routing and checkpoints.
+
+## PLAN-114 — Gemini reviewer attached to existing VERIFY checkpoint
+
+Reuse **five existing machine phases**; do not add workflow enum, STOP status or hidden daemon.
+
+| Phase | Codex responsibility | Optional reviewer |
+| --- | --- | --- |
+| DISCOVER / SPECIFY_PLAN | Approved AC, paths, host/security/data sharing, source & budget | Plan scope only; missing security owner or P0 blocks dispatch |
+| IMPLEMENT | Sole approved writer, preserve file provenance | Never inspect mutable source snapshot |
+| VERIFY | Run actual tests, mark taskComplete and freeze redacted immutable diff | A separately authorized OS-isolated worker may review once while Codex handles unrelated authorized work |
+| HANDOFF_REVIEW | Validate findings, source freshness, risk/RTM and test evidence | No automatic acceptance, independent human gate remains required |
+
+Future logical reviewer report values `REVIEW_NOT_DISPATCHED, REVIEW_BLOCKED, QUEUED, RUNNING, REVIEWED_NO_FINDINGS, FINDINGS, INCONCLUSIVE, STALE, CANCELED` are **not** Workflow Guard states. A Codex notify event may be used to propose checking task completion only when the installed Codex version advertises it; don't dispatch blindly per turn. No synchronous review on Codex's critical path. If source/policy/Spec Kit changes, invalidate the affected review; P0 blocks dependent acceptance. Apply bounded queue, concurrency=1, timeout/cancel/retry limits, exact-source handoff. [Runbook](agentRunbook.md#plan-114--codex-completion-and-gemini-review-protocol).

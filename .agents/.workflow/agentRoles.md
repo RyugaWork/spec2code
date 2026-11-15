@@ -103,3 +103,17 @@ If all roles are simulated within one model/context, declare `independentWorkers
 Proposed specialist weights only rank candidates **after** hard constraints (authorized scope, actually available provider, required BA/developer/QA/security/data expertise and bounded budget) are satisfied. Report selected `n`, each actor's provider/session evidence, expertise match, personality lens, source SHA and possible correlation. If workers are simulated sequentially inside one conversation, label `independentWorkers=0` regardless of how different their prompts sound.
 
 The synthesis reviewer retains all minority P0 findings as separate issues; it must never remove a veto through weighted averaging or self-appoint the business/security owner. On worker outage or disagreement, return `PARTIAL_REVIEW/UNRESOLVED`, name the missing discipline and assign a human decision owner. Real A.1 identity and accepted risk remain external gates.
+
+## PLAN-114 — Codex and Gemini reviewer roles
+
+Use the existing F33/F38–F42 roles, not additional agent infrastructure:
+
+| Role | Owned evidence | Explicit limitation |
+| --- | --- | --- |
+| **[CODEX] implementer** | Authorized code/test operations, actual taskComplete VERIFY checkpoint with source/AC/test fingerprints | Sole authorized writer; cannot self-approve A.1/B.1 |
+| **[REVIEW_DISPATCHER] future** | Freeze redacted source, verify approved data sharing and independent OS read-only host, deduplicate and enqueue one bounded job | No source writes, secret reads, invented task completion or silent model fallback |
+| **[GEMINI_REVIEWER] optional** | `gemini-4-hydrogen-low` finds evidence-linked code defects from immutable diff + relevant AC/tests | Technical second-model review only; no commands, file modifications, other repository reads, credentials or human signoff |
+| **[SYNTHESIS] F40/F41** | Validate JSON/source, deduplicate findings, preserve P0 dissent, update proposed risk/trace/handoff | Findings are untrusted; no automatic code fix, gate promotion or waiver |
+| **[INDEPENDENT OWNER]** | Real OS/security negative tests, exact source, approved business/security decisions | Only accountable person can sign required independent A.1/B.1/risk acceptance |
+
+A Codex notification is a possible event, not an S2C task-complete oracle. Missing sandbox, data permission, model/auth, task source or reviewer coverage ⇒ `REVIEW_BLOCKED`; continue unrelated approved tasks only. Reference [runbook](agentRunbook.md#plan-114--codex-completion-and-gemini-review-protocol) and [CLI guide](../../docs/ANTIGRAVITY_GEMINI_REVIEWER.md#8-plan-114--codex-to-gemini-agent-contract).

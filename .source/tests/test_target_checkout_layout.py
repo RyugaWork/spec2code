@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from platform_support import requires_anchored_io
 
 SCRIPTS = Path(__file__).resolve().parents[1] / 'scripts'
 
@@ -29,6 +30,7 @@ class TargetCheckoutLayoutTests(unittest.TestCase):
         return subprocess.run([sys.executable, str(SCRIPTS / 'session_guard.py'), '--root', str(self.root), *args],
                               capture_output=True, text=True, timeout=60)
 
+    @requires_anchored_io
     def test_new_layout_is_entirely_under_reserved_folders(self):
         started = self.run_cli('start')
         self.assertEqual(started.returncode, 0, started.stderr)
@@ -64,6 +66,7 @@ class TargetCheckoutLayoutTests(unittest.TestCase):
         self.assertEqual(snapshot,(self.root/'src/example.py').read_bytes())
         self.assertFalse((self.root/'.agents/state/session.json').exists())
 
+    @requires_anchored_io
     def test_nonmanaged_s2c_output_directory_does_not_get_overwritten(self):
         owned=self.root/'s2c/data.txt'
         owned.parent.mkdir()
@@ -74,6 +77,7 @@ class TargetCheckoutLayoutTests(unittest.TestCase):
         self.assertEqual(owned.read_bytes(),b'user data - preserve')
         self.assertFalse((self.root/'s2c/.summerize.md').exists())
 
+    @requires_anchored_io
     def test_legacy_architecture_state_requires_manual_migration(self):
         legacy=self.root/'.agents/state/architecture-docs.json'
         legacy.parent.mkdir(parents=True)
@@ -85,6 +89,7 @@ class TargetCheckoutLayoutTests(unittest.TestCase):
         self.assertEqual(json.loads(legacy.read_text())['generated_paths'], ['API/.summerize.md'])
         self.assertFalse((self.root/'s2c/.summerize.md').exists())
 
+    @requires_anchored_io
     def test_installed_bundle_style_governance_workflow_smoke(self):
         """Exercise actual CLI entrypoints on a disposable host checkout."""
         self.assertEqual(self.run_cli('start').returncode, 0)
@@ -115,6 +120,7 @@ class TargetCheckoutLayoutTests(unittest.TestCase):
         self.assertEqual(report['gate_status'], 'READY')
         self.assertFalse(report['can_grant_permissions'])
 
+    @requires_anchored_io
     def test_copied_install_bundle_works_without_source_repo(self):
         """Install the complete bundle into a clean disposable target checkout."""
         bundle = self.root / '.agents/skills/spec-to-code'

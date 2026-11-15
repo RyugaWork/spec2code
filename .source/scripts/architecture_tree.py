@@ -358,6 +358,11 @@ def render_function(c: dict, fn: dict, version: int, change: str) -> str:
 
 def publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
     root = guard.validate_root(root)
+    with scope_io.exclusive_output(root):
+        return _publish(root, manifest, graph, focus)
+
+
+def _publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
     legacy_summary = guard.check_path(root, SUMMARY_NAME)
     if legacy_summary.is_file() and scope_io.read_bytes(root, legacy_summary, max_bytes=1024*1024).startswith(GENERATED.encode('utf-8')):
         raise RuntimeError('LAYOUT_MIGRATION_REQUIRED: old root architecture docs must be reviewed and archived manually')
@@ -379,7 +384,11 @@ def publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
     old_functions=old_state.get('functions',{})
     funcs_new={}
     old_notes=old_state.get('notes_by_path', {})
-    planned=[]
+    counts = {layer: sum(1 for current, _ in components if current == layer)
+              for layer in LAYER_DIRS}
+    # Claim the preflighted output namespace before writing child documents.
+    # An interrupted publish can then resume using the same ownership checks.
+    planned = [(output / SUMMARY_NAME, render_root(graph, manifest, focus, counts))]
     for (layer, name), c in components.items():
         target = root / OUTPUT_ROOT / LAYER_DIRS[layer] / name
         planned.append((target/SUMMARY_NAME,render_component(c,[x for (l,_),x in components.items() if l==layer])))
@@ -397,8 +406,6 @@ def publish(root: Path, manifest: dict, graph: dict, focus: set[str]) -> dict:
             funcs_new[key]={'version':ver,'fingerprint':new_fp,'document':f'{OUTPUT_ROOT.as_posix()}/{LAYER_DIRS[layer]}/{name}/{function_filename(c, fn)}'}
             fname=function_filename(c, fn)
             planned.append((target/fname,render_function(c,fn,ver,change)))
-    counts={layer: sum(1 for (l,_) in components if l==layer) for layer in LAYER_DIRS}
-    planned.append((root/OUTPUT_ROOT/SUMMARY_NAME, render_root(graph,manifest,focus,counts)))
     for layer in LAYER_DIRS:
         layer_comps=[c for (l,_),c in sorted(components.items()) if l==layer]
         planned.append((root/OUTPUT_ROOT/LAYER_DIRS[layer]/SUMMARY_NAME,render_layer(layer,layer_comps,graph,focus)))
@@ -426,6 +433,12 @@ def annotate_recorded_change(root: Path, paths: list[str], note: str, requiremen
                              session_id: str, current_files: dict) -> None:
     """Annotate the latest *registered* change; do not assert inferred semantics."""
     root = guard.validate_root(root)
+    with scope_io.exclusive_output(root):
+        _annotate_recorded_change(root, paths, note, requirement, session_id, current_files)
+
+
+def _annotate_recorded_change(root: Path, paths: list[str], note: str, requirement: str,
+                              session_id: str, current_files: dict) -> None:
     state=infra.read_json(root/STATE_FILE, root=root)
     if not state:
         raise RuntimeError('Missing architecture-docs state for change annotation')

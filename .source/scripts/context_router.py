@@ -196,8 +196,8 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
     paths = sorted(set(paths))
     for path in paths:
         guard.check_path(root, path)  # May originate from untrusted cached manifest.
-    # A new unstaged edit doesn't move HEAD. Compare stat metadata for the exact
-    # selected files, not all source bytes, to reject stale in-session routing.
+    # Verify bounded source content even when Git HEAD and file metadata match.
+    # Sensitive configuration and oversized files remain metadata-only.
     for path in paths:
         snap = manifest['files'].get(path,{})
         src = root / path
@@ -206,6 +206,10 @@ def route(root: Path, task_id: str, task: str, raw_paths: list[str],
         st = src.stat()
         if (snap.get('size') is not None and snap['size'] != st.st_size) or (snap.get('mtime_ns') is not None and snap['mtime_ns'] != st.st_mtime_ns):
             raise RuntimeError('STALE_SOURCE_METADATA: checkpoint before routing ' + path)
+        if not infra.is_sensitive(src.name) and st.st_size <= infra.MAX_SIZE_HASH:
+            digest = infra.sha256_file(src, root=root)
+            if digest != snap.get('sha256'):
+                raise RuntimeError('STALE_SOURCE_CONTENT: run checkpoint --verify before routing ' + path)
     layers = {arch.layer_for_path(p) for p in paths}
     outside = set(session.get('outside_paths', [])) | set(session.get('startup_external_paths', []))
     intersection = bool(outside & set(paths))

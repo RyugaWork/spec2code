@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """Directory-relative, no-follow filesystem operations for Spec2Code-managed files.
 
-On POSIX with openat/renameat support, writes are anchored to directory handles.
-On platforms without dir_fd or O_NOFOLLOW (notably Windows), operations perform
-repeated Path Guard checks but ARE NOT an OS-level TOCTOU sandbox. Use trusted
-workspaces and OS ACLs in those environments.
+Managed I/O requires directory-handle anchoring with no-follow opens.
+Hosts without that support, including native Windows, fail closed.
 """
 from __future__ import annotations
 
@@ -14,7 +12,6 @@ import os
 from pathlib import Path
 import secrets
 import stat
-import tempfile
 
 import path_guard as guard
 
@@ -25,13 +22,15 @@ def _verified_local_root(root: Path) -> Path:
     CLI/MCP entrypoints validate Git identity once per request. Per-file operations
     still reject root symlinks, traversal and directory substitution using handles.
     """
+    if not supports_anchoring():
+        raise RuntimeError('SCOPE_VIOLATION: anchored filesystem I/O unavailable')
     raw = Path(os.path.abspath(os.fspath(root)))
     if not raw.is_dir() or guard._has_reparse_ancestor(raw):
         raise RuntimeError('SCOPE_VIOLATION: invalid local filesystem root')
     return raw
 
 
-def _supports_anchoring() -> bool:
+def supports_anchoring() -> bool:
     return (hasattr(os, 'O_NOFOLLOW') and hasattr(os, 'O_DIRECTORY')
             and os.open in os.supports_dir_fd and os.mkdir in os.supports_dir_fd
             and os.rename in os.supports_dir_fd and os.unlink in os.supports_dir_fd)
@@ -61,23 +60,27 @@ def _parent_fd(root: Path, path: Path, *, create: bool):
         os.close(fd)
 
 
+@contextmanager
+def exclusive_output(root: Path):
+    """Serialize managed publishers using a crash-released directory lock."""
+    root = _verified_local_root(root)
+    try:
+        import fcntl
+    except ImportError as exc:
+        raise RuntimeError('SCOPE_VIOLATION: output locking unavailable') from exc
+    # The path is a placeholder. Only its parent (the root) is opened.
+    with _parent_fd(root, root / '.s2c-output-lock', create=False) as (fd, _):
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RuntimeError('ARCH_OUTPUT_BUSY: retry after the current publisher') from exc
+        yield
+
+
 def atomic_text(root: Path, destination: Path | str, content: str) -> None:
     """Atomic in-root text replacement. Does not follow symlink targets."""
     root = _verified_local_root(root)
     path = guard.check_path(root, destination)
-    if not _supports_anchoring():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        guard.check_path(root, path)
-        with tempfile.NamedTemporaryFile('w', dir=path.parent, encoding='utf-8', newline='\n',
-                                         prefix='.s2c-', delete=False) as stream:
-            temp = Path(stream.name)
-            stream.write(content)
-        try:
-            guard.check_path(root, path)
-            os.replace(temp, path)
-        finally:
-            temp.unlink(missing_ok=True)
-        return
     with _parent_fd(root, path, create=True) as (fd, name):
         try:
             old = os.stat(name, dir_fd=fd, follow_symlinks=False)
@@ -114,12 +117,6 @@ def append_text(root: Path, destination: Path | str, content: str) -> None:
     """Append through O_NOFOLLOW using an anchored parent on supported systems."""
     root = _verified_local_root(root)
     path = guard.check_path(root, destination)
-    if not _supports_anchoring():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        guard.check_path(root, path)
-        with path.open('a', encoding='utf-8', newline='\n') as stream:
-            stream.write(content)
-        return
     with _parent_fd(root, path, create=True) as (fd, name):
         out = os.open(name, os.O_WRONLY | os.O_APPEND | os.O_CREAT | os.O_NOFOLLOW,
                       0o600, dir_fd=fd)
@@ -135,12 +132,6 @@ def unlink_verified(root: Path, target: Path | str, expected_sha256: str) -> Non
     """Remove an exact, hash-verified file, never following a symlink."""
     root = _verified_local_root(root)
     path = guard.check_path(root, target)
-    if not _supports_anchoring():
-        if not path.is_file() or path.is_symlink() or hashlib.sha256(path.read_bytes()).hexdigest() != expected_sha256:
-            raise RuntimeError('SCOPE_VIOLATION: pending file changed before deletion')
-        guard.check_path(root, path)
-        path.unlink()
-        return
     with _parent_fd(root, path, create=False) as (fd, name):
         handle = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=fd)
         with os.fdopen(handle, 'rb') as stream:
@@ -163,17 +154,12 @@ def read_bytes(root: Path, target: Path | str, *, max_bytes: int = 4 * 1024 * 10
     """Read a single regular file without following symlinks (POSIX anchored)."""
     root = _verified_local_root(root)
     path = guard.check_path(root, target)
-    if not _supports_anchoring():
-        guard.check_path(root, path)
-        with path.open('rb') as stream:
+    with _parent_fd(root, path, create=False) as (fd, name):
+        handle = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=fd)
+        with os.fdopen(handle, 'rb') as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise RuntimeError('PATH_GUARD_BLOCKED: read target is not regular file')
             raw = stream.read(max_bytes + 1)
-    else:
-        with _parent_fd(root, path, create=False) as (fd, name):
-            handle = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=fd)
-            with os.fdopen(handle, 'rb') as stream:
-                if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
-                    raise RuntimeError('PATH_GUARD_BLOCKED: read target is not regular file')
-                raw = stream.read(max_bytes + 1)
     if len(raw) > max_bytes:
         raise RuntimeError('SCOPE_VIOLATION: read cap exceeded')
     return raw

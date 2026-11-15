@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from platform_support import requires_anchored_io
 
 SCRIPTS = Path(__file__).resolve().parents[1] / 'scripts'
 sys.path.insert(0, str(SCRIPTS))
@@ -185,6 +186,7 @@ class RepositoryBoundaryTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):
             path_guard.check_path(self.repo, 'src/link/keep.txt')
 
+    @requires_anchored_io
     def test_cache_document_path_escape_rejected(self):
         started = self.cli('session_guard.py', self.repo, 'start')
         self.assertEqual(started.returncode, 0, started.stderr)

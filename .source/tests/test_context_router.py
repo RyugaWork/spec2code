@@ -1,10 +1,12 @@
 """Adaptive mode tests. Synthetic source and metadata; no remote or LLM calls."""
 from pathlib import Path
 import json
+import os
 import subprocess
 import sys
 import tempfile
 import unittest
+from platform_support import requires_anchored_io
 from unittest.mock import patch
 
 ROOT_SCRIPTS=Path(__file__).resolve().parents[1]/'scripts'
@@ -13,6 +15,7 @@ import context_router as router
 import path_guard as guard
 
 
+@requires_anchored_io
 class AdaptiveModeTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory(prefix='spec2code-adaptive-')
@@ -33,7 +36,7 @@ class AdaptiveModeTests(unittest.TestCase):
         self.git('commit','-qm','chore: baseline')
         head=self.git('rev-parse','HEAD')
         self.write_json('.agents/state/session.json',{'id':'S2C-TEST','status':'ACTIVE', 'last_seen_head':head,'outside_paths':[], 'repository_binding': guard.capture_scope(self.root)})
-        self.write_json('.agents/state/infrastructure.json',{'git':{'head':head[:12]},'files':{p:{'sha256':'test'} for p in self.paths}})
+        self.write_json('.agents/state/infrastructure.json',{'git':{'head':head[:12]},'files':{p:router.infra.describe_file(self.root, Path(p), None, True) for p in self.paths}})
         self.write_json('.agents/state/system-graph.json', {'nodes':[{'id':i} for i in ['presentation','api','application','security','quality']],
            'edges':[{'from':'presentation','to':'api'},{'from':'api','to':'application'},{'from':'api','to':'security'}, {'from':'quality','to':'api'}]})
         self.write_json('.agents/state/symbol-cache.json', {self.paths[0]:{'functions':[{'name':'Status','line':1}]}, self.paths[1]:{'functions':[{'name':'Login','line':1}]},self.paths[2]:{'functions':[{'name':'GetMember','line':1}]}})
@@ -98,6 +101,16 @@ class AdaptiveModeTests(unittest.TestCase):
         (self.root/self.paths[0]).write_text('changed uncommitted source!')
         with self.assertRaisesRegex(RuntimeError,'STALE_SOURCE_METADATA'):
             router.route(self.root,'TASK-X','Update Status label',[self.paths[0]],'','auto',0)
+
+    def test_same_size_same_mtime_source_change_is_blocked(self):
+        path = self.root / self.paths[0]
+        before = path.stat()
+        path.write_bytes(b'x' * before.st_size)
+        os.utime(path, ns=(before.st_atime_ns, before.st_mtime_ns))
+        self.assertEqual(path.stat().st_mtime_ns, before.st_mtime_ns)
+        with self.assertRaisesRegex(RuntimeError, 'STALE_SOURCE_CONTENT'):
+            router.route(self.root, 'TASK-X', 'Update Status label', [self.paths[0]], '', 'auto', 0)
+        self.assertFalse((self.root / router.PACK).exists())
 
     def test_stale_git_head_is_blocked(self):
         (self.root/'README.md').write_text('new commit')

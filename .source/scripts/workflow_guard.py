@@ -24,6 +24,7 @@ import governance_schema as schema
 import path_guard
 import policy_resolver
 import scope_io
+import speckit_bridge
 
 CFG = config_loader.load("workflow")
 PATHS = {name: Path(value) for name, value in CFG["paths"].items()}
@@ -148,21 +149,13 @@ def _source_snapshot(root: Path, req: WorkflowRequest) -> str:
         refs.update(item["path"] for item in route["candidate_documents"])
         reasons.extend(operation + ":" + reason for reason in
                        route["blocking_reasons"] + route["review_reasons"])
-    pointer = path_guard.check_path(root, ".specify/feature.json")
-    if pointer.is_file():
-        try:
-            data = json.loads(scope_io.read_bytes(
-                root, pointer, max_bytes=8192).decode("utf-8"))
-            feature = data["feature_directory"] if isinstance(data, dict) else None
-            if not isinstance(feature, str) or not feature.startswith("specs/"):
-                raise ValueError("invalid active feature")
-            schema.safe_path(feature, suffixes=())
-            if not path_guard.check_path(root, feature).is_dir():
-                raise ValueError("missing active feature")
-        except (OSError, RuntimeError, ValueError, KeyError, UnicodeError) as err:
-            raise RuntimeError("WF_INPUT_INVALIDATED") from err
-        refs.update(f"{feature}/{name}" for name in
-                    ("spec.md", "plan.md", "tasks.md"))
+    try:
+        feature = speckit_bridge.active_feature(root)
+    except (OSError, RuntimeError, ValueError) as err:
+        raise RuntimeError("WF_INPUT_INVALIDATED") from err
+    if feature is not None:
+        refs.update((feature / name).relative_to(root).as_posix()
+                    for name in speckit_bridge.ARTIFACTS)
     result = []
     for rel in sorted(refs):
         path = path_guard.check_path(root, rel)

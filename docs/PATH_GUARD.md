@@ -74,3 +74,9 @@ The PLAN-111 GetFileAttributesW reparse check is a **preflight rejection control
 Two candidate treatment paths need security review: (1) restricted/disposable OS sandbox plus unprivileged runner and independently protected outside-root sentinels; or (2) fully audited Windows handle-based IO with parent identity binding, reparse handling, cancellation and adversarial regression. FILE_FLAG_OPEN_REPARSE_POINT affects opening of links but does not by itself make all later path-based operations safe. Reject unsupported host/volume variants rather than silently falling back. Preserve legacy sessions and exact existing work; any migration needs separate authorization.
 
 Actual acceptance uses [existing negative-test variants](../.agents/.workflow/testingAndDelivery.md#plan-112--windows-hostile-host-acceptance-specification-existing-l1-scl1-wf-ids) and [risk record](../.agents/.riskMatrix.md#plan-112--rm-001-windows-toctou-threat-and-host-decision-matrix-2026-11-15). If a race is not triggered the result is INCONCLUSIVE, not an observed security PASS. During this Phase-A work the policy is documentation guidance, NOT a deployed interception in .source/scripts/scope_io.py; an executing host must enforce OS permissions independently.
+
+## Targeted runtime fail-closed candidate
+
+Managed file reads, replacements, appends and verified deletions require directory-relative no-follow I/O. When the runtime lacks that capability, including native Windows Python, Scope IO returns `SCOPE_VIOLATION: anchored filesystem I/O unavailable` before managed file access. Existing sessions and generated files may require reopening from a supported environment. An environment variable or a successful Windows path check cannot enable the retired fallback.
+
+The hostile Windows host acceptance cases remain `BLOCKED_HOST / NOT_RUN`. Ordinary Windows denial tests and Linux anchored I/O regression provide separate evidence.

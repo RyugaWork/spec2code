@@ -82,3 +82,7 @@ A reviewer should first report which documents and external tools were available
 ## PLAN-114 — Agent reviewer entrypoint
 
 For S2C agent-mediated code review, use [root AGENTS](../../AGENTS.md#plan-114--codex--gemini-reviewer-operating-policy-agent-integrated-runtime-gated), [roles](agentRoles.md#plan-114--codex-and-gemini-reviewer-roles), [runbook](agentRunbook.md#plan-114--codex-completion-and-gemini-review-protocol), [existing-phase workflow](workflowSpecification.md#plan-114--gemini-reviewer-attached-to-existing-verify-checkpoint), and [single AGY CLI guide](../../docs/ANTIGRAVITY_GEMINI_REVIEWER.md#8-plan-114--codex-to-gemini-agent-contract). This documents the optional F38–F42 integration, not a deployed queue/hook/OS sandbox. A.1 NOT_RUN, broad B_NOT_AUTHORIZED, RM-001 P0 OPEN.
+
+## PLAN-115 — Feature and VMware trace entrypoint
+
+Begin with [canonical feature relation RTM W](../.traceMatrix.md#w-plan-115--cross-feature-relationship-and-orphan-edge-audit-2026-11-16), [VMware runbook](../../docs/VMWARE_SECURITY_VALIDATION.md), [workflow](workflowSpecification.md#plan-115--controlled-vmware-test-lab-workflow-design), [cases](testingAndDelivery.md#plan-115--vmware-host-and-command-case-matrix), [risk](../.riskMatrix.md#plan-115--vmware-threat-impact-crosswalk) and [plan](../.plans.md#plan-115--relationship-matrix-vmware-and-data-hygiene). VM tests/host owner/A.1 NOT_RUN.

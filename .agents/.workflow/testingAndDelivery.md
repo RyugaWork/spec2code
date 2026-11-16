@@ -252,3 +252,20 @@ These six **DESIGNED/NOT_RUN** cases AGY-TC-09..14 extend PLAN-113 AGY-TC-01..08
 | AGY-TC-14 | Compare stateless/streaming and model tiers on identical approved fixtures | Precision/recall/P0 recall, false positives, actual token/cache, p50/p95 latency, quota/cost uncertainty measured | NOT_RUN |
 
 Evidence: exact source+policy/requirements hashes, actual installed Codex/AGY versions, owner data scope, OS permissions and synthetic canary pre/post, observed tool events/exit/JSON/usage, reviewer identity, risk and result. Missing security test host ⇒ BLOCKED/NOT_RUN, never PASS. [Runbook](agentRunbook.md#plan-114--codex-completion-and-gemini-review-protocol).
+
+## PLAN-115 — VMware host and command case matrix
+
+These are **DESIGNED / NOT_RUN**, not additional executed F43–F64 or AGY cases. Existing L1-SC01-A/B/C, L1-SC02-A and L1-SC03-A are reused without duplication. [Operator contract](../../docs/VMWARE_SECURITY_VALIDATION.md).
+
+| Case | Test fixture/observable | Reused feature/risk | Result |
+| --- | --- | --- | --- |
+| VM-TC-01 | Installed vmrun absolute path, version, signature/hash, help/operation syntax | F08/F10/F31, RM-032 | NOT_RUN |
+| VM-TC-02 | Unknown argv/VMX/shell command injection denied before invocation | F04/F10/F44/F48, RM-043 | NOT_RUN |
+| VM-TC-03 | Shared folder/clipboard/network/USB enabled → hostile test blocked | F15/F18/F52, RM-001 | NOT_RUN |
+| VM-TC-04 | Distinct evaluator/test actor; both outside-root read and write denied; positive in-root control | F04/F09/F15/F36, RM-001 | NOT_RUN |
+| VM-TC-05 | Approved snapshot revert cannot erase independently protected evidence | F05/F06/F37, RM-005 | NOT_RUN |
+| VM-TC-06 | Timeout/guest failure/credential absence → bounded cancellation and secret-safe log | F10/F18/F48, RM-031 | NOT_RUN |
+| VM-TC-07 | Untrusted public CI workflow cannot dispatch host VMware authority | F19/F20/F50, RM-043 | NOT_RUN |
+| VM-TC-08 | Changed source/VM/Gemini SUCCESS cannot promote stale evidence to A.1/B.1 PASS | F17/F36/F41/F42, RM-003/041 | NOT_RUN |
+
+Require source SHA, actual guest/VMX/CLI, separate actor identities/ACL, operation argv, OS event/audit, truly triggered race, before/after canary and read sentinel, original exit/stdout/stderr, bounded deadline, independent evidence owner, risk disposition and exact handoff. Missing isolation = BLOCKED, untriggered race = INCONCLUSIVE, not PASS.

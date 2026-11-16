@@ -164,3 +164,20 @@ Reuse **five existing machine phases**; do not add workflow enum, STOP status or
 | HANDOFF_REVIEW | Validate findings, source freshness, risk/RTM and test evidence | No automatic acceptance, independent human gate remains required |
 
 Future logical reviewer report values `REVIEW_NOT_DISPATCHED, REVIEW_BLOCKED, QUEUED, RUNNING, REVIEWED_NO_FINDINGS, FINDINGS, INCONCLUSIVE, STALE, CANCELED` are **not** Workflow Guard states. A Codex notify event may be used to propose checking task completion only when the installed Codex version advertises it; don't dispatch blindly per turn. No synchronous review on Codex's critical path. If source/policy/Spec Kit changes, invalidate the affected review; P0 blocks dependent acceptance. Apply bounded queue, concurrency=1, timeout/cancel/retry limits, exact-source handoff. [Runbook](agentRunbook.md#plan-114--codex-completion-and-gemini-review-protocol).
+
+## PLAN-115 — Controlled VMware test-lab workflow (design)
+
+This is an external test harness, **not** a new machine phase, activated daemon, source adapter or authorization. [Full command/VM runbook](../../docs/VMWARE_SECURITY_VALIDATION.md); [cases](testingAndDelivery.md#plan-115--vmware-host-and-command-case-matrix).
+
+| Gate | Executor and requirement | Failure route |
+| --- | --- | --- |
+| VM-G0 | S2C verifies task ID, source SHA, owner, permitted effects/budget | Unknown task/authority → STOP |
+| VM-G1 | Local controller discovers installed vmrun/version/help/signature/hash, approved VMX | Unknown/ambiguous binary or syntax → STOP |
+| VM-G2 | Independent evaluator verifies guest/host isolation, actual ACL, protected canaries | Host shares/unenforced OS boundary → BLOCKED_HOST |
+| VM-G3 | Owner pins disposable VM snapshot and fixture; preserves old evidence | No approved snapshot/ownership → STOP |
+| VM-G4 | Bounded allowlisted synthetic L1-SC tests, single writer and cancellation | Any escape/P0/timeout → STOP, quarantine |
+| VM-G5 | Evaluator captures OS audit, actual trigger, logs and canary evidence outside restore scope | Missing read proof/non-triggered race → INCONCLUSIVE |
+| VM-G6 | Security Owner decides RM-001; independent A.1 reviewer uses exact Git/Google revisions | No self-approval; B not authorized |
+| VM-G7 | Recover only after evidence preservation and owner-approved restore/quarantine | Never auto-delete unknown host/guest data |
+
+Existing five Workflow Guard phases stay unchanged. Public-repository GitHub Actions remain ordinary hosted CI/mock tasks; a future separately approved outbound local controller is preferable to a public-repo privileged self-hosted shell runner. Gemini reads only redacted evidence after OS isolation, cannot launch vmrun or sign A.1.

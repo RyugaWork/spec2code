@@ -5,11 +5,13 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from platform_support import requires_anchored_io
 
 SCRIPTS = Path(__file__).resolve().parents[1] / 'scripts'
 GUARD = SCRIPTS / 'session_guard.py'
 
 
+@requires_anchored_io
 class SessionGuardTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='spec2code-session-test-')

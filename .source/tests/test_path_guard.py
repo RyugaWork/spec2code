@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from platform_support import requires_anchored_io
 
 SCRIPTS = Path(__file__).resolve().parents[1] / 'scripts'
 sys.path.insert(0, str(SCRIPTS))
@@ -185,6 +186,7 @@ class RepositoryBoundaryTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):
             path_guard.check_path(self.repo, 'src/link/keep.txt')
 
+    @requires_anchored_io
     def test_cache_document_path_escape_rejected(self):
         started = self.cli('session_guard.py', self.repo, 'start')
         self.assertEqual(started.returncode, 0, started.stderr)
@@ -248,6 +250,17 @@ class RepositoryBoundaryTests(unittest.TestCase):
         self.assertEqual(path_guard.validate_root(extra), extra)
         out = self.cli('session_guard.py', extra, 'status')
         self.assertEqual(out.returncode, 0, out.stderr)
+
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows all-reparse-point guard')
+    def test_windows_non_junction_reparse_attribute_is_denied(self):
+        from unittest.mock import patch
+        suspect = self.repo / 'src'
+        with patch.object(path_guard, '_windows_reparse',
+                          side_effect=lambda part: part == suspect):
+            with self.assertRaisesRegex(RuntimeError, 'PATH_GUARD_BLOCKED'):
+                path_guard.check_path(self.repo, 'src/app.py')
+        self.assertEqual((self.outside / 'keep.txt').read_text(), 'DO-NOT-TOUCH')
 
 
 if __name__ == '__main__':

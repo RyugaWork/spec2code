@@ -94,3 +94,19 @@ Official sources checked for **dated examples**: [Microsoft .NET support policy]
 `S2C-NFR-008`/`S2C-NAC-008`: **any new technology/major-version/project-structure recommendation for S2C or a host** must be supported by maturity, community adoption, maintenance, compatibility, permission and documented alternative/override evidence. The **explicit user override** can replace the conservative default, but not bypass host security/authority.
 
 This is a **Markdown-based agent contract**, not automatic version scanning or a configured runtime veto: `workflow_guard.py`, `policy_resolver.py` and `config_loader.py` currently do not implement this choice logic. Only a separately approved B-phase implementation could add code-level enforcement. RTM: [system matrix](../.traceMatrix.md); risk: [scored matrix](../.riskMatrix.md); reviews: [validation specification](../.workflow/validationSpecification.md).
+
+## DOC-B03 — Verifiable support and version decision method
+
+For every proposed Python, PowerShell, SQL engine/driver/dialect, .NET, JS/TS runtime, framework, SDK or OS, collect the **official maintainer lifecycle reference**, exact major/minor/patch, checked date, supported platform matrix, maintained security patch stream, compatibility with dependencies and test runner, and migration/rollback effort. Distinguish (a) safe patch within a selected supported major, (b) a newly GA but unproven major, (c) preview/RC, and (d) EOL. Never hardcode a universal preferred version or reuse an old source citation as present support evidence.
+
+Conservative default means proven, supported and commonly adopted **at the task date**; an explicit user `OVR-ID` may select a newer stable or nonstandard structure within their scope. Unsupported/EOL or incompatible targets remain BLOCKED until risk-owner decisions and applicable verification, even if requested; no override waives path confinement, data safety, independent A.1/B.1 or observed regression tests. This document only governs recommendations until separately implemented and tested.
+
+## PLAN-110 / Z07 — Maintainer-official compatibility review
+
+When selecting a Python runtime, .NET LTS, Node/JS toolchain, Java release, PowerShell, PostgreSQL/T-SQL server/driver or C/C++ compiler, reference the responsible **maintainer's current supported-version and coding/style guidance**. Record checked date, exact supported release, lifecycle, patch policy, binary/toolchain compatibility, host OS and project acceptance evidence. Avoid a global hardcoded “latest stable” rule, as newer GA majors or preview builds may conflict with user/project constraints.
+
+The default is a mature supported compatible release, while an explicit user override may choose a different version or layout with recorded risk, testing and rollback. An override does not waive host sandbox, privacy, Path Guard, official format/lint requirements, P0 controls or independent authorization. No platform release availability or migration test is independently confirmed by this document-only pass.
+
+## APP-20261114 — Requester approval of version-selection policy only
+
+APP-06 approves the **policy** of choosing officially maintained, widely supported and compatible technology/tool versions and following official maintainer coding conventions, with an explicit user override workflow. This is recorded in the [canonical owner decision register](systemSpecificationPlan.md). APP-06 does **not** fix .NET/Python/Node/Java/PowerShell/SQL to an assumed version, approve a new preview/EOL dependency or authorize migration. Each implementation/host decision still requires current maintainer support evidence, compatibility review, versioned override reference if used, risk disposition and actual tests. No user override is inferred merely because the policy allows one.

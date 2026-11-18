@@ -9,6 +9,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from platform_support import requires_anchored_io
+from unittest.mock import patch
 
 SCRIPTS = Path(__file__).resolve().parents[1] / 'scripts'
 sys.path.insert(0, str(SCRIPTS))
@@ -61,6 +63,7 @@ class ContinuousScopeTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, 'SCOPE_VIOLATION'):
             path_guard.assert_scope(self.root, token)
 
+    @requires_anchored_io
     def test_session_status_denies_missing_binding(self):
         p = self.root / '.agents/state/session.json'
         p.parent.mkdir(parents=True)
@@ -68,6 +71,7 @@ class ContinuousScopeTests(unittest.TestCase):
         res = self.cli('status', success=False)
         self.assertIn('SCOPE_VIOLATION', res.stderr)
 
+    @requires_anchored_io
     def test_checkpoint_invalidates_old_context_pack_on_new_commit(self):
         self.cli('start')
         pack = self.root / '.agents/state/context-pack.json'
@@ -80,6 +84,7 @@ class ContinuousScopeTests(unittest.TestCase):
         state = json.loads((self.root / '.agents/state/session.json').read_text())
         self.assertEqual(state['last_seen_head'], self.git('rev-parse', 'HEAD'))
 
+    @requires_anchored_io
     def test_scope_atomic_write_rejects_symlink_and_foreign_root(self):
         target = self.root / 'src/escape.txt'
         try:
@@ -92,14 +97,42 @@ class ContinuousScopeTests(unittest.TestCase):
             scope_io.atomic_text(self.root, self.other / 'keep.txt', 'BROKEN')
         self.assertEqual((self.other / 'keep.txt').read_text(), 'KEEP')
 
+    @unittest.skipIf(scope_io.supports_anchoring(), 'requires unsupported native host')
+    def test_session_start_fails_closed_without_publishing(self):
+        for action in ('start', 'start --verify'):
+            with self.subTest(action=action):
+                result = self.cli(*action.split(), success=False)
+                self.assertIn('anchored filesystem I/O unavailable', result.stderr)
+                self.assertFalse((self.root / '.agents/state').exists())
+                self.assertFalse((self.root / 's2c').exists())
+
+    def test_unanchored_io_is_denied_before_path_access(self):
+        target = self.root / 'src/example.py'
+        before = target.read_bytes()
+        with patch.object(scope_io, 'supports_anchoring', return_value=False), \
+             patch.object(scope_io.guard, 'check_path', side_effect=AssertionError('path accessed')):
+            for action, args in (
+                (scope_io.read_bytes, ()),
+                (scope_io.atomic_text, ('replacement',)),
+                (scope_io.append_text, ('append',)),
+                (scope_io.unlink_verified, (hashlib.sha256(before).hexdigest(),)),
+            ):
+                with self.subTest(action=action.__name__), self.assertRaisesRegex(
+                    RuntimeError, 'anchored filesystem I/O unavailable'
+                ):
+                    action(self.root, target, *args)
+        self.assertEqual(target.read_bytes(), before)
+
+    @requires_anchored_io
     def test_scope_atomic_write_append_and_read(self):
         dst = self.root / 'src/new/sub/path.txt'
         scope_io.atomic_text(self.root, dst, 'first\n')
         scope_io.append_text(self.root, dst, 'second\n')
         self.assertEqual(scope_io.read_bytes(self.root, dst), b'first\nsecond\n')
         if os.name == 'posix':
-            self.assertTrue(scope_io._supports_anchoring())
+            self.assertTrue(scope_io.supports_anchoring())
 
+    @requires_anchored_io
     def test_verified_unlink_exact_hash_only(self):
         target = self.root / '.agents/.handoffs/.details/pending.md'
         scope_io.atomic_text(self.root, target, 'session-log')
@@ -109,6 +142,7 @@ class ContinuousScopeTests(unittest.TestCase):
         scope_io.unlink_verified(self.root, target, hashlib.sha256(b'session-log').hexdigest())
         self.assertFalse(target.exists())
 
+    @requires_anchored_io
     def test_read_blocked_for_symlink_and_oversize(self):
         try:
             (self.root / 'src/unsafe.txt').symlink_to(self.other / 'keep.txt')
@@ -140,6 +174,7 @@ class ContinuousScopeTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, 'SCOPE_VIOLATION'):
             host.authorize('record_change', {'paths': ['src/.env']})
 
+    @requires_anchored_io
     def test_mcp_write_requires_matching_session_and_fresh_head(self):
         host = mcp_boundary.MCPWorkspaceBoundary(self.root, allow_write=True)
         self.cli('start')
@@ -161,6 +196,7 @@ class ContinuousScopeTests(unittest.TestCase):
         self.assertEqual(host.authorize('record_change', {'session_id': session}).action,
                          'record_change')
 
+    @requires_anchored_io
     def test_mcp_rejects_active_second_session(self):
         host = mcp_boundary.MCPWorkspaceBoundary(self.root, allow_write=True)
         self.cli('start')

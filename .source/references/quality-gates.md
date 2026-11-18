@@ -28,3 +28,9 @@ Use as a review checklist; report `PASS`, `FAIL`, `BLOCKED`, or `NOT RUN` with e
 - [ ] Database migration/backfill, regression and rollback reviewed when relevant.
 - [ ] `checkpoint` run after incoming commits; `finish` succeeded without unclassified final paths. No unauthorized Git action, silent business approval, secrets commit or version bump.
 - [ ] Handoff lists files changed, unresolved blockers, evidence and exact Git status.
+
+## PLAN-109 / M03 — Evidence-aware gate aggregation
+
+Compute a quality gate from **mandatory applicable checks**, each with source SHA, owner, case ID, observed or merely designed status, and evidence reference. A green lint/static result cannot substitute for a missing business AC, a failed Path Guard negative sentinel, a provider quota denial or an unexecuted system test. Use `PASS` only if all required checks are observed PASS for the current source; `FAIL` for actual deviation; `BLOCKED` for missing approval/security; and `NOT_RUN` for absent execution.
+
+Distinct gates: author-side documentation completeness, independent A.1, separately authorized implementation, B.1 host acceptance and release. The skill may prepare/review a packet but cannot self-sign any external gate. Report scope and any waived check with authenticated owner evidence; never calculate a percentage that excludes blocked cases without disclosure.

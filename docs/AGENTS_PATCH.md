@@ -29,3 +29,9 @@ Spec2Code's dev [AGENTS contract](../AGENTS.md) and [role runbook](../.agents/.w
 ## Optional STOP/handoff clause for a reviewed host AGENTS
 
 If approved by the host owner, add a host-specific clause requiring the agent to honor `STOP` at any phase, preserve incomplete source/session state, and create a bounded state snapshot using the installed `references/stop-handoff-template.md`. The handoff must show `PERSISTED` with a verified safe destination or `NOT_PERSISTED` with an in-chat copy. Never overwrite machine pending logs or imply that today's `workflow_guard.py` supports PAUSED/RESUME. A future RESUME request revalidates current host AGENTS, requirements, checkout, session, drift and authorization before further edits. This clause does not give the agent write permission.
+
+## PLAN-107 / S04 — Host AGENTS patch adoption contract
+
+This file is a **human-reviewed suggestion** for a host repository, never an instruction to overwrite its AGENTS. Adoption requires the host owner to inspect its existing root/nested AGENTS precedence, source license, security policy, working-tree changes and selected clauses. Generate a non-mutating proposed diff first; a write needs explicit path-specific approval, current HEAD lease and independent OS containment when executed locally.
+
+Mandatory host text: protect unrelated files, deny unapproved remote/model exfiltration, bound shell/process work, preserve external sentinels, name STOP/handoff output and re-check scope on RESUME. Include a conflict table when S2C guidance disagrees with host policy; the host/security rule wins, and the proposal stays `BLOCKED` until reconciled. A GitHub Markdown example is not a successfully installed host guard.

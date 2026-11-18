@@ -11,6 +11,17 @@ import os
 from pathlib import Path, PureWindowsPath
 import subprocess
 import config_loader
+from functools import lru_cache
+
+
+@lru_cache(maxsize=1)
+def _get_windows_attributes():
+    import ctypes
+    api = ctypes.WinDLL("kernel32", use_last_error=True).GetFileAttributesW
+    api.argtypes = (ctypes.c_wchar_p,)
+    api.restype = ctypes.c_uint32
+    return api
+
 
 # Bundled security-sensitive paths are externalized, but the mandatory parent
 # boundaries stay hardcoded so modifying config cannot remove containment.
@@ -46,7 +57,7 @@ def check_path(root: Path, value: str | Path) -> Path:
     dest = root
     for part in parts:
         dest = dest / part
-        if dest.is_symlink() or (hasattr(dest, 'is_junction') and dest.is_junction()):
+        if _unsafe_link(dest):
             raise RuntimeError('PATH_GUARD_BLOCKED: symlink or junction in repository path')
     if not dest.resolve(strict=False).is_relative_to(root.resolve()):
         raise RuntimeError('PATH_GUARD_BLOCKED: resolved path outside repository')
@@ -58,10 +69,32 @@ def git_env() -> dict[str, str]:
     return {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
 
 
+def _windows_reparse(path: Path) -> bool:
+    """Reject any Windows reparse point, not only junctions and symlinks.
+
+    Detects cloud placeholder/reparse file attributes as well. A concurrent
+    hostile directory swap still requires OS isolation or handle-relative IO.
+    """
+    if os.name != "nt":
+        return False
+    import ctypes
+    attributes = _get_windows_attributes()(str(path))
+    if attributes == 0xFFFFFFFF:
+        if ctypes.get_last_error() in (2, 3):
+            return False
+        raise RuntimeError("PATH_GUARD_BLOCKED: Windows attribute query failed")
+    return bool(attributes & 0x400)
+
+
+def _unsafe_link(path: Path) -> bool:
+    return (path.is_symlink() or
+            (hasattr(path, "is_junction") and path.is_junction()) or
+            _windows_reparse(path))
+
+
 def _has_reparse_ancestor(path: Path) -> bool:
-    """Reject links/junctions, not harmless Windows 8.3/case aliases."""
-    return any(part.is_symlink() or (hasattr(part, 'is_junction') and part.is_junction())
-               for part in (path, *path.parents))
+    """Reject any linked/reparse ancestor without rejecting case/8.3 aliases."""
+    return any(_unsafe_link(part) for part in (path, *path.parents))
 
 
 def validate_root(root_input: str | Path) -> Path:

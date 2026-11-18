@@ -53,3 +53,15 @@ The current workflow configuration has no `PAUSED` enum and `workflow_guard.py` 
 ## PLAN-085 STOP during validation
 
 The [A.1/B.1 validation loops](validationSpecification.md) can be stopped without converting a half-completed check to PASS. A stopped A.1 report preserves design/source revisions, checks performed, reviewer availability, risk and the exact A stage to revisit; a stopped B.1 report preserves implementation/artifact SHA, test environment, failing/untested cases and next B/A owner. Use the [validation report template](validationReportTemplate.md), mark `BLOCKED` or `NOT_RUN` as applicable and write a non-overwriting, verified handoff or `NOT_PERSISTED` in chat. Neither validation stop maps to machine Workflow Guard `close`, `session_guard finish` or an invented PAUSED value.
+
+## DOC-B01 — Durable STOP / RESUME record and uncertain persistence
+
+At interruption, first **cease new mutations**; cancel/mark any outstanding tool call without assuming it stopped; capture the last *observed* source SHA, task/policy/approval scope, changed and protected paths, incomplete attempts, test/status evidence, risk and owner decisions. Persist a new immutable handoff only to a verified allowed path when that write is authorized; on failure say `NOT_PERSISTED` and provide the exact attempted location/error in the response. Do **not** clear journals, close Workflow Guard, merge changes, or fabricate an atomic transaction.
+
+On RESUME, resolve actual branch/working-tree state and pre-existing edits, re-hash the current spec/plan/AGENTS/policy/feature pointer, check any pending action outcome, then decide `CONTINUE|REPLAN|BLOCK`. If the input drifted, invalidate affected acceptance evidence, preserve both source versions and return to the earliest impacted stage. A GitHub handoff certifies only remote persistence, never local sandbox/OS integrity.
+
+## PLAN-107 / S08 — Half-written handoff recovery acceptance
+
+A trustworthy handoff must be attributable to a session/task, source/policy SHA and actor, and either **fully persisted** or explicitly `NOT_PERSISTED`. For a future local host, write to an approved temporary file, validate the serialized fields/checksum, then use a trusted atomic replacement when supported; never assume a network drive provides local POSIX atomicity. On a GitHub connector, require branch lease/parent check, commit plus readback before marking persistence.
+
+Test a failure between planning and writing, a failed write, an interrupted rename, a remote branch move and a source revision change on RESUME. Expected behavior: existing handoffs preserved, no false success, no deletion of unknown files, typed STOP result and revalidation of pending operations. These tests remain a proposed negative-case plan, not an observed filesystem recovery claim.

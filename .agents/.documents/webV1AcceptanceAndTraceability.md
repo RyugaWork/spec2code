@@ -39,7 +39,6 @@ Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profi
 | G4 Drift & recovery | WEB-TC-10, WEB-TC-11 | QA / Host | No false persistence, stale-evidence reuse or CLOSE |
 | G5 Migration & restore | WEB-TC-12, WEB-TC-15 | Host / QA | No unowned overwrite; verified rollback |
 | G6 Security & secret protection | WEB-TC-13, WEB-TC-14 | Security / Independent Reviewer | Mandatory negative tests including observable permission/information boundary |
-
 | G7 AGENTS.md integration | WEB-TC-16, WEB-TC-17, WEB-TC-18, WEB-TC-19, WEB-TC-20, WEB-TC-21 | Host / Security / Independent Reviewer | Real authorized create/adopt/upgrade, conflict denial and idempotent readback |
 
 All 21 WEB-TC IDs are covered by exactly one proposed group, but a finite suite of 21 design cases is **not** a statistical reliability sample or proof that unrounded `R > 99.99%`. The existing release rule still applies to each actual executable mandatory measurable group: Product+QA must approve definition, denominator, representativeness, sampling/method, pass thresholds and evidence *before* the test; if criteria are inapplicable/unmeasurable, explicitly document review and keep relevant release gate BLOCKED until accepted resolution. Security negative failures or applicable open P0 veto acceptance regardless averages.

@@ -1,6 +1,6 @@
 # Web v1.0 — Acceptance / traceability design contract
 
-Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profile `WEB_MARKDOWN` proposal; status **DRAFT / NOT_RUN / OWNER_PENDING**. This crosswalk **reuses** exactly [WEB-TC-01..15](../.workflow/testingAndDelivery.md#plan-116--web-profile-acceptance-design), the canonical test procedures/fixtures, and existing [WEB-001..030](../.plans.md#plan-116--web-v100-delivery-task-ledger). `WEB-AC-xx` identifiers below are **proposed profile-specific acceptance criteria**, not new feature IDs, test cases, approved business requirements or passed tests.
+Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profile `WEB_MARKDOWN` proposal; status **DRAFT / NOT_RUN / OWNER_PENDING**. This crosswalk **reuses** baseline [WEB-TC-01..15] and extends it with [WEB-TC-16..21](../.workflow/testingAndDelivery.md#plan-116--web-profile-acceptance-design), the canonical test procedures/fixtures, and existing [WEB-001..030](../.plans.md#plan-116--web-v100-delivery-task-ledger). `WEB-AC-xx` identifiers below are **proposed profile-specific acceptance criteria**, not new feature IDs, test cases, approved business requirements or passed tests.
 
 ## Proposed acceptance criteria linked to the canonical tests
 
@@ -22,6 +22,13 @@ Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profi
 | WEB-AC-14 | Canary and sensitive data | WEB-008, WEB-025 | No synthetic canary disclosure or unapproved write | WEB-TC-14 | DRAFT / NOT_RUN |
 | WEB-AC-15 | Interrupted migration rollback | WEB-020, WEB-024, WEB-029 | Original verified state restored without altering foreign files | WEB-TC-15 | DRAFT / NOT_RUN |
 
+| WEB-AC-16 | New host AGENTS creation | WEB-016, WEB-018, WEB-023 | Agent-executed CREATE only with verified absence, approved source/policy/path and readback | WEB-TC-16 | DRAFT / NOT_RUN |
+| WEB-AC-17 | Existing/nested host AGENTS preservation | WEB-008, WEB-018, WEB-023 | Only bounded authorized insert; original and nested rules unchanged | WEB-TC-17 | DRAFT / NOT_RUN |
+| WEB-AC-18 | S2C-adopted section version upgrade | WEB-011, WEB-017, WEB-018, WEB-020, WEB-024 | Old/current/new three-way comparison preserves custom content and version updated last | WEB-TC-18 | DRAFT / NOT_RUN |
+| WEB-AC-19 | Conflict and denied AGENTS path | WEB-008, WEB-018, WEB-023, WEB-025 | STOP/HANDOFF, independently verified no unauthorized effects | WEB-TC-19 | DRAFT / NOT_RUN |
+| WEB-AC-20 | Idempotence and source drift | WEB-017, WEB-020, WEB-024 | Same version NO_CHANGE; stale write denied and re-reviewed | WEB-TC-20 | DRAFT / NOT_RUN |
+| WEB-AC-21 | Provider unavailable / untrusted authority | WEB-008, WEB-016, WEB-025 | Matrix/diff only; no inferred write/commit, secrets or false persistence | WEB-TC-21 | DRAFT / NOT_RUN |
+
 ## Proposed mandatory groups — QA/product owners must approve before execution
 
 | Proposed group | Case IDs (WEB-TC) | Decision owner | Group acceptance focus |
@@ -33,7 +40,9 @@ Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profi
 | G5 Migration & restore | WEB-TC-12, WEB-TC-15 | Host / QA | No unowned overwrite; verified rollback |
 | G6 Security & secret protection | WEB-TC-13, WEB-TC-14 | Security / Independent Reviewer | Mandatory negative tests including observable permission/information boundary |
 
-All 15 WEB-TC IDs are covered by exactly one proposed group, but a finite suite of 15 design cases is **not** a statistical reliability sample or proof that unrounded `R > 99.99%`. The existing release rule still applies to each actual executable mandatory measurable group: Product+QA must approve definition, denominator, representativeness, sampling/method, pass thresholds and evidence *before* the test; if criteria are inapplicable/unmeasurable, explicitly document review and keep relevant release gate BLOCKED until accepted resolution. Security negative failures or applicable open P0 veto acceptance regardless averages.
+| G7 AGENTS.md integration | WEB-TC-16, WEB-TC-17, WEB-TC-18, WEB-TC-19, WEB-TC-20, WEB-TC-21 | Host / Security / Independent Reviewer | Real authorized create/adopt/upgrade, conflict denial and idempotent readback |
+
+All 21 WEB-TC IDs are covered by exactly one proposed group, but a finite suite of 21 design cases is **not** a statistical reliability sample or proof that unrounded `R > 99.99%`. The existing release rule still applies to each actual executable mandatory measurable group: Product+QA must approve definition, denominator, representativeness, sampling/method, pass thresholds and evidence *before* the test; if criteria are inapplicable/unmeasurable, explicitly document review and keep relevant release gate BLOCKED until accepted resolution. Security negative failures or applicable open P0 veto acceptance regardless averages.
 
 ## Evidence schema for every eventual execution
 
@@ -50,4 +59,6 @@ Record `caseId`, `acId`, `group`, release bundle/version/checksum, source Git SH
 
 ## Current stop state
 
-No Web Test Case has executed; owners have not approved proposed group denominators, ACs, data-sharing policy, security P0 applicability, independent A.1 or Phase B. **NO-GO for v1 stable.**
+No Web Test Case (WEB-TC-01..21) has executed; owners have not approved proposed group denominators, ACs, data-sharing policy, security P0 applicability, independent A.1 or Phase B. **NO-GO for v1 stable.**
+
+**Integration design amendment:** [AGM-01..17](webV1AgentsIntegrationMatrix.md) defines declarative content and a permissioned agent-execution path. These six ACs and cases are design-only; their host-write proof requires actual before/after evidence, not merely a Markdown diff.

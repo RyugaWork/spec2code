@@ -51,3 +51,7 @@ The named reviewer must independently inspect the **exact resulting Git SHA** an
 | Authorize B if A.1 passed | Responsible Product/Host Owner | **Separate** explicit scope for WEB-006..020, not inferred by reading this document |
 
 **Result:** `REVIEW_PACKET_DRAFTED / A1_NOT_RUN / B_NOT_AUTHORIZED / B1_NOT_RUN / NO_RELEASE`.
+
+## Scope change for A.1 reviewer — agent-executed AGENTS integration (2026-11-23)
+
+Re-evaluate A1-VAL-01/02 for [DEC-WEB-06 and 17 AGM rows](webV1AgentsIntegrationMatrix.md), A1-VAL-03 for new WEB-TC-16..21 reverse mappings, A1-VAL-04/05 for create/adopt/upgrade/three-way conflicts, A1-VAL-06/07 for AGENTS write/owner risks and A1-VAL-08/09 for approval/readback/rollback evidence. Proposed **ADR-WEB-06:** S2C is the declarative source only; a separately authorized AI agent performs AGENTS writes using real capabilities, otherwise outputs a patch/handoff. This is a **new design candidate** and invalidates any older scoped approval assumptions, though no previous independent A.1 PASS exists. **21 test designs, 0 executions.** Bind any independent review to the final post-amendment SHA, not the initial candidate SHA quoted above. No host AGENTS change was made.

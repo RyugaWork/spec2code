@@ -16,7 +16,7 @@ Date: 2026-11-23. Design amendment requested for `RyugaWork/spec2code`, developm
 | --- | --- | --- | --- |
 | NEW_ROOT | Root AGENTS absent on a pinned and actually inspected host | Propose and create a host-specific root AGENTS plus one approved S2C subsection, **only** if file-create scope granted | Before absent + post-write readback/hash, or NOT_APPLIED |
 | ADOPT_EXISTING | Root and/or nested AGENTS exist; no adopted S2C subsection | Preserve existing text; insert compatible approved S2C clause in authorized root or named nested path | Exact diff and verified unchanged foreign text |
-| UPGRADE_MANAGED | Old approved S2C subsection/version and new pinned release | Three-way compare old pristine S2C + current host customized S2C + new pristine S2C; apply only allowed nonconflicting changes | Per-clause conflict disposition, backup, readback; version last |
+| UPGRADE_MANAGED | Old approved S2C subsection/version and new pinned release | Three-way compare old pristine S2C + current host customized S2C + new pristine S2C; **any overlap/owner customization conflict stops the entire approved batch, output diff + BLOCKED without writes or automatic retry** | Per-clause conflict disposition, backup, readback for conflict-free runs; version last only after verified success |
 | REPEAT_SAME_VERSION | Current verified version and clause identity already match | NO_CHANGE, never append a duplicate marker | Identical observed hash and marker count |
 | NESTED_SCOPE | Applicable nested AGENTS constrain specific directories | Respect root/nested precedence; do not write unapproved folders | Per-file permission and byte-accurate before/after |
 | CONFLICT_OR_DENIED | Missing owner/tool/source, malformed marker, host conflict or stale ref | BLOCKED/HANDOFF_ONLY; return matrix, proposed diff, owner decision needed | No unauthorized file changes |
@@ -44,7 +44,7 @@ Each row is an *element for the host agent to reconcile*, not a generic rule to 
 | AGM-13 | Test and evidence policy | QA rules, real logs and statuses | PASS requires observation; NOT_RUN otherwise | WEB-TC-17, WEB-TC-20 |
 | AGM-14 | Create/adopt/upgrade | Old pristine, current customized, new pristine | Create if absent, else bounded insert/three-way merge | WEB-TC-16, WEB-TC-17, WEB-TC-18 |
 | AGM-15 | Nested AGENTS scope | Per-module paths, non-overridable policies | No cross-module propagation or unauthorized nested write | WEB-TC-17, WEB-TC-19 |
-| AGM-16 | Idempotence and rollback | Version marker, baseline hashes and approved backup | No duplicated sections; version updated last; restore owned only | WEB-TC-18, WEB-TC-20 |
+| AGM-16 | Idempotence and rollback | Version marker, baseline hashes and approved backup | No duplicated sections; version updated last; **conflict fingerprint blocks repeated automatic attempts; never overwrite customized host clauses** | WEB-TC-18, WEB-TC-20 |
 | AGM-17 | Unavailable capabilities | Read-only connector/unknown source/ref | Matrix+diff/handoff NOT_APPLIED, never imaginary host write | WEB-TC-19, WEB-TC-21 |
 
 ## 4. Per-project matrix schema and actions
@@ -102,3 +102,7 @@ The old release's pristine S2C block is the merge base; the current host copy ma
 ## 8. Gemini review follow-up — provider-specific execution mode (proposal)
 
 The matrix's 17 elements remain unchanged. [Source/owner/host mode disposition](webV1GeminiReviewDisposition20261123.md) now explicitly separates a **real permissioned remote connector** (GitHub ref/blob lease and authorized AGENTS paths) from **Codex/local Windows writing** (RM-001 still applicable, no tested OS containment) and from **upload-only Web** (matrix+suggested diff, never a real host write). No content in an AGENTS file can self-issue an authorization. A project with existing customized AGENTS must keep foreign text/byte identity, root/nested policy, and old/current/new three-way comparison; manifest updated after verified approved readback.
+
+## 9. Requester U-06 conditional approval — conflict-loop kill switch (2026-11-23)
+
+The [requester response](webV1RequesterConditionalDecisions20261123.md#7-u-06--conflict-kill-switch-for-upgrade_managed) requires `UPGRADE_MANAGED` to STOP with `BLOCKED_CONFLICT/NO_WRITE`, **only** output a bounded proposed diff and owner resolution choices, never auto-edit host-customized AGENTS or partially commit non-conflicting chunks in that same batch. Stable unchanged `targetPath + oldVersion + currentBlobHash + newBundleHash + conflictingClauseIDs` => stable conflict identity; repeat with identical inputs returns the same outcome and **zero automatic retries**, with no version/manifest change. A documented new owner approval and newly observed source/ref/authority trigger a **new dry run**, not blind retry. Keep WEB-TC-18/19/20 negative-fixture variants designed/NOT_RUN. No actual host AGENTS file was edited.

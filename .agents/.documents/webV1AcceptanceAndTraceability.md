@@ -68,3 +68,7 @@ No Web Test Case (WEB-TC-01..21) has executed; owners have not approved proposed
 ## 21-case A-Closure execution precision supplement (2026-11-23)
 
 [Per-case observable oracles, negative signals and required proof](webV1AClosureWebTestOracleDesign20261123.md) supplement the canonical case identities without adding duplicate test IDs. [Proposed BR/F reverse coverage](webV1AClosureFeatureReverseMatrix20261123.md) explicitly marks BR-007/008 without a direct Web case; owner must approve REFERENCE_ONLY or refine a canonical fixture. All `WEB-AC-01..21` remain DRAFT / NOT_RUN and their corresponding 21 canonical cases remain NOT_RUN. Inherited quality threshold requires Product+QA decision before treating a deterministic-case metric as a sufficient release criterion.
+
+## Requester conditions on source and AGENTS acceptance (2026-11-23)
+
+[Decision record](webV1RequesterConditionalDecisions20261123.md) adds proposed `WEB-TC-03-C` **subvariant** (simultaneous GitHub/ZIP same-path mismatch => conflict and no hidden precedence) and strengthens `WEB-TC-18/19/20` to assert **BLOCKED/no-write/no retry on unchanged customized-AGENTS conflict**. The canonical 21 IDs and 21 ACs stay unchanged; no verdict can be promoted from a designed case. BR-007/008 and Git-versus-Google normative authority are **Product/QA decision pending** (author recommends reference-only BR-007/008 for V1 and Git technical master with owner-approved Google business snapshot).

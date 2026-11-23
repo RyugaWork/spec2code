@@ -24,7 +24,7 @@
 | Analyze | Compare BR/REQ/AC/feature/story/task/test IDs, paths/links, source hashes, permission boundaries, drift and conflicting decisions using static GitHub reads | `STATIC_INSPECTED` with exact HEAD, method/check count/gaps; **not** official `$speckit-analyze` output |
 | Implement | **PROHIBITED in current Web-only phase** unless a separately authorized capable runtime exists, independent A.1 and scoped B authorizations pass, and host rules can be enforced | `NOT_AUTHORIZED` / factual STOP; do not fabricate code/test execution |
 | Converge | Web may review remaining documentation gaps in read-only/draft form but must not claim native Converge or automatically append executable B tasks | Document-only review, untouched owner gates and reviewed task diffs |
-| STOP / Resume | Record exact latest Git HEAD and Google revision, feature pointer, changed files, task statuses and actual persistence; on resume re-fetch all authorities | Persistent handoff with `PERSISTED` or `NOT_PERSISTED`, `STALE` if source drift |
+| STOP / Resume | Record exact latest Git HEAD and any external source revisions actually used, feature pointer, changed files, task statuses and actual persistence; on resume re-fetch all authorities | Persistent handoff with `PERSISTED` or `NOT_PERSISTED`, `STALE` if source drift |
 
 **Official CLI and native agent skills are distinct tools.** A connector read does not execute `specify`, the S2C Python bridge, host Path Guard, CI or agent-native skills.
 

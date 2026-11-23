@@ -61,13 +61,13 @@ Use [cross-stack technology policy](../.documents/technologyVersionPolicy.md) an
 
 ## DOC-B06 — Evidence completeness before any signed validation result
 
-A real review report must fill the existing template's nine per-gate rows with **reviewer identity independent of the author**, authority evidence, exact Git SHA and Google BRD doc/tab/revision, expected requirement/AC/risk result, actual cited evidence, reviewer verdict and any dissent. Do not populate these fields with generated approvals, guessed timestamps, stale CI runs or a single-model multi-role simulation. For any mandatory `NOT_RUN` or missing owner/P0 decision, aggregate `A1_BLOCKED/NOT_RUN` with a precise rework owner.
+A real review report must fill the existing template's nine per-gate rows with **reviewer identity independent of the author**, authority evidence, exact Git SHA, expected requirement/AC/risk result, actual cited evidence, reviewer verdict and any dissent. Do not populate these fields with generated approvals, guessed timestamps, stale CI runs or a single-model multi-role simulation. For any mandatory `NOT_RUN` or missing owner/P0 decision, aggregate `A1_BLOCKED/NOT_RUN` with a precise rework owner.
 
 Distinguish four different records: `AUTHOR_STATIC_REVIEW` (can be model-produced), `BUSINESS_OWNER_DECISION` (must be authenticated), `INDEPENDENT_A1_REPORT` (actual separately accountable reviewer), `PHASE_B_AUTHORIZATION` (distinct requester/maintainer consent). Never reuse a signoff across materially changed SHA/BRD revisions without an impact re-review. The template is not itself a completed report or approval.
 
 ## PLAN-110 / Z09 — Nine-gate independent evidence sheet (blank by design)
 
-Populate the following only when an **actual independent authorized reviewer** has evidence on the current Git+Google revision pair. Each row requires `gateId, reviewerIdentity, authorityEvidence, gitSha, googleRevision, impactedRequirements, observedEvidenceUri, result(PASS|FAIL|BLOCKED|NOT_RUN), dissent, correctiveOwner`. The author-model must not create a forged signoff.
+Populate the following only when an **actual independent authorized reviewer** has evidence on the pinned Git SHA. Each row requires `gateId, reviewerIdentity, authorityEvidence, gitSha, impactedRequirements, observedEvidenceUri, result(PASS|FAIL|BLOCKED|NOT_RUN), dissent, correctiveOwner`. The author-model must not create a forged signoff.
 
 | Required gate | Actual reviewer verdict | Evidence and owner |
 | --- | --- | --- |
@@ -92,3 +92,5 @@ An A.1 PASS requires the reviewer to replace all applicable mandatory entries wi
 Require strict R > 99.99% in every mandatory measured executable group, zero unresolved P0, all applicable real independent A1-VAL-01..09 and full required evidence. Keep design validation distinct from runtime test percentage. Any missing requirement means NO_GO, not inferred signoff.
 
 Task checkpoint after each phase: total unique task IDs; done_verified; ready; in_progress; failed; blocked; reopened; newly discovered; remaining; gptweb_remaining; codex_remaining; P0_open; next task/owner; handoff/evidence refs. This template itself is NOT_RUN.
+
+For Web V1 under D01, historical source provenance is optional. When relevant, cite the archived source in Git at the reviewed SHA in the evidence links.

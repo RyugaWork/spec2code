@@ -9,8 +9,8 @@ Date: 2026-11-23; reviewer input candidate `fa2ba44e4a2076cf004160831fdaa7a3f2ec
 | ADR-WEB-01 scope and external boundaries | Restrict v1 distribution to allowlisted Markdown. Manual ChatGPT Web can read only actual supplied material or permitted provider sources. No shell, Python, local Path Guard, auto workers, native Spec Kit CLI or CI. Provider/tool access is neither presumed nor OS sandbox enforcement. | Product + Security; OWNER_PENDING |
 | ADR-WEB-02 authority and artifacts | Development root `AGENTS.md` governs the S2C repository, not universal host files. The host owns existing AGENTS and customized docs; upstream Spec Kit owns `.specify/` and `specs/`. Future package under `.source/profiles/web/` only after B, no distribution of prototype scripts/config. | Architecture + Host; OWNER_PENDING |
 | ADR-WEB-03 version/data contract | Candidate `productVersion=1.0.0`, `schemaVersion=1`, independently pinned `bundleVersion`, release commit/checksums; `UNKNOWN` is not permission. Manual three-way migration and rollback, manifest version updated last after verified readback. | Architecture + Host; OWNER_PENDING |
-| ADR-WEB-04 Git integration | Maintain one documentation branch, no forced merge. Reconcile main's unique change, four stacked draft PRs, external reviewer findings and Google BRD semantic source parity; release only from separately approved immutable source. | Git Integrator + Release Owner; OWNER_PENDING |
-| ADR-WEB-05 QA and release policy | All 21 Web case oracles proposed, QA/owner defines valid mandatory groups, denominator and evidence. Independent A.1 required before Phase B, independent B.1 after implementation; no P0 waiver, no approval-by-author. | QA + Security + Product; OWNER_PENDING |
+| ADR-WEB-04 Git integration | Maintain one documentation branch, no forced merge. Reconcile main's unique change, four stacked draft PRs, external reviewer findings and D01 Git source authority; release only from separately approved immutable source. | Git Integrator + Release Owner; OWNER_PENDING |
+| ADR-WEB-05 QA and release policy | All 37 Web case oracles proposed, QA/owner defines valid mandatory groups, denominator and evidence. Independent A.1 required before Phase B, independent B.1 after implementation; no P0 waiver, no approval-by-author. | QA + Security + Product; OWNER_PENDING |
 
 These proposed ADR names do not supersede existing architecture decisions/BRD and are not new runtime feature identifiers.
 
@@ -18,7 +18,7 @@ These proposed ADR names do not supersede existing architecture decisions/BRD an
 
 | Gate | Evidence available to review | Open question / blocker | Author-prep status |
 | --- | --- | --- | --- |
-| A1-VAL-01 Source authority | PLAN-116, master SRS, Web DEC packet, Git PR baseline | Product owner must approve exact Web BR/AC and Git/Google source relation | NEEDS_OWNER |
+| A1-VAL-01 Source authority | PLAN-116, master SRS, Web DEC packet, Git PR baseline | Product owner must approve exact Web BR/AC and Git source revision | NEEDS_OWNER |
 | A1-VAL-02 Requirements and AC | [15 AC crosswalk](webV1AcceptanceAndTraceability.md), [canonical tests](../.workflow/testingAndDelivery.md) | ACs, mandatory group metrics/denominators, consented test fixtures unsigned | NEEDS_OWNER_QA |
 | A1-VAL-03 Bidirectional RTM | [64-feature mapping](webV1PreflightAndCapabilityMatrix.md), [RTM](../.traceMatrix.md) | Confirm Web-only requirement reverse traces, orphans and exclusions | NEEDS_REVIEW |
 | A1-VAL-04 Feature design | Manual Web stages and authority from PLAN-116; negative paths from WEB-TC | Confirm denied/blocked paths and host ownership on concrete fixture | NEEDS_REVIEW |
@@ -62,7 +62,7 @@ The reviewer must also inspect the [Gemini review disposition](webV1GeminiReview
 
 ## A-Closure source snapshot and independent reviewer handoff (2026-11-23)
 
-Use [source-bound A-Closure evidence and REV-090 statuses](webV1AClosureEvidence20261123.md), [the 64-F/27-BR reverse matrix](webV1AClosureFeatureReverseMatrix20261123.md) and [21-case oracle worksheet](webV1AClosureWebTestOracleDesign20261123.md). Current Google BRD Draft v1.5 revision and pinned upstream Spec Kit v1.4.3 commit are recorded there. The identity/source/semantic/release decisions are explicitly in [owner packet](webV1AClosureApprovalPacket20261123.md); **do not freeze an old author SHA or self-sign A1-VAL-01..09**. Final independent reviewer must inspect the *post-author-commit exact SHA* after stakeholder decisions. `A1_NOT_RUN`, `RM-001 P0 OPEN`, `B_NOT_AUTHORIZED` remain.
+Use [source-bound A-Closure evidence and REV-090 statuses](webV1AClosureEvidence20261123.md), [the 64-F/27-BR reverse matrix](webV1AClosureFeatureReverseMatrix20261123.md) and [37-case oracle worksheet](webV1AClosureWebTestOracleDesign20261123.md). Historical Google BRD provenance and pinned upstream Spec Kit v1.4.3 commit are recorded there. The identity/source/semantic/release decisions are explicitly in [owner packet](webV1AClosureApprovalPacket20261123.md); **do not freeze an old author SHA or self-sign A1-VAL-01..09**. Final independent reviewer must inspect the *post-author-commit exact SHA* after stakeholder decisions. `A1_NOT_RUN`, `RM-001 P0 OPEN`, `B_NOT_AUTHORIZED` remain.
 
 ## Requester-reviewed A.1 preconditions — conditional decisions not an A.1 signoff
 

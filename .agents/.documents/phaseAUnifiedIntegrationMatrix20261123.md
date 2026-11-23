@@ -511,3 +511,7 @@ Quét link chỉ kiểm sự tồn tại của đường dẫn trong Git tree ch
 | [specs/001-s2c-speckit-integration/research.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/research.md) | `37d654d186f4` |
 | [specs/001-s2c-speckit-integration/spec.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/spec.md) | `4de86c531969` |
 | [specs/001-s2c-speckit-integration/tasks.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/tasks.md) | `24051a052519` |
+
+### Disposition of Phase A documentation corrections
+
+This update applies the source authority, Web acceptance grouping and remote GitHub AGENTS write contract corrections from M01–M07 and the Web handoff provenance correction from M10. The rows above preserve the observations at the audited input SHA. Product and QA retain ownership of measurement and applicability decisions. Security and Host retain risk disposition. The 37 cases are NOT_RUN, RM-001 is P0 OPEN and A.1 awaits independent review.

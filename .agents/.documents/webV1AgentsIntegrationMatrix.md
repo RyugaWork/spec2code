@@ -6,7 +6,7 @@ Date: 2026-11-23. Design amendment requested for `RyugaWork/spec2code`, developm
 
 **Spec2Code only supplies** (a) the 17-row matrix of elements and normative text, (b) the create/adopt/upgrade version comparison protocol, (c) conflict/permission/rollback rules, (d) expected artifacts and test oracles. It does **not** install, edit or watch files by itself in V1.0.
 
-**The executing AI agent** (ChatGPT Web with an actually authorized write-capable connector, Codex or another legitimately deployed agent) invokes the matrix only during an explicit host integration/upgrade task. It discovers the existing root/nested AGENTS, builds the project-specific matrix, prepares a bounded diff and, **when a real owner grant covers exact paths and the tool/environment genuinely supports writes**, applies and reads back the permitted changes. A previously approved bounded scope can authorize the whole batch without repeated prompts, unless host rules require otherwise. No inferred code/Git/CI privilege. If capability or authorization is missing, the output is matrix+diff/handoff, not file changes.
+**Web V1 executor.** Use `WEB_UPLOAD_READ` for upload/paste analysis and proposed diffs. Only `WEB_REMOTE_GITHUB_AGENTS_WRITE` can apply changes. It requires a verified remote GitHub API capability plus an explicit grant for the repository, branch, exact AGENTS.md paths and operation, subject to host Git policy. Otherwise return the proposed diff and `NOT_APPLIED`. Local agents, shells and native tools are outside the Web V1 execution scope.
 
 **The host owns AGENTS.md.** Approved BR/AC, host root/nested policies, security and Git rules remain authoritative. Spec Kit owns `.specify/` and `specs/`. Never copy the development repository's `AGENTS.md` wholesale into the host. Do not claim that Markdown instructions enforce an OS sandbox.
 
@@ -90,14 +90,14 @@ For a **new** root AGENTS, this block is only one part of a project-specific doc
 4. AUTHORIZE using real host/provider/task scope. With no write capability/approval, output matrix, diff and HANDOFF_ONLY; do not claim success.
 5. APPLY the approved AGENTS changes only, under one-writer and observed ref/blob precondition; do not edit unrelated nested paths, reset Git or alter host history. Git commit/push/merge need separate authorization.
 6. VERIFY by independent file readback, marker count, old+new hash, original foreign bytes unchanged, valid source/links, idempotence and no unauthorized effects. Tool acknowledgement without readback = UNVERIFIED.
-7. FINALIZE active version/manifest **last**, only after all required checks; interrupted or conflicting upgrade remains PARTIAL/BLOCKED, with original installed version retained. Rollback only verified owned hunks without overwriting concurrent user changes.
+7. FINALIZE only after every approved path is verified. The candidate version and source reference belong inside the managed S2C block of each authorized `AGENTS.md`, included in the exact approved diff. The observed candidate marker alone does not advance the verified active version. Record the operation manifest as evidence in the handoff, with `NOT_PERSISTED` when there is no separately approved evidence destination. A separate repository manifest is outside the AGENTS-only grant.
 8. REPORT per-row states, actual evidence/source SHA, remaining decisions, STOP/RESUME or NOT_PERSISTED when appropriate. This is not external A.1/B.1 validation.
 
 ## 7. Upgrade / conflict policy and acceptance
 
 The old release's pristine S2C block is the merge base; the current host copy may contain authorized edits. The agent must compare both to the proposed new block. Unmodified adopted clauses may be updated within the pre-approved path scope; modified clauses have host ownership and any overlap requires owner resolution. Unknown old version or source hash => do not guess: BLOCKED. Re-running at the same verified version must be a true NO_CHANGE. A changed source/policy after review invalidates the earlier patch/approval. Different nested AGENTS scope cannot be folded into root automatically.
 
-**Acceptance design adds six cases** [WEB-TC-16..21](../.workflow/testingAndDelivery.md#plan-116--web-profile-acceptance-design) for create, existing/nested adoption, customized upgrade, conflict/denied write, repeat/stale SHA and untrusted prompt/read-only fallback. All **21 Web cases are NOT_RUN**. New scope affects RM-005/009/031/036/050 and related security/ownership risks; existing global statuses are unchanged. Design approval must cover DEC-WEB-01/02/04 and new DEC-WEB-06; independent Web A.1 and separate Phase B authorization are required before the V1 product profile is authored. No actual host AGENTS was modified by this documentation.
+**Acceptance design adds six cases** [WEB-TC-16..21](../.workflow/testingAndDelivery.md#plan-116--web-profile-acceptance-design) for create, existing/nested adoption, customized upgrade, conflict/denied write, repeat/stale SHA and untrusted prompt/read-only fallback. All **37 Web cases are NOT_RUN**. New scope affects RM-005/009/031/036/050 and related security/ownership risks; existing global statuses are unchanged. Design approval must cover DEC-WEB-01/02/04 and new DEC-WEB-06; independent Web A.1 and separate Phase B authorization are required before the V1 product profile is authored. No actual host AGENTS was modified by this documentation.
 
 ## 8. Gemini review follow-up — provider-specific execution mode (proposal)
 
@@ -106,3 +106,18 @@ The matrix's 17 elements remain unchanged. [Source/owner/host mode disposition](
 ## 9. Requester U-06 conditional approval — conflict-loop kill switch (2026-11-23)
 
 The [requester response](webV1RequesterConditionalDecisions20261123.md#7-u-06--conflict-kill-switch-for-upgrade_managed) requires `UPGRADE_MANAGED` to STOP with `BLOCKED_CONFLICT/NO_WRITE`, **only** output a bounded proposed diff and owner resolution choices, never auto-edit host-customized AGENTS or partially commit non-conflicting chunks in that same batch. Stable unchanged `targetPath + oldVersion + currentBlobHash + newBundleHash + conflictingClauseIDs` => stable conflict identity; repeat with identical inputs returns the same outcome and **zero automatic retries**, with no version/manifest change. A documented new owner approval and newly observed source/ref/authority trigger a **new dry run**, not blind retry. Keep WEB-TC-18/19/20 negative-fixture variants designed/NOT_RUN. No actual host AGENTS file was edited.
+
+## 10. Remote write reconciliation after a missing response
+
+Before sending a write, record the pinned ref, approved target paths, old blob SHAs or expected absence, and intended bytes and blob identities. Verify all applicable conditions before writing. Use a single atomic expected-ref update for a multi-path grant only when the provider can demonstrate that guarantee. Otherwise return `NOT_APPLIED` for the batch. Never split the approved batch into sequential writes.
+
+If acceptance is uncertain, stop further writes and automatic retries. Read the current ref and each approved target independently and correlate with the provider operation or commit when evidence is available.
+
+| Observation | Disposition |
+| --- | --- |
+| Provider evidence confirms no commit and the scoped refs/blobs are unchanged | Record `NOT_APPLIED`. A new attempt requires a fresh preflight. |
+| The attributable commit and independent readback match all approved targets and show no other paths changed | Record the verified result and activate the observed version. |
+| Some intended changes are attributable and others are absent or conflict | Record `PARTIAL`, with per-path observed states and evidence. |
+| Readback is unavailable, or bytes cannot be attributed to the operation | Record `UNVERIFIED`. Preserve the last verified version in the evidence record. |
+
+For `PARTIAL` or `UNVERIFIED`, hand off exact refs, blobs and unknowns. Preserve concurrent owner changes. Recovery or rollback requires fresh authorization and current ref/blob preconditions. Re-entry begins with readback and a new dry run. See [WEB-TC-20 variants](../.workflow/testingAndDelivery.md#web-tc-20-remote-response-loss-variants).

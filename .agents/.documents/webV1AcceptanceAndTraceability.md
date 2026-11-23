@@ -48,19 +48,19 @@ Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profi
 
 | Proposed group | Case IDs (WEB-TC) | Decision owner | Group acceptance focus |
 | --- | --- | --- | --- |
-| G1 Source & onboarding | WEB-TC-01, WEB-TC-03, WEB-TC-04, WEB-TC-05, WEB-TC-06 | Product / QA | Source accuracy and fail-closed handling of missing or disputed inputs |
-| G2 Existing host & Spec Kit | WEB-TC-02, WEB-TC-07 | Host / QA | Owner-preserving read/plan behavior |
-| G3 Authority & evidence | WEB-TC-08, WEB-TC-09 | Product / Independent Reviewer | No fabricated PASS, self-approval or unauthorized write |
-| G4 Drift & recovery | WEB-TC-10, WEB-TC-11 | QA / Host | No false persistence, stale-evidence reuse or CLOSE |
-| G5 Migration & restore | WEB-TC-12, WEB-TC-15 | Host / QA | No unowned overwrite; verified rollback |
-| G6 Security & secret protection | WEB-TC-13, WEB-TC-14 | Security / Independent Reviewer | Mandatory negative tests including observable permission/information boundary |
+| G1 Source & onboarding | WEB-TC-01, WEB-TC-03, WEB-TC-04, WEB-TC-05, WEB-TC-06, WEB-TC-22, WEB-TC-26, WEB-TC-29, WEB-TC-34 | Product / QA | Source accuracy and fail-closed handling of missing or disputed inputs |
+| G2 Existing host & Spec Kit | WEB-TC-02, WEB-TC-07, WEB-TC-23, WEB-TC-33 | Host / QA | Owner-preserving read/plan behavior |
+| G3 Authority & evidence | WEB-TC-08, WEB-TC-09, WEB-TC-24, WEB-TC-25, WEB-TC-30, WEB-TC-37 | Product / Independent Reviewer | No fabricated PASS, self-approval or unauthorized write |
+| G4 Drift & recovery | WEB-TC-10, WEB-TC-11, WEB-TC-31 | QA / Host | No false persistence, stale-evidence reuse or CLOSE |
+| G5 Migration & restore | WEB-TC-12, WEB-TC-15, WEB-TC-35, WEB-TC-36 | Host / QA | No unowned overwrite; verified rollback |
+| G6 Security & secret protection | WEB-TC-13, WEB-TC-14, WEB-TC-27, WEB-TC-28, WEB-TC-32 | Security / Independent Reviewer | Mandatory negative tests including observable permission/information boundary |
 | G7 AGENTS.md integration | WEB-TC-16, WEB-TC-17, WEB-TC-18, WEB-TC-19, WEB-TC-20, WEB-TC-21 | Host / Security / Independent Reviewer | Real authorized create/adopt/upgrade, conflict denial and idempotent readback |
 
-All 21 WEB-TC IDs are covered by exactly one proposed group, but a finite suite of 21 design cases is **not** a statistical reliability sample or proof that unrounded `R > 99.99%`. The existing release rule still applies to each actual executable mandatory measurable group: Product+QA must approve definition, denominator, representativeness, sampling/method, pass thresholds and evidence *before* the test; if criteria are inapplicable/unmeasurable, explicitly document review and keep relevant release gate BLOCKED until accepted resolution. Security negative failures or applicable open P0 veto acceptance regardless averages.
+Each of the 37 WEB-TC IDs has one primary group. Approved applicability fixes the denominator before execution. All specified variants of applicable cases are required, including TC-03 A/B/C, TC-07 safe/unsafe/unverified, TC-11 source drift, TC-18/19 conflict and denied cases, TC-20 repeat/conflict/stale SHA and reconciliation variants, and both P/N variants of TC-22..37. A parent AC passes only when every required variant passes with evidence. Keep failed, blocked, inconclusive and unexecuted variants visible in the denominator. Every applicable mandatory AC must pass under D05, and any applicable open P0 vetoes release. Product and QA still own the separate reliability and coverage measurement decisions.
 
 ## Evidence schema for every eventual execution
 
-Record `caseId`, `acId`, `group`, release bundle/version/checksum, source Git SHA or `UNKNOWN`, original input/fixture hash, host/provider capability observation, allowed read/write permissions, actual GPT Web transcript excerpt (synthetic/redacted), actual outcome `PASS|FAIL|BLOCKED|NOT_RUN|INCONCLUSIVE`, reproduction, executor, independent reviewer (if required), date, risk ID, issue/rollback, and immutable evidence link. Presence of Markdown instructions only means `DESIGNED`; no `PASS` without actual tool/host observations. Authorization and product-version claims remain separate.
+Record `caseId`, `acId`, `group`, `variantId`, approved applicability and denominator, release bundle/version/checksum, source Git SHA or `UNKNOWN`, original input/fixture hash, host/provider capability observation, allowed read/write permissions, actual GPT Web transcript excerpt (synthetic/redacted), actual outcome `PASS|FAIL|BLOCKED|NOT_RUN|INCONCLUSIVE`, reproduction, executor, independent reviewer (if required), date, risk ID, issue/rollback, and immutable evidence link. Presence of Markdown instructions only means `DESIGNED`; no `PASS` without actual tool/host observations. Authorization and product-version claims remain separate.
 
 ## Bidirectional trace and owner dependencies
 

@@ -331,3 +331,17 @@ Use the [per-case fixture, negative/positive oracle and required evidence worksh
 The requester **approved design-direction D02**: each of **BR-001..016 has its own distinct, mandatory Web acceptance criterion and Web test case**, with one-to-one pairs `WEB-AC-22..37 ↔ WEB-TC-22..37`. These are **additional** to original 21 existing cases, resulting in **37 distinct ACs and 37 distinct planned cases**; 30 WEB tasks remain unchanged. Each new case includes a positive and negative variant; **both mandatory variants must have real observed evidence for parent PASS**. Cases are scoped to V1's **manual/upload/read and separately authorized remote GitHub AGENTS-only** profile, not local Windows/Linux/macOS host execution or full native runtime install. `BR-007` risk grouping and `BR-008` research-source controls now have explicit Web assertions and must not be labeled `REFERENCE_ONLY / NO_DIRECT_WEB_TEST`.
 
 All 37 remain `NOT_RUN`. **D05 requester-approved decision:** the proposed Web-specific release policy requires **100% observed PASS of all applicable mandatory Web ACs, including required positive/negative variants**, with no unresolved applicable P0. `R>99.99%` reliability and `>95%` line/branch coverage remain **measurement-method/denominator pending**, not silently waived or newly met; Product+QA must record any scoped governance amendment. No A.1/B/B.1 release gate has executed or passed. [Dedicated 16-BR crosswalk](../.documents/phaseAD02BrDedicatedWebCoverage20261123.md) is the source-bound audit reference; this file remains canonical for Web test identities.
+
+## WEB-TC-20 remote response-loss variants
+
+These are required design variants for the applicable remote GitHub write mode under WEB-TC-20 and WEB-AC-20. Preserve the repeat, conflict and stale-SHA variants. Use synthetic, authorized fixtures with controlled provider responses. Record initial ref/blob SHAs, expected path/byte inventory, request/commit evidence and independent post-call ref/blob readback per path.
+
+| Variant | Fixture | Expected outcome |
+| --- | --- | --- |
+| LOSS-NO-COMMIT | Missing response with independently confirmed no commit and unchanged targets | `NOT_APPLIED`, no automatic retry. |
+| LOSS-COMMIT | Missing response after attributable approved commit | Verified result only with exact diff and independent readback for every approved path. |
+| LOSS-PARTIAL | Synthetic anomalous provider observation with one attributable intended change and a conflicting or absent target | `PARTIAL`, preserve concurrent owner bytes, stop and hand off. |
+| LOSS-UNKNOWN | Readback unavailable or matching bytes without attribution | `UNVERIFIED`, no success claim or version advancement. |
+| BATCH-UNSUPPORTED | Multi-path grant with no demonstrated atomic expected-ref update | `NOT_APPLIED`, no write attempted. |
+
+A variant fails if the executor retries blindly, overwrites concurrent changes, advances the verified version prematurely or writes outside the approved paths. The case stays `NOT_RUN` until execution evidence exists.

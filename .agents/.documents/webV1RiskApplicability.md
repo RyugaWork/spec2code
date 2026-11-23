@@ -54,7 +54,7 @@ Owner codes: SEC=Security/Provider Owner; QA=QA/Independent Reviewer; HOST=Host/
 | RM-037 | WEB_APPLIES | Source summarization omits business or security authority | QA | WEB-TC-03, WEB-TC-05 | PENDING_OWNER |
 | RM-038 | RUNTIME_EXCLUDED | Automated DBA/lint/mutation repair loop is future runtime work | ARCH | WEB-TC-08 | PENDING_OWNER |
 | RM-039 | WEB_APPLIES | Context/token optimization loses mandatory policy coverage | QA | WEB-TC-06 | PENDING_OWNER |
-| RM-040 | SPLIT | Automated retry/release feature disabled; manual upgrade interruption remains | HOST | WEB-TC-12, WEB-TC-15 | PENDING_OWNER |
+| RM-040 | SPLIT | Remote response loss, partial observation and unsafe retry. Record per-path readback and preserve last verified state. | HOST | WEB-TC-12, WEB-TC-15, WEB-TC-20 LOSS-* | PENDING_OWNER |
 | RM-041 | WEB_APPLIES | Same-model check described as external independent acceptance | QA | WEB-TC-08, WEB-TC-09 | PENDING_OWNER |
 | RM-042 | RUNTIME_EXCLUDED | Multiworker overlapping code patches excluded; Web cannot auto-commit | SEC | WEB-TC-08 | PENDING_OWNER |
 | RM-043 | SPLIT | OS process containment excluded; connector/host authorization still bounded | SEC | WEB-TC-13, WEB-TC-14 | PENDING_OWNER |
@@ -64,7 +64,7 @@ Owner codes: SEC=Security/Provider Owner; QA=QA/Independent Reviewer; HOST=Host/
 | RM-047 | SPLIT | MCP server excluded; untrusted-source injection still relevant to Web | SEC | WEB-TC-13 | PENDING_OWNER |
 | RM-048 | WEB_APPLIES | Remote source/context sharing or redaction leaks credentials | SEC | WEB-TC-14 | PENDING_OWNER |
 | RM-049 | SPLIT | CLI/state DB failures excluded; unavailable Web capability must be stated | QA | WEB-TC-03, WEB-TC-09 | PENDING_OWNER |
-| RM-050 | WEB_APPLIES | Git branch/source movement invalidates a later documentation/release action | HOST | WEB-TC-11, WEB-TC-12 | PENDING_OWNER |
+| RM-050 | WEB_APPLIES | Remote ref/blob drift and concurrent host changes. Preserve concurrent bytes and require fresh preconditions after uncertainty. | HOST | WEB-TC-11, WEB-TC-12, WEB-TC-20 stale SHA / LOSS-PARTIAL / BATCH-UNSUPPORTED | PENDING_OWNER |
 | RM-051 | WEB_APPLIES | Stale Git/BRD pair and role lenses treated as independent A.1 | QA | WEB-TC-08, WEB-TC-11 | PENDING_OWNER |
 | RM-052 | WEB_APPLIES | Chat interruption or resume loses tasks, policy and provenance | QA | WEB-TC-10, WEB-TC-11 | PENDING_OWNER |
 

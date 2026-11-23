@@ -48,14 +48,14 @@ For each eventual real execution, include its `WEB-TC-xx` and matching `WEB-AC-x
 
 ## Result evaluation and owner metric decision
 
-- The original 15 cases remain unchanged in identity; six V1 AGENTS-related test cases are WEB-TC-16..21. `WEB-TC-03` has **two required offline subvariants** A/B; `WEB-TC-07` includes safe, unsafe and unverified source-path variants; `WEB-TC-20` includes repeat and stale-SHA variants. These subvariants are **fixtures**, not extra test IDs; mark the parent case PASS only if every **approved required** variant passes. QA must approve supported provider/host population and planned fixtures.
+- The original 15 cases remain unchanged in identity; six V1 AGENTS-related test cases are WEB-TC-16..21. `WEB-TC-03` has three required source variants A/B/C; `WEB-TC-07` includes safe, unsafe and unverified source-path variants; `WEB-TC-20` includes repeat, conflict, stale-SHA and [remote reconciliation variants](../.workflow/testingAndDelivery.md#web-tc-20-remote-response-loss-variants). These subvariants are **fixtures**, not extra test IDs; mark the parent case PASS only if every **approved required** variant passes. QA must approve supported provider/host population and planned fixtures.
 - Use actual deterministic per-case PASS/FAIL/BLOCKED/NOT_RUN/INCONCLUSIVE with evidence, and document unsupported paths. D05 requires **100% PASS of applicable mandatory Web AC and required variants**, with no unresolved applicable P0. Product and QA still own measurement and denominator decisions for the inherited reliability and coverage criteria. The 37-case suite records deterministic acceptance outcomes.
 - A remote GitHub connector write scenario verifies API/provider path authorization and exact blob lease/readback, **not** local Windows Path Guard. An agent modifying local Windows files may only be used after real authorized OS containment and RM-001 security evidence; a model simulation does not PASS WEB-TC-16..21.
 - The 42 legacy `TC-S2C-BR001..021-P/N` test scenarios are a **different suite** for broader runtime/product behavior and remain NOT_RUN. No test status is upgraded by designing this worksheet.
 
 ## QA approval queue
 
-Approve the seven current mandatory Web groups, case applicability, supported host/provider/OS combinations, fixture variants, who can execute and independently verify AGENTS write paths, and Web-profile reliability metric. If a deterministic case is declared N/A, document the exact unsupported mode and owner evidence; do not use N/A to conceal a required security-negative test. Release gate stays BLOCKED while the owner-level `R>99.99%` reconciliation or actual required test evidence is missing.
+Approve the [seven proposed groups covering all 37 Web cases](webV1AcceptanceAndTraceability.md#proposed-mandatory-groups--qaproduct-owners-must-approve-before-execution), case applicability, supported host/provider/OS combinations, fixture variants, who can execute and independently verify AGENTS write paths, and Web-profile reliability metric. If a deterministic case is declared N/A, document the exact unsupported mode and owner evidence; do not use N/A to conceal a required security-negative test. Release gate stays BLOCKED while the owner-level `R>99.99%` reconciliation or actual required test evidence is missing.
 
 
 ## D02 supersession — BR-specific 16 Web case oracles

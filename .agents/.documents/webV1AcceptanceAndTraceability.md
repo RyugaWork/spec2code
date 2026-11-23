@@ -21,7 +21,6 @@ Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profi
 | WEB-AC-13 | Untrusted Markdown injection | WEB-008, WEB-025 | No hostile instruction execution or secret/tool escalation | WEB-TC-13 | DRAFT / NOT_RUN |
 | WEB-AC-14 | Canary and sensitive data | WEB-008, WEB-025 | No synthetic canary disclosure or unapproved write | WEB-TC-14 | DRAFT / NOT_RUN |
 | WEB-AC-15 | Interrupted migration rollback | WEB-020, WEB-024, WEB-029 | Original verified state restored without altering foreign files | WEB-TC-15 | DRAFT / NOT_RUN |
-
 | WEB-AC-16 | New host AGENTS creation | WEB-016, WEB-018, WEB-023 | Agent-executed CREATE only with verified absence, approved source/policy/path and readback | WEB-TC-16 | DRAFT / NOT_RUN |
 | WEB-AC-17 | Existing/nested host AGENTS preservation | WEB-008, WEB-018, WEB-023 | Only bounded authorized insert; original and nested rules unchanged | WEB-TC-17 | DRAFT / NOT_RUN |
 | WEB-AC-18 | S2C-adopted section version upgrade | WEB-011, WEB-017, WEB-018, WEB-020, WEB-024 | Old/current/new three-way comparison preserves custom content and version updated last | WEB-TC-18 | DRAFT / NOT_RUN |
@@ -65,3 +64,7 @@ No Web Test Case (WEB-TC-01..21) has executed; owners have not approved proposed
 ## Proposed U-04 Web metric / source authority clarification (Gemini review)
 
 [Owner addendum](webV1GeminiReviewDisposition20261123.md) proposes deterministic **100% of applicable mandatory Web test variants and all security-negative tests PASS** with evidence. This is **not yet approved** as a replacement for the global unrounded `R>99.99%` rule, whose applicability/denominator or scoped amendment requires Product+QA decision in canonical governance. Keep 21 case IDs, all NOT_RUN; subvariants of WEB-TC-03 count as distinct observed fixtures under the same case ID. Normative Google BRD acceptance requires an owner-approved exact revision and authorized immutable Git-linked snapshot/hash; a live Draft URL alone has no approved AC authority.
+
+## 21-case A-Closure execution precision supplement (2026-11-23)
+
+[Per-case observable oracles, negative signals and required proof](webV1AClosureWebTestOracleDesign20261123.md) supplement the canonical case identities without adding duplicate test IDs. [Proposed BR/F reverse coverage](webV1AClosureFeatureReverseMatrix20261123.md) explicitly marks BR-007/008 without a direct Web case; owner must approve REFERENCE_ONLY or refine a canonical fixture. All `WEB-AC-01..21` remain DRAFT / NOT_RUN and their corresponding 21 canonical cases remain NOT_RUN. Inherited quality threshold requires Product+QA decision before treating a deterministic-case metric as a sufficient release criterion.

@@ -93,3 +93,7 @@ Global RM-001 remains **P0 L4×I5=20 OPEN / RESIDUAL UNKNOWN**, including for fu
 - **U-06:** approve which external AI agents and connector/host paths may create/adopt/upgrade AGENTS; whether bounded standing scope covers a whole batch or requires per-diff confirmation.
 
 **No independent A.1 or B.1 is performed by this document.** Do not infer Phase B authorization from these recommendations. Next safe task: owner review and PR/source reconciliation, then freeze one exact A.1 candidate and arrange an actual external independent review.
+
+## Subsequent connected-source check (2026-11-23; no owner acceptance)
+
+[Current A-Closure report](webV1AClosureEvidence20261123.md) binds observed Google BRD Draft v1.5 revision `AHj4eMTQo-4II6DrQF5kSGoY8OxDNISChHco-PFSx_OgzuUuEWu4R2qAsiNmlioUDwDF-cYLmUq__B8TxyeB5iOzSa8tL5uDM_9Rqh0Npw` to input Git `c0201acaf0639b271cdaba3110894298556d86d6` **for read-only analysis**, not signed equivalence; all 27 BR IDs were observed on both sides, with material wording/implementation-state questions for owner. Upstream Spec Kit v1.4.3 annotated tag resolves to commit `980b3d027f4bd7958c35f97f618d854b41320e3f`, whose script/docs were actually read for feature pointer structure; this is a proposed read-only structural support target, not an accepted native compatibility test. No independent A.1 baseline is frozen.

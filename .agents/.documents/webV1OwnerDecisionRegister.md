@@ -13,7 +13,7 @@ Date: 2026-11-23. Based on source d7fed7bb7d6d791f0c62f4315a66a729bb5f52ea on br
 | DEC-WEB-05 | Require independent Web-scope A1-VAL-01..09 on an exact approved source before product authoring; then separate Phase B implementation permission, actual B1-VAL-01..09 on candidate, and a distinct release approval. | Named independent Reviewer(s) plus Product/Host Owner; explicit evidence/report IDs and actual decisions for each gate. | OWNER_PENDING |
 | DEC-WEB-06 | Approve **agent-executed AGENTS.md create/adopt/upgrade** based only on declarative AGM-01..17, with actual path grants, old/current/new merge, readback, idempotent repeat, denied-write fallback and no incidental Git rights. | Product/Architecture/Host/Security: supported host/provider and exact approved paths; independent review of negative tests. | OWNER_PENDING |
 
-These are **five separate decision records**, not a request for the owner to blindly approve all items. A.1/B/B.1 and release approvals remain separate even if one person holds multiple accountable business roles; the document author cannot be the independent reviewer of their own work.
+These are **six separate decision records**, not a request for the owner to blindly approve all items. A.1/B/B.1 and release approvals remain separate even if one person holds multiple accountable business roles; the document author cannot be the independent reviewer of their own work.
 
 ## What AI can do next without replacing the owner
 
@@ -69,3 +69,7 @@ The canonical proposed Web suite now includes **WEB-TC-01..21**, all NOT_RUN. A.
 - U-06: agent-executed AGENTS updates require actual scoped grants, matrix and three-way diff/readback; no broad git/runtime permission.
 
 **Decisions DEC-WEB-01..06 remain OWNER_PENDING.** This addendum is NOT an A.1 PASS or Phase B authorization. Owner source and reviewer names are intentionally unfilled rather than fabricated.
+
+## A-Closure owner review (2026-11-23)
+
+The precise **six U-item approval form and three blockers** are in [A-Closure Approval Packet](webV1AClosureApprovalPacket20261123.md). Source [Git/Google/PR review](webV1AClosureEvidence20261123.md) and [64-F/27-BR trace](webV1AClosureFeatureReverseMatrix20261123.md) are author-verifiable evidence, not an owner decision. `DEC-WEB-01..06` remain `OWNER_PENDING`. Until identities, supported provider/OS modes, 52-risk decisions, KPI treatment and immutable BRD/branch baseline are approved, there is no actual independent A.1, no B authorization and no release.

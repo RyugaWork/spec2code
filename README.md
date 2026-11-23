@@ -137,7 +137,7 @@ The current development documentation has been refined in **two bounded sets of 
 
 The five author-side documentation batches are PLAN-106 (requirement/RTM/QA), PLAN-107 (Path Guard/host security), PLAN-108 (Spec Kit), PLAN-109 (portable skill/provider) and PLAN-110 (final reviewer/owner packet). They comprise **50 discrete document tasks and five Git-persisted handoffs**, not 50 separate feature implementations, external reviews or code tests. Use the canonical [master](.agents/.spec.md), [RTM](.agents/.traceMatrix.md), [test catalogue](.agents/.workflow/testingAndDelivery.md), [risk matrix](.agents/.riskMatrix.md), [A.1 contract](.agents/.workflow/validationSpecification.md) and [PLAN-110 handoff](.agents/.handoffs/plan-110-10task-batch-5.md) for current status.
 
-The historical README sections remain preserved. The development branch is `docs/plan-089-a1-readiness`; PR #10 remains Draft until independently reviewed. Google BRD is only a stakeholder Draft mirror and needs semantic owner reconciliation with the final Git SHA. Authoring completeness can pass static checks while independent A.1, security P0, runtime host tests and separate B approval remain blocked.
+The historical README sections remain preserved. The **current Phase A consolidation branch is `s2c/PhaseA`**; `docs/plan-089-a1-readiness` remains the older PR #10 head, not the active working branch. All old branch histories, including PR #11, are preserved in Phase A ancestry; PR #8..#11 are still open Drafts and have not been closed through GitHub. Google BRD is only a stakeholder Draft mirror and needs semantic owner reconciliation with the final Git SHA. Authoring completeness can pass static checks while independent A.1, security P0, runtime host tests and separate B approval remain blocked.
 
 ## PLAN-115 — Unified feature linkage and VMware security design
 
@@ -168,3 +168,8 @@ The [U-01..06 conditional design decision record](.agents/.documents/webV1Reques
 ## S2C Phase A branch history consolidated (2026-11-23)
 
 [Full integration ledger](.agents/.documents/webV1FullBranchHistoryIntegration20261123.md) preserves PR #11 and `InitialVersion_v0` histories in `s2c/PhaseA` without overwriting current canonical F/RM/PLAN IDs. The [original PR #11 review file](.agents/.handoffs/plan-090-a1-preflight-review.md) and [exact historical 180 added lines](.agents/.documents/webV1Pr11AddedLinesArchive20261123.md) are available for auditing. No runtime/CI activation, independent A.1 signoff, B authorization, or release was performed.
+
+
+## Phase A integration audit and unified traceability (2026-11-23)
+
+[Immutable-input source/CI/coherence audit](.agents/.documents/phaseAIntegrationCoherenceAudit20261123.md) and [full 64-F/27-BR/30-task/21-AC/21-TC/52-RM/17-AGM unified matrix](.agents/.documents/phaseAUnifiedIntegrationMatrix20261123.md) were prepared against merge input `4f3f22928673a9c80a2fa0bf9988f2daa1a9cfb4`. These are **derived static evidence**, not A.1 approval or a new normative source. The input CI run #494 had five completed PASS jobs; Web acceptance cases remain NOT_RUN, RM-001 global P0 OPEN, and Phase B NOT_AUTHORIZED. Native Spec Kit pilot trigger/version drift remains a Git/Host Owner decision; the historical PR #11 source is preserved without assigning it conflicting canonical IDs.

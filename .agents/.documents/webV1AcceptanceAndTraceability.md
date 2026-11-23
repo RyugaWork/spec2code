@@ -8,7 +8,7 @@ Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profi
 | --- | --- | --- | --- | --- | --- |
 | WEB-AC-01 | Identity and source binding | WEB-001, WEB-006, WEB-007, WEB-016 | Correct pinned bundle and observed source; missing source named | WEB-TC-01 | DRAFT / NOT_RUN |
 | WEB-AC-02 | Host AGENTS precedence | WEB-008, WEB-018, WEB-023 | No host policy overwrite or unauthorized change | WEB-TC-02 | DRAFT / NOT_RUN |
-| WEB-AC-03 | Missing mandatory input | WEB-007, WEB-022 | Offline complete-upload grounded plan; missing source BLOCKED/UNKNOWN, no invented SHA | WEB-TC-03 | DRAFT / NOT_RUN |
+| WEB-AC-03 | Missing mandatory input | WEB-007, WEB-022 | A complete offline grounded plan; B missing mandatory source BLOCKED/UNKNOWN; C simultaneous Git/ZIP differing same-path bytes => SOURCE_CONFLICT, report exact refs/hashes, stop dependent action, no silent precedence/write. | WEB-TC-03 | DRAFT / NOT_RUN |
 | WEB-AC-04 | Requirements and task structure | WEB-012, WEB-013, WEB-014, WEB-022 | Stable unique IDs, acyclic prerequisites and source-bound plan | WEB-TC-04 | DRAFT / NOT_RUN |
 | WEB-AC-05 | Conflicting requirements | WEB-008, WEB-009, WEB-012, WEB-022 | Owner decision required, no convenient invented resolution | WEB-TC-05 | DRAFT / NOT_RUN |
 | WEB-AC-06 | Context safety floor | WEB-010, WEB-022 | Mandatory security context not omitted by MINIMAL request | WEB-TC-06 | DRAFT / NOT_RUN |
@@ -23,9 +23,9 @@ Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profi
 | WEB-AC-15 | Interrupted migration rollback | WEB-020, WEB-024, WEB-029 | Original verified state restored without altering foreign files | WEB-TC-15 | DRAFT / NOT_RUN |
 | WEB-AC-16 | New host AGENTS creation | WEB-016, WEB-018, WEB-023 | Agent-executed CREATE only with verified absence, approved source/policy/path and readback | WEB-TC-16 | DRAFT / NOT_RUN |
 | WEB-AC-17 | Existing/nested host AGENTS preservation | WEB-008, WEB-018, WEB-023 | Only bounded authorized insert; original and nested rules unchanged | WEB-TC-17 | DRAFT / NOT_RUN |
-| WEB-AC-18 | S2C-adopted section version upgrade | WEB-011, WEB-017, WEB-018, WEB-020, WEB-024 | Old/current/new three-way comparison preserves custom content and version updated last | WEB-TC-18 | DRAFT / NOT_RUN |
-| WEB-AC-19 | Conflict and denied AGENTS path | WEB-008, WEB-018, WEB-023, WEB-025 | STOP/HANDOFF, independently verified no unauthorized effects | WEB-TC-19 | DRAFT / NOT_RUN |
-| WEB-AC-20 | Idempotence and source drift | WEB-017, WEB-020, WEB-024 | Same version NO_CHANGE; stale write denied and re-reviewed | WEB-TC-20 | DRAFT / NOT_RUN |
+| WEB-AC-18 | S2C-adopted section version upgrade | WEB-011, WEB-017, WEB-018, WEB-020, WEB-024 | Old/current/new three-way comparison; host-customized overlap causes whole-batch BLOCKED_CONFLICT/NO_WRITE and no version change; conflict-free authorized upgrade verifies readback and changes version last. | WEB-TC-18 | DRAFT / NOT_RUN |
+| WEB-AC-19 | Conflict and denied AGENTS path | WEB-008, WEB-018, WEB-023, WEB-025 | Denied path or overlapping customized AGENTS => bounded diff+HANDOFF only, no file/manifest writes, unchanged conflict fingerprint cannot automatically retry or escalate. | WEB-TC-19 | DRAFT / NOT_RUN |
+| WEB-AC-20 | Idempotence and source drift | WEB-017, WEB-020, WEB-024 | Same verified version is idempotent NO_CHANGE; repeated blocked fingerprint causes no loop/duplicate; stale target ref STOPs and requires new approved dry run. | WEB-TC-20 | DRAFT / NOT_RUN |
 | WEB-AC-21 | Provider unavailable / untrusted authority | WEB-008, WEB-016, WEB-025 | Matrix/diff only; no inferred write/commit, secrets or false persistence | WEB-TC-21 | DRAFT / NOT_RUN |
 
 ## Proposed mandatory groups — QA/product owners must approve before execution

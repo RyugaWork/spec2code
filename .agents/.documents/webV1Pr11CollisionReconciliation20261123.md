@@ -1,6 +1,6 @@
 # PLAN-116 — PR #11 unique-delta and ID collision reconciliation (2026-11-23)
 
-**AUTHOR REVIEW / PR11_NOT_MERGED / ARCH_GIT_OWNER_PENDING.** Main author branch source `e8efc36b78f991efc618d1ca98865609d032bb0d`, historical PR #11 branch head `e119100e17ed138a1bbd1d2b600d9b890d5441b7`, historical parent `1dae9338f4d38518e897212cdf80ba47239a7671`. These are source comparison SHAs, **not** an approved A.1 baseline. [Existing REV-090 finding audit](webV1AClosureEvidence20261123.md) records the ten review findings; no human independent signature is inferred from that report.
+**AUTHOR REVIEW / PR11_GIT_ANCESTRY_INTEGRATED / GITHUB_PR11_STILL_OPEN_DRAFT / ARCH_GIT_OWNER_PENDING.** Main author branch source `e8efc36b78f991efc618d1ca98865609d032bb0d`, historical PR #11 branch head `e119100e17ed138a1bbd1d2b600d9b890d5441b7`, historical parent `1dae9338f4d38518e897212cdf80ba47239a7671`. These are source comparison SHAs, **not** an approved A.1 baseline. [Existing REV-090 finding audit](webV1AClosureEvidence20261123.md) records the ten review findings; no human independent signature is inferred from that report.
 
 ## 1. Inspected historical delta
 

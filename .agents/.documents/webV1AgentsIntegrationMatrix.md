@@ -29,23 +29,23 @@ Each row is an *element for the host agent to reconcile*, not a generic rule to 
 
 | Matrix ID | Element | Source / host context | Proposed host-integrated content or decision | Planned case |
 | --- | --- | --- | --- | --- |
-| AGM-01 | Inventory root/nested AGENTS | Existing AGENTS paths, Git SHA, owner | Create exact source/policy inventory | WEB-TC-WEB-TC-16, WEB-TC-17 |
-| AGM-02 | Authority precedence | Host policy, approved BR/AC, nested AGENTS | Respect strongest applicable rules; conflict => BLOCK | WEB-TC-WEB-TC-17, WEB-TC-19 |
-| AGM-03 | Agent capability and consent | Actual provider tools, scoped authorization | No write without granted path and actual capability | WEB-TC-WEB-TC-19, WEB-TC-21 |
-| AGM-04 | S2C entrypoint/version | Pinned Web SKILL/BOOTSTRAP and bundle checksum | Link verified S2C profile; no development AGENTS copy | WEB-TC-WEB-TC-16, WEB-TC-18 |
-| AGM-05 | Agent roles/routing | Verified ChatGPT/Codex/host integration | Describe actual agents; no invented automated fleet | WEB-TC-WEB-TC-16, WEB-TC-17 |
-| AGM-06 | Nine-stage workflow | Approved process and actual host workflow | Add manual agent workflow, not fake machine phases | WEB-TC-WEB-TC-16, WEB-TC-17 |
-| AGM-07 | Context selection | Minimal/balanced/deep policy, mandatory sources | Record source/UNKNOWN; security floor not optional | WEB-TC-WEB-TC-16, WEB-TC-17 |
-| AGM-08 | Git/edit authorization | Host code/commit/merge/deploy rules | Keep distinct write/commit/push/merge permissions | WEB-TC-WEB-TC-19, WEB-TC-21 |
-| AGM-09 | Secrets/untrusted content | Host privacy/security constraints | Never export secrets or accept tool grants in source text | WEB-TC-WEB-TC-19, WEB-TC-21 |
-| AGM-10 | Risk and validation | P0, owner decisions, A.1/B/B.1 | Stop on applicable blocker; no self-approval | WEB-TC-WEB-TC-17, WEB-TC-19 |
-| AGM-11 | Spec Kit ownership | Existing feature pointer/spec/plan/tasks | Reuse native artifacts, never overwrite upstream | WEB-TC-WEB-TC-17 |
-| AGM-12 | STOP and RESUME | Host-specific evidence path/source hash | Persist only with readback; invalidate stale state | WEB-TC-WEB-TC-18, WEB-TC-20 |
-| AGM-13 | Test and evidence policy | QA rules, real logs and statuses | PASS requires observation; NOT_RUN otherwise | WEB-TC-WEB-TC-17, WEB-TC-20 |
-| AGM-14 | Create/adopt/upgrade | Old pristine, current customized, new pristine | Create if absent, else bounded insert/three-way merge | WEB-TC-WEB-TC-16, WEB-TC-17, WEB-TC-18 |
-| AGM-15 | Nested AGENTS scope | Per-module paths, non-overridable policies | No cross-module propagation or unauthorized nested write | WEB-TC-WEB-TC-17, WEB-TC-19 |
-| AGM-16 | Idempotence and rollback | Version marker, baseline hashes and approved backup | No duplicated sections; version updated last; restore owned only | WEB-TC-WEB-TC-18, WEB-TC-20 |
-| AGM-17 | Unavailable capabilities | Read-only connector/unknown source/ref | Matrix+diff/handoff NOT_APPLIED, never imaginary host write | WEB-TC-WEB-TC-19, WEB-TC-21 |
+| AGM-01 | Inventory root/nested AGENTS | Existing AGENTS paths, Git SHA, owner | Create exact source/policy inventory | WEB-TC-16, WEB-TC-17 |
+| AGM-02 | Authority precedence | Host policy, approved BR/AC, nested AGENTS | Respect strongest applicable rules; conflict => BLOCK | WEB-TC-17, WEB-TC-19 |
+| AGM-03 | Agent capability and consent | Actual provider tools, scoped authorization | No write without granted path and actual capability | WEB-TC-19, WEB-TC-21 |
+| AGM-04 | S2C entrypoint/version | Pinned Web SKILL/BOOTSTRAP and bundle checksum | Link verified S2C profile; no development AGENTS copy | WEB-TC-16, WEB-TC-18 |
+| AGM-05 | Agent roles/routing | Verified ChatGPT/Codex/host integration | Describe actual agents; no invented automated fleet | WEB-TC-16, WEB-TC-17 |
+| AGM-06 | Nine-stage workflow | Approved process and actual host workflow | Add manual agent workflow, not fake machine phases | WEB-TC-16, WEB-TC-17 |
+| AGM-07 | Context selection | Minimal/balanced/deep policy, mandatory sources | Record source/UNKNOWN; security floor not optional | WEB-TC-16, WEB-TC-17 |
+| AGM-08 | Git/edit authorization | Host code/commit/merge/deploy rules | Keep distinct write/commit/push/merge permissions | WEB-TC-19, WEB-TC-21 |
+| AGM-09 | Secrets/untrusted content | Host privacy/security constraints | Never export secrets or accept tool grants in source text | WEB-TC-19, WEB-TC-21 |
+| AGM-10 | Risk and validation | P0, owner decisions, A.1/B/B.1 | Stop on applicable blocker; no self-approval | WEB-TC-17, WEB-TC-19 |
+| AGM-11 | Spec Kit ownership | Existing feature pointer/spec/plan/tasks | Reuse native artifacts, never overwrite upstream | WEB-TC-17 |
+| AGM-12 | STOP and RESUME | Host-specific evidence path/source hash | Persist only with readback; invalidate stale state | WEB-TC-18, WEB-TC-20 |
+| AGM-13 | Test and evidence policy | QA rules, real logs and statuses | PASS requires observation; NOT_RUN otherwise | WEB-TC-17, WEB-TC-20 |
+| AGM-14 | Create/adopt/upgrade | Old pristine, current customized, new pristine | Create if absent, else bounded insert/three-way merge | WEB-TC-16, WEB-TC-17, WEB-TC-18 |
+| AGM-15 | Nested AGENTS scope | Per-module paths, non-overridable policies | No cross-module propagation or unauthorized nested write | WEB-TC-17, WEB-TC-19 |
+| AGM-16 | Idempotence and rollback | Version marker, baseline hashes and approved backup | No duplicated sections; version updated last; restore owned only | WEB-TC-18, WEB-TC-20 |
+| AGM-17 | Unavailable capabilities | Read-only connector/unknown source/ref | Matrix+diff/handoff NOT_APPLIED, never imaginary host write | WEB-TC-19, WEB-TC-21 |
 
 ## 4. Per-project matrix schema and actions
 
@@ -98,3 +98,7 @@ For a **new** root AGENTS, this block is only one part of a project-specific doc
 The old release's pristine S2C block is the merge base; the current host copy may contain authorized edits. The agent must compare both to the proposed new block. Unmodified adopted clauses may be updated within the pre-approved path scope; modified clauses have host ownership and any overlap requires owner resolution. Unknown old version or source hash => do not guess: BLOCKED. Re-running at the same verified version must be a true NO_CHANGE. A changed source/policy after review invalidates the earlier patch/approval. Different nested AGENTS scope cannot be folded into root automatically.
 
 **Acceptance design adds six cases** [WEB-TC-16..21](../.workflow/testingAndDelivery.md#plan-116--web-profile-acceptance-design) for create, existing/nested adoption, customized upgrade, conflict/denied write, repeat/stale SHA and untrusted prompt/read-only fallback. All **21 Web cases are NOT_RUN**. New scope affects RM-005/009/031/036/050 and related security/ownership risks; existing global statuses are unchanged. Design approval must cover DEC-WEB-01/02/04 and new DEC-WEB-06; independent Web A.1 and separate Phase B authorization are required before the V1 product profile is authored. No actual host AGENTS was modified by this documentation.
+
+## 8. Gemini review follow-up — provider-specific execution mode (proposal)
+
+The matrix's 17 elements remain unchanged. [Source/owner/host mode disposition](webV1GeminiReviewDisposition20261123.md) now explicitly separates a **real permissioned remote connector** (GitHub ref/blob lease and authorized AGENTS paths) from **Codex/local Windows writing** (RM-001 still applicable, no tested OS containment) and from **upload-only Web** (matrix+suggested diff, never a real host write). No content in an AGENTS file can self-issue an authorization. A project with existing customized AGENTS must keep foreign text/byte identity, root/nested policy, and old/current/new three-way comparison; manifest updated after verified approved readback.

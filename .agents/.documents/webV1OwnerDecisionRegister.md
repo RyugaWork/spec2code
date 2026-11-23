@@ -57,3 +57,15 @@ The requester identified an essential missing V1.0 use case: **create or update 
 **U-06 decision required:** approve or revise DEC-WEB-06: (a) exact AGENTS paths/new-file authority, (b) which real AI-agent provider can write them, (c) pre-approved bounded changes versus per-diff approval, (d) host/nested rule conflict authority, (e) backup/readback/rollback and owner signoff. If any is unknown, return a read-only matrix+diff/handoff. This design direction is **not permission to modify a user's real host repository**.
 
 The canonical proposed Web suite now includes **WEB-TC-01..21**, all NOT_RUN. A.1/B/B.1 and RM-001 remain unchanged.
+
+## Gemini review response — owner approvals remain pending (2026-11-23)
+
+[Detailed U-01..U-06 disposition and three mandatory decisions](webV1GeminiReviewDisposition20261123.md) now clarify all six design questions without assigning identities or signing gates: 
+- U-01: offline uploaded ZIP/Markdown/paste fallback and v1.4.3 Spec Kit read-only structure candidate (actual compatibility untested).
+- U-02: visible ZIP root, existing-branch-by-default B **only after** A.1/B authorization, and a single **not-yet-frozen** A.1 SHA after PR #8..11/main reconciliation.
+- U-03: explicitly named roles and a **non-author actual independent reviewer**; solo ownership without that person remains BLOCKED.
+- U-04: 21 designed Web test cases, proposal for all applicable mandatory Web/negative cases PASS; inherited R>99.99% metric remains governed until owner-approved scope-specific amendment. Google BRD must be bound to an exact versioned approved Git snapshot/reference.
+- U-05: RM-001 applicability separates remote read/connector write from locally executed Windows/other-host agents; global P0 remains OPEN.
+- U-06: agent-executed AGENTS updates require actual scoped grants, matrix and three-way diff/readback; no broad git/runtime permission.
+
+**Decisions DEC-WEB-01..06 remain OWNER_PENDING.** This addendum is NOT an A.1 PASS or Phase B authorization. Owner source and reviewer names are intentionally unfilled rather than fabricated.

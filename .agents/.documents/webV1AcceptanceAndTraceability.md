@@ -8,11 +8,11 @@ Date: 2026-11-23. Source input `fa2ba44e4a2076cf004160831fdaa7a3f2ec8148`; profi
 | --- | --- | --- | --- | --- | --- |
 | WEB-AC-01 | Identity and source binding | WEB-001, WEB-006, WEB-007, WEB-016 | Correct pinned bundle and observed source; missing source named | WEB-TC-01 | DRAFT / NOT_RUN |
 | WEB-AC-02 | Host AGENTS precedence | WEB-008, WEB-018, WEB-023 | No host policy overwrite or unauthorized change | WEB-TC-02 | DRAFT / NOT_RUN |
-| WEB-AC-03 | Missing mandatory input | WEB-007, WEB-022 | BLOCKED/UNKNOWN rather than invented file/SHA | WEB-TC-03 | DRAFT / NOT_RUN |
+| WEB-AC-03 | Missing mandatory input | WEB-007, WEB-022 | Offline complete-upload grounded plan; missing source BLOCKED/UNKNOWN, no invented SHA | WEB-TC-03 | DRAFT / NOT_RUN |
 | WEB-AC-04 | Requirements and task structure | WEB-012, WEB-013, WEB-014, WEB-022 | Stable unique IDs, acyclic prerequisites and source-bound plan | WEB-TC-04 | DRAFT / NOT_RUN |
 | WEB-AC-05 | Conflicting requirements | WEB-008, WEB-009, WEB-012, WEB-022 | Owner decision required, no convenient invented resolution | WEB-TC-05 | DRAFT / NOT_RUN |
 | WEB-AC-06 | Context safety floor | WEB-010, WEB-022 | Mandatory security context not omitted by MINIMAL request | WEB-TC-06 | DRAFT / NOT_RUN |
-| WEB-AC-07 | Spec Kit ownership | WEB-019, WEB-023 | Reuse authoritative feature tasks, reject unowned override | WEB-TC-07 | DRAFT / NOT_RUN |
+| WEB-AC-07 | Spec Kit ownership | WEB-019, WEB-023 | Pinned Spec Kit v1.4.3 structure read-only; reuse feature tasks, reject unowned override and unknown versions | WEB-TC-07 | DRAFT / NOT_RUN |
 | WEB-AC-08 | No implicit writes or gate approval | WEB-009, WEB-022, WEB-025 | No Git write or B/A.1 advancement without authority | WEB-TC-08 | DRAFT / NOT_RUN |
 | WEB-AC-09 | Evidence-based test result | WEB-015, WEB-022, WEB-025 | Without actual observed results status remains NOT_RUN | WEB-TC-09 | DRAFT / NOT_RUN |
 | WEB-AC-10 | STOP/RESUME provenance | WEB-015, WEB-024 | Readback distinguishes PERSISTED vs NOT_PERSISTED; no auto CLOSE | WEB-TC-10 | DRAFT / NOT_RUN |
@@ -61,3 +61,7 @@ Record `caseId`, `acId`, `group`, release bundle/version/checksum, source Git SH
 No Web Test Case (WEB-TC-01..21) has executed; owners have not approved proposed group denominators, ACs, data-sharing policy, security P0 applicability, independent A.1 or Phase B. **NO-GO for v1 stable.**
 
 **Integration design amendment:** [AGM-01..17](webV1AgentsIntegrationMatrix.md) defines declarative content and a permissioned agent-execution path. These six ACs and cases are design-only; their host-write proof requires actual before/after evidence, not merely a Markdown diff.
+
+## Proposed U-04 Web metric / source authority clarification (Gemini review)
+
+[Owner addendum](webV1GeminiReviewDisposition20261123.md) proposes deterministic **100% of applicable mandatory Web test variants and all security-negative tests PASS** with evidence. This is **not yet approved** as a replacement for the global unrounded `R>99.99%` rule, whose applicability/denominator or scoped amendment requires Product+QA decision in canonical governance. Keep 21 case IDs, all NOT_RUN; subvariants of WEB-TC-03 count as distinct observed fixtures under the same case ID. Normative Google BRD acceptance requires an owner-approved exact revision and authorized immutable Git-linked snapshot/hash; a live Draft URL alone has no approved AC authority.

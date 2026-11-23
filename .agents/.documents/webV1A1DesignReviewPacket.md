@@ -10,7 +10,7 @@ Date: 2026-11-23; reviewer input candidate `fa2ba44e4a2076cf004160831fdaa7a3f2ec
 | ADR-WEB-02 authority and artifacts | Development root `AGENTS.md` governs the S2C repository, not universal host files. The host owns existing AGENTS and customized docs; upstream Spec Kit owns `.specify/` and `specs/`. Future package under `.source/profiles/web/` only after B, no distribution of prototype scripts/config. | Architecture + Host; OWNER_PENDING |
 | ADR-WEB-03 version/data contract | Candidate `productVersion=1.0.0`, `schemaVersion=1`, independently pinned `bundleVersion`, release commit/checksums; `UNKNOWN` is not permission. Manual three-way migration and rollback, manifest version updated last after verified readback. | Architecture + Host; OWNER_PENDING |
 | ADR-WEB-04 Git integration | Maintain one documentation branch, no forced merge. Reconcile main's unique change, four stacked draft PRs, external reviewer findings and Google BRD semantic source parity; release only from separately approved immutable source. | Git Integrator + Release Owner; OWNER_PENDING |
-| ADR-WEB-05 QA and release policy | All 15 Web case oracles proposed, QA/owner defines valid mandatory groups, denominator and evidence. Independent A.1 required before Phase B, independent B.1 after implementation; no P0 waiver, no approval-by-author. | QA + Security + Product; OWNER_PENDING |
+| ADR-WEB-05 QA and release policy | All 21 Web case oracles proposed, QA/owner defines valid mandatory groups, denominator and evidence. Independent A.1 required before Phase B, independent B.1 after implementation; no P0 waiver, no approval-by-author. | QA + Security + Product; OWNER_PENDING |
 
 These proposed ADR names do not supersede existing architecture decisions/BRD and are not new runtime feature identifiers.
 
@@ -45,7 +45,7 @@ The named reviewer must independently inspect the **exact resulting Git SHA** an
 | --- | --- | --- |
 | Accept/revise DEC-WEB-01 and scopes across F01..64 | Product + Security | Approved Web profile boundary, precise permissions/provider/data treatment and source SHA |
 | Accept/revise DEC-WEB-02/03 and ADR-WEB-01..05 | Architecture + Git/Host | Contract, ownership/target, version/schema and integration decision |
-| Accept/revise DEC-WEB-04 and 15 AC/group decisions | Product + QA | BR/source authority, case oracles, group method, test fixtures and evidence |
+| Accept/revise DEC-WEB-04 and 21 AC/group decisions | Product + QA | BR/source authority, case oracles, group method, test fixtures and evidence |
 | Decide applicability for RM-001..052 | Security Owner | 52 row dispositions + mandatory negative test plan, no open applicable P0 |
 | Conduct scoped A.1 | Actually independent reviewer | Exact-SHA A1-VAL-01..09 report, dissent and dated identity |
 | Authorize B if A.1 passed | Responsible Product/Host Owner | **Separate** explicit scope for WEB-006..020, not inferred by reading this document |
@@ -55,3 +55,7 @@ The named reviewer must independently inspect the **exact resulting Git SHA** an
 ## Scope change for A.1 reviewer — agent-executed AGENTS integration (2026-11-23)
 
 Re-evaluate A1-VAL-01/02 for [DEC-WEB-06 and 17 AGM rows](webV1AgentsIntegrationMatrix.md), A1-VAL-03 for new WEB-TC-16..21 reverse mappings, A1-VAL-04/05 for create/adopt/upgrade/three-way conflicts, A1-VAL-06/07 for AGENTS write/owner risks and A1-VAL-08/09 for approval/readback/rollback evidence. Proposed **ADR-WEB-06:** S2C is the declarative source only; a separately authorized AI agent performs AGENTS writes using real capabilities, otherwise outputs a patch/handoff. This is a **new design candidate** and invalidates any older scoped approval assumptions, though no previous independent A.1 PASS exists. **21 test designs, 0 executions.** Bind any independent review to the final post-amendment SHA, not the initial candidate SHA quoted above. No host AGENTS change was made.
+
+## Gemini feedback after AGENTS scope revision — independent-review gate correction
+
+The reviewer must also inspect the [Gemini review disposition](webV1GeminiReviewDisposition20261123.md), particularly named independent reviewer identity/actual authority, BRD immutable owner-approved Git snapshot, proposed Spec Kit v1.4.3 read-only mapping boundaries and permissioned AGENTS host writes. A.1 baseline is **not yet frozen**: `d23e981073a8e4419d992b1b0fe4de0ee11730da` is an observed author input, not a signed scope-freeze SHA. Reconcile stacked PR #8–#11 and main's unique change before selecting one immutable final candidate. No role-lens/Gemini review substitutes for independent A1-VAL-09. A Web-only RM-001 exclusion requires distinct Security Owner scope/evidence for remote connector vs Codex/local Windows execution; the latter remains blocked pending OS proof. All 21 Web tests are NOT_RUN; no release acceptance is inferred.

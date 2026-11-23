@@ -23,7 +23,7 @@ The following are **current author assessments**, not the PR reviewer's signoff.
 | REV-090-03 | P1 | RECHECK_REQUIRED | 42 legacy BR scenario IDs are designed, not executed; verify individual oracles, fixture feasibility and coverage on final source. Separate from 15 WEB-TC cases. |
 | REV-090-04 | P1 | DEFERRED_ENGINE; OPEN_GLOBAL | Worker isolation, review quorum/budgets and artifact ownership are future multi-agent/runtime decisions; Web human-directed review still needs ownership/false-approval checks. |
 | REV-090-05 | P1 | OPEN_BRANCH_INTEGRATION | Four stacked draft PRs plus divergent main; review integration graph and choose immutable target/merge policy before v1 release. |
-| REV-090-06 | P1 | OPEN_SOURCE_PARITY | Git/Google BRD semantic equivalence must be reviewed by owner on exact Git SHA and Google revision; no observed fresh Google revision here. |
+| REV-090-06 | P1 | OPEN_SOURCE_PARITY | Git/Google BRD semantic equivalence was an open finding at this historical preflight. D01 now specifies the reviewed Git SHA as the Web V1 baseline. Cite the archived Google source when relevant to provenance. |
 | REV-090-07 | P1 | OPEN_INDEPENDENT_A1 | Same-model sequential lenses are not independent review; real external A1-VAL-01..09 required. |
 | REV-090-08 | P2 | NO_MATCH_IN_CURRENT_MASTER | Text scan of current .agents/.spec.md found zero literal A.1-VAL-0x labels and eight canonical A1-VAL-0x matches. This narrow display defect appears corrected; no rendered Markdown or independent review claimed. |
 | REV-090-09 | P2 | NO_MATCH_IN_CURRENT_MASTER | Text scan found zero escaped-backtick tokens in current .agents/.spec.md. Narrow source symptom absent; visual rendering not independently verified. |

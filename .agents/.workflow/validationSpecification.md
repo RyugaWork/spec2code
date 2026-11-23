@@ -116,7 +116,7 @@ No change to the five machine runtime phases, host permissions or existing A.1/B
 
 | Gate | Required evidence and reviewer assertion | Author-preflight finding | Formal reviewer |
 | --- | --- | --- | --- |
-| A1-VAL-01 Source authority | Exact Git SHA and Google doc/tab/revision, accepted BRD semantics and accountable approvers | Google draft headings 31–35 now exist; line-level BR/AC parity and owner approval remain unknown | NOT_RUN |
+| A1-VAL-01 Source authority | Exact Git SHA, accepted BRD semantics and accountable approvers. Cite historical Google provenance when relevant. | Google draft headings 31–35 now exist; line-level BR/AC parity and owner approval remain unknown | NOT_RUN |
 | A1-VAL-02 Requirements and AC | Each active BR/REQ, actor/precondition, positive/negative AC and ambiguous default disposition | SRS-01..12 drafted; BR-022..027 candidate, F43..64 not approved | NOT_RUN |
 | A1-VAL-03 Bidirectional RTM | Requirement → feature → task → test → risk/evidence and reverse; no orphan identifiers | Candidate RTM covers 44 F cases and 12 MM test IDs; execution NOT_RUN | NOT_RUN |
 | A1-VAL-04 Feature design | Main/alternate/error/STOP paths, input/output/data ownership, permissions and contract compatibility for each scoped feature | F43–F64 designs and cases exist; executable host fixtures and owner choices remain proposed | NOT_RUN |
@@ -173,7 +173,7 @@ The reviewer records each gate's evidence URI, source/version, observation, diss
 
 The requester's broad **“duyệt hết đi”** instruction was conservatively mapped by the author into APP-01..06 design/policy directions; see [canonical owner register](../.documents/systemSpecificationPlan.md). This provides evidence of user intent for broad design scope, architecture, safety policy, P0 handling process, A→A.1→B→B.1 workflow and technology selection rules. It does **not** supply an independent evaluator, signed host/security acceptance, numerical per-BR ACs, semantic Google/Git parity, observed security tests or a B implementation grant.
 
-**Do not change formal `A1-VAL-01..09` statuses:** all are `NOT_RUN` until a separately accountable reviewer evaluates evidence on the final Git/Google pair. The prior source-bound A.1 author-preflight is a historical author assessment, not an A.1 PASS. An owner may later submit individual ADR/P0/AC decisions, but the present record is `DESIGN_DIRECTION_APPROVED_BY_REQUESTER / FORMAL_A1_NOT_RUN`, and a future independent A.1 PASS would still require separate explicit B authorization.
+**Do not change formal `A1-VAL-01..09` statuses:** all are `NOT_RUN` until a separately accountable reviewer evaluates evidence on the final pinned Git SHA under D01. The prior source-bound A.1 author-preflight is a historical author assessment, not an A.1 PASS. An owner may later submit individual ADR/P0/AC decisions, but the present record is `DESIGN_DIRECTION_APPROVED_BY_REQUESTER / FORMAL_A1_NOT_RUN`, and a future independent A.1 PASS would still require separate explicit B authorization.
 
 ## A1-SRC-20261114 — Source-pair screening disposition (author-side only)
 
@@ -191,7 +191,7 @@ Google BR-003/017/019 were updated at source revision `AHj4eMTAw3s3g2hRmmpvE3EnG
 
 For each defined mandatory measurable executable test group on one pinned source SHA, use R = valid passes / all valid executions × 100%, with an **unrounded strict R > 99.99%** threshold. Preserve genuine failures, retry units, excluded/skipped cases, denominator, host and evidence. Zero valid executions or unavailable tests are NOT_MEASURABLE/BLOCKED, not 100%. Numerically passing tests do not establish a production 99.99% reliability claim without statistical justification.
 
-The nine A1-VAL-01..09 are separate design judgments needing actual independent review on the same Git/Google pair; do not convert them to a pass percentage or treat model-generated prose as a signature. Any missing evidence, unresolved P0, mandatory NOT_RUN, source drift or unaccepted owner decision means NO_GO even if the measured groups exceed threshold. A.1 FAIL/BLOCKED returns to affected A stages, refreshes risk/AC, and reruns mandatory A.1 after a fresh pinned revision and any separately authorized regressions. Apply bounded retries and a STOP/handoff at limits. Report remaining/new/reopened/blocked tasks by executor each cycle using the [runbook](agentRunbook.md); no automatic B authority.
+The nine A1-VAL-01..09 are separate design judgments needing actual independent review on the same pinned Git SHA under D01; do not convert them to a pass percentage or treat model-generated prose as a signature. Any missing evidence, unresolved P0, mandatory NOT_RUN, source drift or unaccepted owner decision means NO_GO even if the measured groups exceed threshold. A.1 FAIL/BLOCKED returns to affected A stages, refreshes risk/AC, and reruns mandatory A.1 after a fresh pinned revision and any separately authorized regressions. Apply bounded retries and a STOP/handoff at limits. Report remaining/new/reopened/blocked tasks by executor each cycle using the [runbook](agentRunbook.md); no automatic B authority.
 
 ## Security verification in Phase B
 

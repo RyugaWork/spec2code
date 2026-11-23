@@ -515,3 +515,7 @@ Quét link chỉ kiểm sự tồn tại của đường dẫn trong Git tree ch
 ### Disposition of Phase A documentation corrections
 
 This update applies the source authority, Web acceptance grouping and remote GitHub AGENTS write contract corrections from M01–M07 and the Web handoff provenance correction from M10. The rows above preserve the observations at the audited input SHA. Product and QA retain ownership of measurement and applicability decisions. Security and Host retain risk disposition. The 37 cases are NOT_RUN, RM-001 is P0 OPEN and A.1 awaits independent review.
+
+### A.1 re-review handoff
+
+Follow-up to the static review of `e8d468d4823c51284a2b0d6fb4e9eb7038d01852`. The validation specification now pins the independent Web V1 review to one Git SHA. The Spec Kit Web handoff records external source revisions when those sources were actually used. Review this correction at the Git revision containing this section and compare A1-VAL-01..09 with the previous technical findings. Product and QA still own Web fixture applicability and KPI measurement for all 37 planned cases. Security and Host still own RM-001 applicability by mode and evidence requirements. A.1 and all 37 Web cases are NOT_RUN. RM-001 is P0 OPEN and B is NOT_AUTHORIZED.

@@ -2,15 +2,17 @@
 
 **Status: AUTHOR_STATIC_MATRIX_VERIFIED / DESIGN_AND_OWNER_GATES_PENDING.** Source branch `s2c/PhaseA`, audit input SHA `4f3f22928673a9c80a2fa0bf9988f2daa1a9cfb4`, Git tree `223c576403dd5a357218f5732caa37665086b5b5`, 2026-11-23. This is a **derived audit snapshot**; normative wording and owners remain in [master SRS](../.spec.md), [canonical RTM](../.traceMatrix.md), [risk register](../.riskMatrix.md), [plans](../.plans.md), [Web feature scope](webV1AClosureFeatureReverseMatrix20261123.md), [QA cases](../.workflow/testingAndDelivery.md), [AC design](webV1AcceptanceAndTraceability.md) and [AGM](webV1AgentsIntegrationMatrix.md). No source/test status is promoted by this report.
 
+> **Audit revision scope:** The original evidence inputs (`4f3f229...`, 2026-11-23) apply to the original 21-case snapshot. Requester D01–D06 later approved Git-only requirements and 16 additional dedicated BR-001..016 Web cases at input Git `01a96a28534fa4f32b11800ba64061bd1c4201ef`. This matrix now includes the **proposed revised 37-case source graph**; it does not claim that 37 tests ran on either earlier SHA. [D02 source/fixture detail](phaseAD02BrDedicatedWebCoverage20261123.md).
+
 ## 1. Matrix completeness and invariants
 
 | Integration layer | Observed unique primary IDs | Static check | Remaining gate |
 | --- | ---: | --- | --- |
 | Feature scope | 64 F01..F64 | One row per ID, valid Web task/test references | Product architecture applicability not signed |
-| Business requirement | 27 BR-001..027 | One Web disposition per ID | Google-versus-Git semantics and BR-007/008 choice pending |
+| Business requirement | 27 BR-001..027 | One Web disposition per ID | Git-only current authority; Google fully archived as historical source; requester D02 requires BR-001..016 separate AC/test |
 | Web tasks | 30 WEB-001..030 | 30 unique, all dependencies exist, DAG no cycles | Only WEB-001..003 author documentation complete |
-| Web acceptance | 21 WEB-AC-01..21 | 21 unique; one-to-one TC link | QA must approve fixtures/denominator |
-| Web tests | 21 WEB-TC-01..21 | 21 unique; every task ref resolves | All 21 NOT_RUN; not CI Python tests |
+| Web acceptance | 37 WEB-AC-01..37 | 37 unique; one-to-one TC link (16 dedicated BR variants added) | QA must approve actual fixtures and execution denominator |
+| Web tests | 37 WEB-TC-01..37 | 37 unique; every task ref resolves | All 37 NOT_RUN; not CI Python tests |
 | Risks | 52 RM-001..052 | 52 unique, every related WEB-TC ID resolves | Every Web risk applicability PENDING_OWNER; RM-001 global P0 OPEN |
 | AGENTS clauses | 17 AGM-01..17 | 17 unique, every related WEB-TC resolves | Real path/provider write grants and negative tests pending |
 | Cross-collection links | All typed WEB-task/test references in these rows | No out-of-range references observed | Semantic sufficiency of all edges still owner/reviewer work |
@@ -91,22 +93,22 @@
 
 | BR | Proposed Web scope | Direct test / absence | Review reason |
 | --- | --- | --- | --- |
-| BR-001 | SPLIT | WEB-TC-08, WEB-TC-19, WEB-TC-21 | Local OS Path Guard excluded; authority denied-write behavior is Web-visible |
-| BR-002 | WEB_APPLIES | WEB-TC-02, WEB-TC-17, WEB-TC-19 | Host root/nested AGENTS ownership |
-| BR-003 | WEB_APPLIES | WEB-TC-04, WEB-TC-08 | Manual stages and no unauthorized B promotion |
-| BR-004 | WEB_APPLIES | WEB-TC-08, WEB-TC-09 | Separate A.1/B.1 and real evidence |
-| BR-005 | WEB_APPLIES | WEB-TC-04, WEB-TC-07, WEB-TC-09 | Bidirectional trace without fabricated status |
-| BR-006 | WEB_APPLIES | WEB-TC-09, WEB-TC-11 | Risk/evidence and source drift |
-| BR-007 | REFERENCE_ONLY | NO_DIRECT_WEB_TEST | Risk grouping may be handled manually; owner must decide whether dedicated Web oracle is mandatory |
-| BR-008 | REFERENCE_ONLY | NO_DIRECT_WEB_TEST | Research provenance manually referenced; owner must decide whether dedicated Web oracle is mandatory |
-| BR-009 | WEB_APPLIES | WEB-TC-05, WEB-TC-08 | Prioritize blocker and refuse unsafe scope |
-| BR-010 | WEB_APPLIES | WEB-TC-10, WEB-TC-11 | STOP/RESUME/manual checkpoint |
-| BR-011 | WEB_APPLIES | WEB-TC-06, WEB-TC-13, WEB-TC-14, WEB-TC-21 | Context, privacy and untrusted document |
-| BR-012 | CONDITIONAL_READ | WEB-TC-07 | Pinned upstream Spec Kit read-only mapping |
-| BR-013 | WEB_APPLIES | WEB-TC-01, WEB-TC-07, WEB-TC-18 | Version/compatibility and reviewed override |
-| BR-014 | WEB_APPLIES | WEB-TC-02, WEB-TC-05, WEB-TC-17 | Owner-preserving documentation |
-| BR-015 | SPLIT | WEB-TC-12, WEB-TC-15, WEB-TC-16, WEB-TC-18, WEB-TC-20 | Web manifest and AGENTS migration only; full OS install excluded |
-| BR-016 | WEB_APPLIES | WEB-TC-01, WEB-TC-09, WEB-TC-15 | Evidence and release receipt; authority still pending |
+| BR-001 | SPLIT | WEB-TC-08, WEB-TC-19, WEB-TC-21, WEB-TC-22 | Local OS Path Guard excluded; authority denied-write behavior is Web-visible |
+| BR-002 | WEB_APPLIES | WEB-TC-02, WEB-TC-17, WEB-TC-19, WEB-TC-23 | Host root/nested AGENTS ownership |
+| BR-003 | WEB_APPLIES | WEB-TC-04, WEB-TC-08, WEB-TC-24 | Manual stages and no unauthorized B promotion |
+| BR-004 | WEB_APPLIES | WEB-TC-08, WEB-TC-09, WEB-TC-25 | Separate A.1/B.1 and real evidence |
+| BR-005 | WEB_APPLIES | WEB-TC-04, WEB-TC-07, WEB-TC-09, WEB-TC-26 | Bidirectional trace without fabricated status |
+| BR-006 | WEB_APPLIES | WEB-TC-09, WEB-TC-11, WEB-TC-27 | Risk/evidence and source drift |
+| BR-007 | WEB_APPLIES | WEB-TC-28 | Manually verify risk-group causes and member IDs |
+| BR-008 | WEB_APPLIES | WEB-TC-29 | Verify research provenance and unsupported claims |
+| BR-009 | WEB_APPLIES | WEB-TC-05, WEB-TC-08, WEB-TC-30 | Prioritize blocker and refuse unsafe scope |
+| BR-010 | WEB_APPLIES | WEB-TC-10, WEB-TC-11, WEB-TC-31 | STOP/RESUME/manual checkpoint |
+| BR-011 | WEB_APPLIES | WEB-TC-06, WEB-TC-13, WEB-TC-14, WEB-TC-21, WEB-TC-32 | Context, privacy and untrusted document |
+| BR-012 | CONDITIONAL_READ | WEB-TC-07, WEB-TC-33 | Pinned upstream Spec Kit read-only mapping |
+| BR-013 | WEB_APPLIES | WEB-TC-01, WEB-TC-07, WEB-TC-18, WEB-TC-34 | Version/compatibility and reviewed override |
+| BR-014 | WEB_APPLIES | WEB-TC-02, WEB-TC-05, WEB-TC-17, WEB-TC-35 | Owner-preserving documentation |
+| BR-015 | SPLIT | WEB-TC-12, WEB-TC-15, WEB-TC-16, WEB-TC-18, WEB-TC-20, WEB-TC-36 | Web manifest and AGENTS migration only; full OS install excluded |
+| BR-016 | WEB_APPLIES | WEB-TC-01, WEB-TC-09, WEB-TC-15, WEB-TC-37 | Evidence and release receipt; authority still pending |
 | BR-017 | DEFERRED_FUTURE | NO_DIRECT_WEB_TEST | Worker allocation/review fleet excluded from v1 |
 | BR-018 | DEFERRED_FUTURE | NO_DIRECT_WEB_TEST | Isolated worker execution excluded |
 | BR-019 | DEFERRED_FUTURE | NO_DIRECT_WEB_TEST | Automated synthesis service excluded |
@@ -120,7 +122,7 @@
 | BR-027 | DEFERRED_FUTURE | NO_DIRECT_WEB_TEST | Self-evolution/protected core automation deferred |
 
 
-**Important:** BR-007 and BR-008 are owner-blocked for choosing `REFERENCE_ONLY` or explicit existing-case oracles. The existence of 27 BR labels on Google and Git does not establish approved semantic equivalence.
+**Requester D01/D02 resolution:** Git is the sole current BR/SRS authority; Google's complete historical content is archived in Git. BR-007/008 have dedicated Web AC/test cases. All BR-001..016 have 16 distinct Web P/N case pairs (22..37). Product/QA must still review actual executable fixture coverage; the first 21 cross-cutting cases remain unchanged.
 
 ## 4. Task dependency → accountable executor → phase/evidence (30 rows)
 
@@ -160,7 +162,7 @@
 
 **Static dependency DAG:** 30 nodes, zero missing prerequisite task IDs and zero cycles. The dependency graph is not authorization: WEB-005 must still obtain independent A.1 and distinct B authorization before Web profile implementation.
 
-## 5. Web acceptance → mandatory test → related task (21 rows)
+## 5. Web acceptance → mandatory test → related task (37 rows after D02)
 
 | Acceptance | Objective | Task references | Test ID | Test observed status | AC approval status |
 | --- | --- | --- | --- | --- | --- |
@@ -185,6 +187,22 @@
 | WEB-AC-19 | Conflict and denied AGENTS path | WEB-008, WEB-018, WEB-023, WEB-025 | WEB-TC-19 | NOT_RUN | DRAFT / NOT_RUN |
 | WEB-AC-20 | Idempotence and source drift | WEB-017, WEB-020, WEB-024 | WEB-TC-20 | NOT_RUN | DRAFT / NOT_RUN |
 | WEB-AC-21 | Provider unavailable / untrusted authority | WEB-008, WEB-016, WEB-025 | WEB-TC-21 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-22 | BR-001 dedicated Web acceptance | Refer to canonical BR-001 scoped task links | WEB-TC-22 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-23 | BR-002 dedicated Web acceptance | Refer to canonical BR-002 scoped task links | WEB-TC-23 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-24 | BR-003 dedicated Web acceptance | Refer to canonical BR-003 scoped task links | WEB-TC-24 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-25 | BR-004 dedicated Web acceptance | Refer to canonical BR-004 scoped task links | WEB-TC-25 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-26 | BR-005 dedicated Web acceptance | Refer to canonical BR-005 scoped task links | WEB-TC-26 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-27 | BR-006 dedicated Web acceptance | Refer to canonical BR-006 scoped task links | WEB-TC-27 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-28 | BR-007 dedicated Web acceptance | Refer to canonical BR-007 scoped task links | WEB-TC-28 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-29 | BR-008 dedicated Web acceptance | Refer to canonical BR-008 scoped task links | WEB-TC-29 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-30 | BR-009 dedicated Web acceptance | Refer to canonical BR-009 scoped task links | WEB-TC-30 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-31 | BR-010 dedicated Web acceptance | Refer to canonical BR-010 scoped task links | WEB-TC-31 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-32 | BR-011 dedicated Web acceptance | Refer to canonical BR-011 scoped task links | WEB-TC-32 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-33 | BR-012 dedicated Web acceptance | Refer to canonical BR-012 scoped task links | WEB-TC-33 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-34 | BR-013 dedicated Web acceptance | Refer to canonical BR-013 scoped task links | WEB-TC-34 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-35 | BR-014 dedicated Web acceptance | Refer to canonical BR-014 scoped task links | WEB-TC-35 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-36 | BR-015 dedicated Web acceptance | Refer to canonical BR-015 scoped task links | WEB-TC-36 | NOT_RUN | DRAFT / NOT_RUN |
+| WEB-AC-37 | BR-016 dedicated Web acceptance | Refer to canonical BR-016 scoped task links | WEB-TC-37 | NOT_RUN | DRAFT / NOT_RUN |
 
 
 **Required unresolved negative variants:** WEB-TC-03-C handles simultaneous GitHub+ZIP same-path content drift, with stop/no silent precedence; WEB-TC-18/19/20 handle customized AGENTS conflict no write, stable conflict identity/no loop and stale SHA. These refine existing IDs, not add tests. No WEB case was actually executed.
@@ -279,3 +297,9 @@ Host root/nested AGENTS and external provider permission checks are required. Sa
 The [full Phase A coherence audit](phaseAIntegrationCoherenceAudit20261123.md) records Git lineage, observed CI checks, whole-tree Markdown results, PR #11 archived identifiers, current Spec Kit workflow drift, current task/test risk status and owner review queue.
 
 **No false promotion:** `AUTHOR_STATIC_MATRIX_VERIFIED` is a documentation consistency finding only. Four OS/Python unit jobs and one Ruff job had observed PASS on the input source commit, but 21 profile Web tests, real host AGENTS integrations, native Spec Kit smoke on `s2c/PhaseA`, adversarial Windows RM-001 and independent A.1/B.1 remain NOT_RUN.
+
+## D01–D06 requester decision supersession (2026-11-23)
+
+**Requester design decisions now recorded:** D01 = **Git alone normative**. Previous Google `BRD_Spec2Code` v1.5 is a *historical Gemini-era source*, imported in its entirety into Git as [source archive](legacyGoogleBrdSourceArchive20261123.md); **do not require future Google revision matching or treat Google as a second current business authority**. Source conflict checks still apply to other differing Git/ZIP/snapshot inputs. D02 = **all BR-001..016 receive individual dedicated Web AC and TC**: [16 pairs](phaseAD02BrDedicatedWebCoverage20261123.md); BR-007 and BR-008 are **not** REFERENCE_ONLY for Web acceptance. D03 = BR-017..021 accepted as architecture/requirements **design scope**, automated reviewer fleet deferred. D04 = BR-022..027 retained in roadmap, **not mandatory V1 implementation**. D05 = **100% PASS of applicable mandatory Web AC/test P/N variants** required for V1 release; inherited `R>99.99%` and BR-027 `>95%` scoped coverage await approved measurement/denominator rather than an invented waiver. D06 = read/upload in ChatGPT Web plus only **individually authorized remote GitHub API host AGENTS.md-only writes**; local OS/native agent writes excluded. Full dispositions: [decision register](phaseAD01D06RequesterDecisionRegister20261123.md).
+
+**Current suite: 37 AC + 37 planned TC (21 baseline + 16 BR-dedicated), 37/37 NOT_RUN.** No actual host permission, A.1/B/B.1 gate, risk acceptance or release is implied. Historic notes above remain dated source evidence and are **superseded where they contradict D01–D06**.

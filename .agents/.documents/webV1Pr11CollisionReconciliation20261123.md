@@ -60,3 +60,8 @@ Risk relationships are **proposed**; shared theme is not confirmed shared root c
 **Web V1 boundary:** S2C Markdown-first, read-only source intake plus separately authorized *remote GitHub API AGENTS-only writes*; no local Codex/OS write, autonomous worker orchestration, CI/CD admission, browser runner or Jules adapter in V1. Existing 17 AGMs/21 Web test IDs remain untouched, all actual tests NOT_RUN. No PR merge/tag/branch is authorized by this analysis.
 
 **Verified method:** GitHub PR #11 base-to-head comparison and readback of its six pre-existing changed files compared to corresponding current-branch text. The special `.agents/.spec.md` delta includes non-tail insertions, so appending only the new tail is not a safe merge method. No independent merge trial, host/runtime tests or A.1 PASS.
+
+
+## True Phase A history integration (later disposition, 2026-11-23)
+
+The [PR #11 complete added-lines historical annex](webV1Pr11AddedLinesArchive20261123.md) now preserves all 180 PR #11 lines added to six original files, and the [original 150-line PLAN-090 preflight](../.handoffs/plan-090-a1-preflight-review.md) is present under its original path. The [single branch history consolidation record](webV1FullBranchHistoryIntegration20261123.md) identifies the merge parents, including PR #11 and InitialVersion_v0. The PR #11 **Git ancestry is integrated**, but its colliding F43..50/RM-034..40/PLAN-091 definitions remain archival, **not normative**, and A.1/Phase B approval remains blocked. GitHub PR #11 is not automatically closed by this operation.

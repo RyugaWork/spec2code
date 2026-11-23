@@ -72,3 +72,8 @@ Use [source-bound A-Closure evidence and REV-090 statuses](webV1AClosureEvidence
 ## A.1 source-integrity blocker: PR #11 collisions (2026-11-23)
 
 Independent A1-VAL-01/03/06/09 must verify the [PR #11 historical semantic collision register](webV1Pr11CollisionReconciliation20261123.md) is owner-dispositioned before accepting an integrated source SHA: 8 F43..50 labels, 7 RM-034..40 labels, conflicting PLAN-091 Section 18, historical 10-finding handoff. No whole-file PR merge or self-approval. The [136-file Markdown file-target audit](webV1FullMarkdownLinkAudit20261123.md) is bounded author evidence only and cannot substitute semantic or security review. Reviewer identity, BRD authority, risk applicability, source integration and exact A.1 freeze remain pending.
+
+
+## Post-integration historical source handling
+
+Before A.1, inspect the [full history merge resolution](webV1FullBranchHistoryIntegration20261123.md) and [archived PR #11 additions](webV1Pr11AddedLinesArchive20261123.md). A historical PR commit as merge parent cannot make its colliding feature/risk definitions current. The canonical Phase A documents retain their IDs; all original PR #11 text remains recoverable. Require an actual separate Architecture/Git Reviewer disposition and fresh A.1 SHA freeze after this merge and business/QA/security decisions. Independent A1-VAL-01..09 are **NOT_RUN**.

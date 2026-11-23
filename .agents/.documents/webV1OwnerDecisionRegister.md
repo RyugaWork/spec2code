@@ -82,3 +82,8 @@ The precise **six U-item approval form and three blockers** are in [A-Closure Ap
 ## U-02/DEC-WEB-03 — PR #11 identity collision requires explicit Architecture/Git disposition
 
 The [PR #11 semantic diff and safe alias proposal](webV1Pr11CollisionReconciliation20261123.md) establishes that the historical branch reuses F43..50, RM-034..40, PLAN-091 and SRS Section 18 for **different** meanings than current canonical records. Do not merge/cherry-pick PR #11 wholesale or rename current feature/risk IDs. Owner should accept/revise PR11-C01..05 (ID authority, concept reuse, historical PR disposition, main/Phase B integration, risk cause linkage) before selecting one A.1 baseline. U-02 and DEC-WEB-03 remain conditional/owner pending; this author report does not approve Git actions.
+
+
+## U-02 history integration — no automatic semantic approval
+
+All surviving branch commit histories, including PR #11's three previously unique commits and InitialVersion_v0's unique historical merge commit, are now recorded for merge into `s2c/PhaseA` without overwriting canonical IDs; see [integration ledger](webV1FullBranchHistoryIntegration20261123.md). The original [PR #11 report](../.handoffs/plan-090-a1-preflight-review.md) and [historical added lines](webV1Pr11AddedLinesArchive20261123.md) are preserved. This **fulfills history preservation** but does not satisfy open Git Owner decisions on PR closure/target, Architecture Owner semantic consent, or independent A.1 source freeze.

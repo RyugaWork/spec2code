@@ -163,3 +163,8 @@ The [U-01..06 conditional design decision record](.agents/.documents/webV1Reques
 ## Phase A — PR #11 collision and static audit follow-up (2026-11-23)
 
 [PR #11 semantic collision report](.agents/.documents/webV1Pr11CollisionReconciliation20261123.md) records eight F43..50 and seven RM-034..40 ID collisions plus PLAN-091 reuse, so no wholesale PR #11 merge should occur without source/architecture review. [Complete 136-file tracked Markdown file-target audit](.agents/.documents/webV1FullMarkdownLinkAudit20261123.md) observed 1,446 link occurrences, with 11 legacy archived exceptions and no active missing file target in the recognized pattern. No V1 profile implementation, real host security testing, A.1/B/B.1 approval or release has occurred.
+
+
+## S2C Phase A branch history consolidated (2026-11-23)
+
+[Full integration ledger](.agents/.documents/webV1FullBranchHistoryIntegration20261123.md) preserves PR #11 and `InitialVersion_v0` histories in `s2c/PhaseA` without overwriting current canonical F/RM/PLAN IDs. The [original PR #11 review file](.agents/.handoffs/plan-090-a1-preflight-review.md) and [exact historical 180 added lines](.agents/.documents/webV1Pr11AddedLinesArchive20261123.md) are available for auditing. No runtime/CI activation, independent A.1 signoff, B authorization, or release was performed.

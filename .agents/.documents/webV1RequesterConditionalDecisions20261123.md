@@ -100,3 +100,8 @@ Required user confirmations before A.1 freeze:
 5. **Security/AGENTS:** name provider/path scope and accountable Security Owner, verify real supported remote API behavior; no independent host write evidence claimed.
 
 **Unchanged gates:** PR stack and main not merged, no single frozen A.1 SHA, A1-VAL-01..09 NOT_RUN, 21 Web tests NOT_RUN, WEB-004/005 blocked pending owner approvals, Phase B NOT_AUTHORIZED, B.1 NOT_RUN, RM-001 P0 OPEN, no V1 release.
+
+
+## 9. Additional source-verified U-02 review item: PR #11 semantic ID collision
+
+[Detailed reconciliation](webV1Pr11CollisionReconciliation20261123.md) identifies the historical PR #11 F43..50 and RM-034..40 values as **different definitions** from this branch, plus PLAN-091/SRS 18 overlap. This confirms the requester's concern about PR #11 and strengthens the **NO_WHOLESALE_MERGE** recommendation, but **does not itself grant approval** to close, cherry-pick or rename historical identifiers. Git/Architecture/Security Owners must review PR11-C01..05 and main's unique `.gitignore` before one A.1 integration baseline. All previous conditional statuses and A.1/B hard gates remain.

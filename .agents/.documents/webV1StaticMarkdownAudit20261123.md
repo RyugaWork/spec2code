@@ -38,3 +38,8 @@ They are **archive/provenance-only**, not active V1 package paths. Preserve thos
 4. Perform true A.1 external review, Web-host fixture testing and security acceptance only when authority and implementation gates allow.
 
 **Disposition:** `STATIC_FILE_LINK_PREFLIGHT_COMPLETE_WITH_ARCHIVE_EXCEPTIONS`; **A1_NOT_RUN / B_NOT_AUTHORIZED / WEB_TC_NOT_RUN**.
+
+
+## Later all-tracked-Markdown path check (2026-11-23)
+
+The previous 125-file limited scan is **historical baseline evidence**, not the latest comprehensive tracked-file input. [New read-only 136-file audit at `e8efc36b78f991efc618d1ca98865609d032bb0d`](webV1FullMarkdownLinkAudit20261123.md) observed 1,446 Markdown link occurrences and the same 11 archived v0.6.4 missing relative targets, with no other missing tracked target in the recognized syntax. It does not validate anchors, renderer behavior or functional correctness. No archival history was modified.

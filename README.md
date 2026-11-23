@@ -158,3 +158,8 @@ The [A-Closure source/REV-090 evidence](.agents/.documents/webV1AClosureEvidence
 ## Web V1 requester-reviewed scope (2026-11-23)
 
 The [U-01..06 conditional design decision record](.agents/.documents/webV1RequesterConditionalDecisions20261123.md) now confirms the requested V1 modes: ChatGPT Web ZIP/Markdown reading and permissioned **remote GitHub AGENTS integration only**; no local OS writing via Codex/agent in this V1. It proposes explicit concurrent Git/ZIP source conflict reporting and a mandatory upgrade no-write/no-repeat guard on customized AGENTS. Current giant docs PR #10 merits one distinct Phase B branch only **after** A.1 approval and separate permission. The technical Git/Google BRD authority, BR-007/008, identity of real Independent Reviewer, metric and all risk owner signatures remain pending; no v1 bundle has been built, tested or released.
+
+
+## Phase A — PR #11 collision and static audit follow-up (2026-11-23)
+
+[PR #11 semantic collision report](.agents/.documents/webV1Pr11CollisionReconciliation20261123.md) records eight F43..50 and seven RM-034..40 ID collisions plus PLAN-091 reuse, so no wholesale PR #11 merge should occur without source/architecture review. [Complete 136-file tracked Markdown file-target audit](.agents/.documents/webV1FullMarkdownLinkAudit20261123.md) observed 1,446 link occurrences, with 11 legacy archived exceptions and no active missing file target in the recognized pattern. No V1 profile implementation, real host security testing, A.1/B/B.1 approval or release has occurred.

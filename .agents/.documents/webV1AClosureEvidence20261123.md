@@ -74,3 +74,8 @@ Web v1 maps actual supplied `specs/<feature>/spec.md`, `plan.md`, `tasks.md` rea
 **External hard gates:** WEB-004/005 require Product/Security/Architecture approvals for BR/AC, RM applicability, scope and version; A1-VAL-01..09 independent review at one **later frozen source SHA**; separate explicit B permission; actual WEB-006..030 product/tests/release later. An author-drafted report is not the reviewer. No Go release, no local Windows race test, no host AGENTS write, no Google edit, no Git merge/tag in this A phase.
 
 **Next owner packet:** [U-01..06 and source/risk/branch/reviewer decisions](webV1AClosureApprovalPacket20261123.md) (draft for review, no signed outcome).
+
+
+## 7. PR #11 semantic collision and whole-tree Markdown follow-up (2026-11-23)
+
+[Full PR #11 base-to-head content crosswalk](webV1Pr11CollisionReconciliation20261123.md) confirms **8 historical feature ID collisions** (F43..50), **7 risk ID collisions** (RM-034..40) and conflicting PLAN-091 / SRS Section 18 assignments. The original PR #11 historical 3 unique commits/7 touched files and its 10-finding report are retained; no branch has been merged. Proposed action is **review-specific semantic mapping**, never auto-cherry-pick colliding IDs. [Read-only all 136 Markdown-file link audit](webV1FullMarkdownLinkAudit20261123.md) expands the earlier 125-file preflight: 1,446 syntactic link occurrences, 11 missing tracked-file paths only in three archived handoffs, 0 missing in the other 133 files (recognized syntax), zero unclosed simple code fences. These are bounded author checks and do not sign A.1. This input audit was made at `e8efc36b78f991efc618d1ca98865609d032bb0d`, not the future commit or frozen baseline.

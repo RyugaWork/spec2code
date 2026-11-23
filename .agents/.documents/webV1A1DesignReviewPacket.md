@@ -67,3 +67,8 @@ Use [source-bound A-Closure evidence and REV-090 statuses](webV1AClosureEvidence
 ## Requester-reviewed A.1 preconditions — conditional decisions not an A.1 signoff
 
 [Recorded requester U-01..06 dispositions](webV1RequesterConditionalDecisions20261123.md) constrain the future reviewable design: only read/upload and **remote authorized GitHub AGENTS** operations; concurrent Git/ZIP conflict proof; no local Codex/Windows/Linux/macOS writes in V1; no retry/overwrite upon customized AGENTS upgrade conflicts; source/BRD authority, reviewer and KPI still pending. PR #10 author comparison at `13a55f37d32c59e132d6c996983afbf133a5bc19` already has 175 commits and 135 changed files versus PR #9 base, so do **not** default Phase B to that oversized docs PR without integrator signoff. A.1 frozen SHA must be from final reviewed integration after decision and source reconciliation; current HEAD is not a signed baseline. A1-VAL-01..09 NOT_RUN, no separate B grant.
+
+
+## A.1 source-integrity blocker: PR #11 collisions (2026-11-23)
+
+Independent A1-VAL-01/03/06/09 must verify the [PR #11 historical semantic collision register](webV1Pr11CollisionReconciliation20261123.md) is owner-dispositioned before accepting an integrated source SHA: 8 F43..50 labels, 7 RM-034..40 labels, conflicting PLAN-091 Section 18, historical 10-finding handoff. No whole-file PR merge or self-approval. The [136-file Markdown file-target audit](webV1FullMarkdownLinkAudit20261123.md) is bounded author evidence only and cannot substitute semantic or security review. Reviewer identity, BRD authority, risk applicability, source integration and exact A.1 freeze remain pending.

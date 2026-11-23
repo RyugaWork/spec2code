@@ -25,3 +25,9 @@ This reference describes the optional workflow when Spec Kit is **actually initi
 ## Non-goals
 
 No automatic feature approval, full-repository source ingestion, Git push, shell execution delegation, MCP transport or silent Spec Kit initialization. See `integrations/speckit/README.md` for upstream agent invocation instructions.
+
+## PLAN-109 / M05 — Nine work steps versus implemented machine phases
+
+The portable skill uses the same **nine universal task stages** as canonical S2C: DISCOVER, PLAN, RISK MANAGEMENT, IMPLEMENT, TEST, VERIFY, OPTIMIZE, HANDOFF, DOCUMENT. Risk Discovery is a Phase-A planning-content substep (P7), not a tenth universal stage; HANDOFF and DOCUMENT remain separate. These responsibilities do **not** imply nine deployed Workflow Guard machine phases. The actual five-phase machine authority and current bugs must be respected. Each task notes `workStep` and `runtimePhaseOrNA`; a Phase-A documentation-only task marks execution phases N/A rather than forging implementation evidence.
+
+Before any dependency advances, check approved source and P0 risk veto, actual mandatory result, budget and explicit scope. A source/plan change triggers downstream impact invalidation; STOP can occur in every step, with the handoff recording last actual observed action. Multi-agent parallel reading may be proposed, but only one trusted writer may integrate changes unless independent isolation and conflict policy are proven.

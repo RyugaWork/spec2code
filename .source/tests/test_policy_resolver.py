@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from platform_support import requires_anchored_io
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
@@ -56,6 +57,7 @@ class PolicyResolverTests(unittest.TestCase):
         self.assertEqual(actual["root_agents"][0]["path"], "AGENTS.md")
         self.assertFalse((self.root / ".agents").exists())
 
+    @requires_anchored_io
     def test_required_policy_found(self):
         (self.root / "security.md").write_text("# Security\n", encoding="utf-8")
         self.host_map([self.doc("security.md")])
@@ -63,22 +65,26 @@ class PolicyResolverTests(unittest.TestCase):
         self.assertEqual(actual["policy_status"], "READY")
         self.assertEqual(actual["selected_documents"][0]["path"], "security.md")
 
+    @requires_anchored_io
     def test_missing_required_blocks_implementation(self):
         self.host_map([self.doc("missing.md")])
         actual = self.resolve()
         self.assertEqual(actual["policy_status"], "BLOCKED")
         self.assertIn("POLICY_REQUIRED_MISSING:missing.md", actual["blocking_reasons"])
 
+    @requires_anchored_io
     def test_missing_required_in_read_requires_review(self):
         self.host_map([self.doc("missing.md", required=("read",))])
         self.assertEqual(self.resolve(operation="read")["policy_status"], "NEEDS_REVIEW")
 
+    @requires_anchored_io
     def test_duplicate_canonical_blocks(self):
         for f in ("one.md", "two.md"):
             (self.root / f).write_text("# Rules\n", encoding="utf-8")
         self.host_map([self.doc("one.md"), self.doc("two.md")])
         self.assertEqual(self.resolve()["policy_status"], "BLOCKED")
 
+    @requires_anchored_io
     def test_host_cannot_assert_approval(self):
         value = self.doc("security.md")
         value["approved"] = True
@@ -86,6 +92,7 @@ class PolicyResolverTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "POLICY_MAP_MALFORMED"):
             self.resolve()
 
+    @requires_anchored_io
     def test_traversal_in_policy_map_rejected(self):
         self.host_map([self.doc("../outside.md")])
         with self.assertRaisesRegex(ValueError, "POLICY_MAP_MALFORMED"):
@@ -119,6 +126,7 @@ class PolicyResolverTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             governance_schema.validate_config("workflow", cfg)
 
+    @requires_anchored_io
     def test_scoped_policy_is_enforced_even_without_category_keyword(self):
         policy = self.doc("src/security.md")
         policy["applies_to_prefixes"] = ["src/"]
@@ -128,6 +136,7 @@ class PolicyResolverTests(unittest.TestCase):
         self.assertIn("POLICY_REQUIRED_MISSING:src/security.md",
                       result["blocking_reasons"])
 
+    @requires_anchored_io
     def test_unrelated_directory_policy_is_not_assumed_authoritative(self):
         policy = self.doc("src/security.md")
         policy["applies_to_prefixes"] = ["src/auth/"]
@@ -137,6 +146,7 @@ class PolicyResolverTests(unittest.TestCase):
                          [item["path"] for item in result["selected_documents"]])
         self.assertEqual(result["policy_status"], "NEEDS_REVIEW")
 
+    @requires_anchored_io
     def test_policy_map_duplicate_json_keys_are_rejected(self):
         dest = self.root / ".agents" / "policy-map.json"
         dest.parent.mkdir(exist_ok=True)

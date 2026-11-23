@@ -1,0 +1,49 @@
+# PLAN-112 Security Owner evidence packet
+
+15 November 2026. Source reviewed on `docs/plan-089-a1-readiness` at `159af88e0c8755d49a455c5fe332f728888e7d8e`. This is author preflight. See the [PLAN-111 remediation](plan-111-a1-p0-return-to-a.md), [PLAN-112 execution packet](plan-112-windows-p0-codex.md) and [prior regression and scanner evidence](plan-112-a1-security-continuation.md). The GitHub branch and draft PR #10 matched this SHA before publication. PR #10 had zero submitted reviews. The OneDrive checkout had HEAD `d63a8bd2d78e74346e355b96e771d91a04a7f276`, eight commits ahead of its cached tracking ref, seven modified tracked documents and two untracked documents. It was inspected read-only. Transport via git ls-remote failed DNS initialization. GitHub supplied the authoritative branch observation.
+
+## Host preflight and task ledger
+
+| Task | Current status | Observation or condition to resume |
+| --- | --- | --- |
+| T112-05 | BLOCKED_HOST | Windows reported edition CoreSingleLanguage. WindowsSandbox.exe absent at System32 and from command discovery. Hyper-V module and Get-VM absent from discovery. CIM access denied. WSL enumeration rejected with Wsl/E_ACCESSDENIED. Docker client exists, but docker info exited 1 because its Linux engine pipe was absent. No usable disposable Windows guest, isolated filesystem or independent identities/ACL were established. |
+| T112-06 | NOT_RUN | Requires T112-05 proof before execution. No race, junction, reparse, outside-root read/write, concurrent mutation, ACL enforcement or canary result was collected. |
+| T112-07 | PARTIAL | Scope IO denies without directory anchoring, and Workflow Guard uses the existing anchored output lock. Source inspection and prior ordinary Windows denial regression support this narrow claim. RM-001 remains P0 OPEN, 4 × 5 = 20, residual UNKNOWN. |
+| T112-08 | BLOCKED_OWNER | Named accountable Security Owner and reviewed Windows evidence or a documented supported-host exclusion decision are outstanding. |
+| T112-09 | NOT_RUN | Requires T112-08 disposition, actual independent reviewer and exact Git/Google pair with BR/ADR owner decisions and acceptance denominators. All A1-VAL-01..09 remain NOT_RUN. |
+| A1-SEC-08 | DONE, scoped | Metadata-only fingerprint keeps appsettings.json content unread by this path. Equal size and mtime can conceal changes. |
+| A1-SEC-09 | PARTIAL | Local journal integrity checks and interrupted-cache recovery help under the cooperating-writer model. Independent authenticity remains unproven. |
+| A1-SEC-10 | DONE for retry recovery | Cross-file reader consistency remains open. |
+| A1-SEC-11 | DONE for scoped CI | Executable lookup and the excluded Ruff diagnostics still require disposition. |
+
+## Residual threat decisions
+
+| Finding and source | Source observation | Proposed acceptance or treatment for owner decision |
+| --- | --- | --- |
+| A1-SEC-09, RM-004/006/032. [Workflow Guard replay, cache and write order](../../.source/scripts/workflow_guard.py#L187) | Canonical JSON, public hashes, legal transitions and a private local cache detect corruption under bounded assumptions. A same-UID writer with access to both files can rewrite a plausible replay plus its anchor, and a legal forged tail can have the same shape as one interrupted cache write. Replayed state sets approval UNKNOWN and release_authorized false. | Decide whether workflow history is only local recovery evidence. For audit-grade authenticity, an independent principal must authenticate ordered events and retain a monotonic head outside the writer boundary. Bind task, session, scope, checkout and predecessor. Test tail forgery, full rewrite, rollback, truncation and crash recovery with a same-UID writer excluded from the external anchor. A key accessible to the same writer cannot supply that boundary. |
+| A1-SEC-10, RM-005/032. [Publisher commit order](../../.source/scripts/architecture_tree.py#L413) | Cooperating writers serialize. File replacements and the later cache/state writes occur separately, so a reader can cross generations during normal publication or after interruption. The recovery regressions cover retry. | Decide whether callers need snapshot consistency. If required, design immutable generation directories with one atomically published manifest, then have each reader pin and verify a generation before reading. Preserve compatibility for current paths through an explicitly approved migration. Exercise concurrent readers, interruption at each publish boundary and cleanup while an old reader is active. |
+| A1-SEC-11, RM-032. [Path Guard](../../.source/scripts/path_guard.py), [Session Guard](../../.source/scripts/session_guard.py#L46), [scanner](../../.source/scripts/scan_infrastructure.py#L159) | Five list-argument subprocess sites include four bare Git lookups and one opt-in version-probe site. The latter uses bare dotnet/node names and sys.executable for Python. Fixed arguments and default shell behavior leave executable selection dependent on host lookup. | Establish trusted binary paths and location ownership at runner setup, and verify the effective environment and Windows lookup semantics. Test synthetic name shadowing from PATH and cwd in an isolated guest, plus absent tools and legitimate custom installs. Review the opt-in probes separately. A lookup using the same attacker-controlled search inputs does not establish trust. |
+
+Residual threat analysis is static inspection at the pinned SHA. No runtime defect was reproduced in this pass, and there is no source patch. Existing scores and independent gates retain their dispositions.
+
+## T112-06 acceptance checklist
+
+Before launching any adversarial process, the Security Owner must record guest ID and disposal procedure, Windows build and filesystem, disabled host data mappings and credential sharing, network policy, exact clean checkout and tool versions, fixture and command allowlist, and bounded attempt/time limits with cancellation proof. Use distinct test-process, race-actor and evaluator identities as needed. Record effective tokens and ACLs. An evaluator-controlled synthetic canary outside the guest checkout must be independently protected against test actors, with read and write denied and the evaluator able to inspect it. Verify policies under the actual test token. Use a permitted in-root positive control to validate the instrumentation. Keep logs and canary observations where test actors cannot alter them.
+
+| Existing case | Fixture and acceptance oracle | Result |
+| --- | --- | --- |
+| L1-SC01-A | Synthetic traversal, drive-relative/UNC and junction/reparse routes. Test read and write independently. Require OS denial, unchanged canary and no canary bytes in outputs. | NOT_RUN |
+| L1-SC01-B | Coordinate a replacement after validation and before actual read/append/replace/delete. Capture ordered markers for both actors and the attempted operation. Require verified interleaving and independent denial. A missed race is INCONCLUSIVE. | NOT_RUN |
+| L1-SC01-C | Simulate cloud placeholder/reparse and unsupported mount or network root inside the disposable environment. Require explicit refusal without fallback or partial mutation. | NOT_RUN |
+| L1-SC02-A | Test alternate paths and a helper targeting protected synthetic output. Require independent denial and identical protected artifacts. | NOT_RUN |
+| L1-SC03-A | Run bounded concurrent workers over overlapping generated outputs and stale source identity. Verify serialization or explicit denial, no lost state, and intact protected/foreign files. | NOT_RUN |
+
+For each variant record exact Git SHA, tool/config fingerprints, fixture/operation and command, actor IDs, ACLs, trigger/attempt counts, deadline, exit code, original redacted stdout/stderr, OS audit access records, and before/after SHA-256 for write targets and canaries. A hash match cannot rule out a read or a write followed by restoration. Use audit evidence and a synthetic read sentinel observed by the evaluator. A runner denial counts toward a specific threat only when the test demonstrates where denial occurred. Escapes or unauthorized access are P0 FAIL and trigger STOP. Preserve evidence before teardown and record cleanup under evaluator control.
+
+## Verification and decision handoff
+
+- Fresh host checks were read-only. `docker info --format '{{.OSType}} {{.Isolation}}'` exited 1. `wsl --list --verbose` exited 1. `git ls-remote origin refs/heads/docs/plan-089-a1-readiness` failed in the current environment. No local regression or scanner was rerun. Hostile cases have no exit codes or measured canary hashes.
+- Historical replay commands, platform counts and exit codes are in the [prior handoff](plan-112-a1-security-continuation.md). Source revision `9a49f6bf361f83864f341fe7dbf4bb32d04b418b`: WSL2 141 passed and 5 skipped, Windows 43 passed and 103 skipped, both exit 0. Ruff 0.11.13 with the scoped security rules exited 0, excluding S603/S607. Bandit 1.8.3 exited 1 with 12 low findings.
+- Exact-input-SHA [PR Actions run](https://github.com/RyugaWork/spec2code/actions/runs/43684266845): security-static and four unittest matrix jobs successful (Ubuntu Python 3.10, 3.11, 3.13 and Windows 3.14). This is observed CI at the input SHA. Host acceptance still requires the fixture evidence above.
+- T112-08 decision record needs owner identity/authority, timestamp/signature, exact evidence SHA and supported Windows/configuration scope, per-case results and explicit RM-001 disposition including restrictions and exclusions. T112-09 then needs independent criterion-level decisions on the final Git SHA and authoritative Google doc/tab/revision, evidence references, applicable BR/ADR dispositions, remaining risks, and reviewer signature. Keep absent evidence UNKNOWN or NOT_RUN.
+- A.1 NO-GO. B NOT_AUTHORIZED. Rollback is a separately authorized revert of the documentation commit, preserving prior handoffs and all unrelated changes.

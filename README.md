@@ -1,6 +1,6 @@
 # Spec2Code v0.7.0
 
-> **Current baseline: PLAN-088 / unified BRD v1.3 (PLAN-087 retained).** Start with [the unified BRD, architecture and M0–M5 implementation plan](.agents/.spec.md). Detailed and historical sections below are supporting references; they do not supersede current scope, evidence or lifecycle mapping.
+> **Development documentation baseline: PLAN-103 authoring candidate on the current development branch; runtime baseline remains v0.7.0.** Use the [unified master BRD/SRS](.agents/.spec.md), [RTM](.agents/.traceMatrix.md) and [current review index](#current-documentation-and-review-entrypoints--plan-103). Historical PLAN-087..102 sections below preserve context, not current approval status. A.1 independent validation and Phase B still require separate authorization.
 
 
 Infrastructure-aware, universal Spec-to-Code agent skill with optional read-only upstream GitHub Spec Kit bridge.
@@ -84,3 +84,82 @@ For **both Spec2Code's own source/toolchain and any integrated repository**, Age
 The single canonical development BRD, architecture, functional integration model and dependency-based M0–M5 implementation plan is [`.agents/.spec.md`](.agents/.spec.md). It currently covers BR-001..021, including **proposed** weighted multi-agent review, with linked [RTM](.agents/.traceMatrix.md), [risk matrix](.agents/.riskMatrix.md), [features](.agents/.features.md), [task ledger](.agents/.plans.md) and [agent contract](AGENTS.md). [Google BRD](https://docs.google.com/document/d/1M3_2tNUxOXci83pcpPCzBkxwvRvixeT7FYeGyIsFOa4) is the stakeholder-facing mirror; reconcile revisions and BR IDs before treating a new draft as approved.
 
 The S2C portable skill source is in `.source/`; governance records in `.agents/`; documentation and installation guidance in `docs/`. This repository's default `main` may not contain the development tree until an explicitly reviewed integration. Current architecture/runtime and proposed review automation must not be confused: the five-phase `workflow_guard.py`, Path Guard and session tools exist as candidate development code; multi-agent review orchestration and native STOP/RESUME do **not**. A.1/B.1 and actual implementation/merge/release require distinct approvals.
+
+## PLAN-089 — Staged documentation completion toward A.1
+
+The canonical [master specification](.agents/.spec.md) now contains 12 substantive SRS chapters (Sections 15), proposed cross-module contract definitions (Section 16), and phased acceptance design (Section 17). The [test catalogue](.agents/.workflow/testingAndDelivery.md) lists two **planned** cases per BR-001..021 (42 total; no execution claimed), and the [RTM](.agents/.traceMatrix.md) preserves their reverse mappings. The [SRS review inventory](.agents/.documents/systemSpecificationPlan.md) records outstanding decision/owner/evidence gaps. Google BRD Draft v1.4 mirrors the stakeholder-level specification and plan.
+
+This work is documentation and design only: `A1_NOT_RUN`, `B_NOT_AUTHORIZED`, `B1_NOT_RUN`. No actual worker orchestration, runtime STOP/RESUME, merged PR, unit-test PASS or release decision follows merely from writing these chapters. The next required step is independent A.1 and explicit scope approval; code safety M1 must precede new worker implementation M3.
+
+
+## Spec Kit adoption for S2C development (PLAN-092)
+
+This repository now contains a **native-compatible Markdown bootstrap** for official GitHub Spec Kit, allowing [ChatGPT Web/GitHub mode](.specify/README.md) to maintain a selected feature's [spec](specs/001-s2c-speckit-integration/spec.md), [plan](specs/001-s2c-speckit-integration/plan.md) and [tasks](specs/001-s2c-speckit-integration/tasks.md) while following [root AGENTS](AGENTS.md), [draft Constitution](.specify/memory/constitution.md), [RTM](.agents/.traceMatrix.md) and risk gates. Active feature comes from [`.specify/feature.json`](.specify/feature.json), **not** from Git branch names.
+
+For a coding-agent native workflow, the official `specify-cli` + selected agent integration must still be installed and tested in an authorized **disposable checkout**; scripts and official agent skills have **not** been installed or invoked by these GitHub-only commits. See [Spec Kit integration guide](.source/integrations/speckit/README.md) and [upstream existing-project setup](https://github.github.com/spec-kit/how-to/existing-projects.html). No automatic CI/MCP/new feature branch or implementation permission was added. A.1/B/B.1 still require separate evidence and approval.
+
+
+## PLAN-094 — Continue Spec Kit development from the selected feature
+
+For **ChatGPT Web**, use [feature quickstart](specs/001-s2c-speckit-integration/quickstart.md) and [official-template feature spec](specs/001-s2c-speckit-integration/spec.md) with [research](specs/001-s2c-speckit-integration/research.md), [plan](specs/001-s2c-speckit-integration/plan.md) and [24 designed test cases](specs/001-s2c-speckit-integration/checklists/integrationAcceptance.md). The authoritative 12-row [RTM](.agents/.traceMatrix.md) and root AGENTS still govern all tasks. T010 draft reconciliation is documented; native SK-03 remains unavailable in this offline runner. Do not treat manually edited Spec Kit files as if `specify init` or official coding-agent skills had run.
+
+### PLAN-095 — Web-mode execution and native safety evidence
+
+[Web/GitHub workflow](.agents/.workflow/specKitWebWorkflow.md) describes browser-based Spec Kit artifact steps without claiming native CLI execution. [Native execution gate](.agents/.workflow/specKitNativeExecutionGate.md) prevents treating upstream checklist continuation or author-executed tasks as S2C A.1/B permission. [Four scoped GitHub/static positive cases](.agents/.documents/specKitWebModeEvidence095.md) are documented with exact Git commit/blob/compare evidence; 20 additional feature cases and every native host/security gate remain unrun. The existing PR stays Draft; no new branch or runtime source file was added.
+
+## PLAN-096 — Actual Spec Kit bridge contract-gap assessment
+
+The [source-bound PLAN-096 bridge audit](.agents/.documents/specKitBridgeSourceAudit096.md) identified four unverified runtime gaps in feature namespace policy, duplicate pointer JSON handling, empty mandatory artifact handling and duplicate task-ID detection. [Feature acceptance catalogue](specs/001-s2c-speckit-integration/checklists/integrationAcceptance.md) adds **four planned, unrun** negative test cases `SK96-NEG-01..04`; the existing 24-case test status remains **4 scoped Web/static PASS / 20 NOT_RUN**. Read the [PLAN-096 handoff](.agents/.handoffs/plan-096-bridge-source-audit-handoff.md) before taking any B-phase action. No S2C Python/JSON/CI file was changed; native Spec Kit CLI/skills and independent A.1/B.1 validation remain NOT_RUN.
+
+## Current documentation and review entrypoints — PLAN-103
+
+The development branch's latest **authored** documentation is PLAN-103 (not the historical PLAN-092 summary above). The version in the title describes the **runtime baseline**, not approval or release of these newer proposed features.
+
+| Purpose | Canonical entrypoint | Status |
+| --- | --- | --- |
+| Unified BRD / SRS / architecture and planned delivery | [Master specification](.agents/.spec.md#28-plan-103--technical-review-closeout-and-remaining-authority-boundary) | AUTHORING_COMPLETE_CANDIDATE, owner approval pending |
+| Feature design, reuse and open ADRs | [Feature design](.agents/.documents/featureDesign.md#10-plan-102--architecture-decision-records-for-a1-disposition) | DESIGN_PROPOSED |
+| Explicit draft BR-022..027 → F43..64 → 44 acceptance-case IDs | [RTM Section P](.agents/.traceMatrix.md#p-plan-098--draft-integration-trace-crosswalk-not-implementation) and [test catalogue](.agents/.workflow/testingAndDelivery.md#plan-100-candidate-feature-acceptance-cases) | DESIGN_CASES_LINKED / NOT_RUN |
+| Codex/Gemini optional MCP and bounded Auto Run | [Master Section 26](.agents/.spec.md#26-plan-101--codexgeminiantigravity-documentation-integration-candidate) and [runbook](.agents/.workflow/agentRunbook.md#11-plan-101--codex-autorun-preflight) | Provider and CLI sandbox unverified |
+| Independent design review before code | [A.1 definitions and author review findings](.agents/.workflow/validationSpecification.md#10-plan-103--author-side-technical-review-and-findings-not-independent-a1) | A1_NOT_RUN |
+| Security and threat acceptance | [Scored risk matrix](.agents/.riskMatrix.md) | P0 OPEN / residual UNKNOWN |
+| Exact source, checks and continuation | [PLAN-103 traceability checkpoint](.agents/.handoffs/plan-103-traceability-review-checkpoint.md) and [technical review handoff](.agents/.handoffs/plan-103-documentation-final-handoff.md) | Documentation evidence only |
+
+The connected [Google BRD](https://docs.google.com/document/d/1M3_2tNUxOXci83pcpPCzBkxwvRvixeT7FYeGyIsFOa4/edit) is a **Draft stakeholder summary**, not a second normative SRS or independently accepted source pair. Preserve the existing Draft PR and do not infer that `A1_PASS`, a B authorization, Gemini MCP connectivity or host security tests follow from this index. Read the [workflow index](.agents/.workflow/README.md#current-authoring-and-review-entrypoints--plan-103) before any resumed documentation work.
+
+## Two-batch Documentation authoring and review handoff
+
+The current development documentation has been refined in **two bounded sets of ten authoring tasks** on `docs/plan-089-a1-readiness`, without new feature/BRD documents, new branches, runtime code, config or CI changes. Read [Batch A handoff](.agents/.handoffs/plan-104-batch-a-documentation-handoff.md) for requirements, risk, test and model/CLI/Spec Kit authority and [Batch B handoff](.agents/.handoffs/plan-105-batch-b-documentation-handoff.md) for STOP/RESUME, source lifecycle, owner signoff and final review. Consult [the current master specification](.agents/.spec.md), [RTM](.agents/.traceMatrix.md), [tests](.agents/.workflow/testingAndDelivery.md), [risk matrix](.agents/.riskMatrix.md) and [validation report template](.agents/.workflow/validationReportTemplate.md) rather than copying those materials.
+
+**Documentation-authored does not mean implementation approved:** BR-022..027 and model/provider designs remain candidates, 44 feature acceptance scenarios and 12 MCP cases remain unrun, owner P0 decisions remain open, A.1 requires an actual independent reviewer and Phase B needs a separate authorization. The [Google BRD](https://docs.google.com/document/d/1M3_2tNUxOXci83pcpPCzBkxwvRvixeT7FYeGyIsFOa4/edit) is a Draft mirror with a review-summary subsection, not accepted Git/Google equivalence. [PR #10](https://github.com/RyugaWork/spec2code/pull/10) must not be merged by these documentation updates.
+
+## PLAN-110 / Z01 — Five-batch review entry and exact authority
+
+The five author-side documentation batches are PLAN-106 (requirement/RTM/QA), PLAN-107 (Path Guard/host security), PLAN-108 (Spec Kit), PLAN-109 (portable skill/provider) and PLAN-110 (final reviewer/owner packet). They comprise **50 discrete document tasks and five Git-persisted handoffs**, not 50 separate feature implementations, external reviews or code tests. Use the canonical [master](.agents/.spec.md), [RTM](.agents/.traceMatrix.md), [test catalogue](.agents/.workflow/testingAndDelivery.md), [risk matrix](.agents/.riskMatrix.md), [A.1 contract](.agents/.workflow/validationSpecification.md) and [PLAN-110 handoff](.agents/.handoffs/plan-110-10task-batch-5.md) for current status.
+
+The historical README sections remain preserved. The development branch is `docs/plan-089-a1-readiness`; PR #10 remains Draft until independently reviewed. Google BRD is only a stakeholder Draft mirror and needs semantic owner reconciliation with the final Git SHA. Authoring completeness can pass static checks while independent A.1, security P0, runtime host tests and separate B approval remain blocked.
+
+## PLAN-115 — Unified feature linkage and VMware security design
+
+[F01–F64 relationship + gaps (RTM W)](.agents/.traceMatrix.md#w-plan-115--cross-feature-relationship-and-orphan-edge-audit-2026-11-16) · [VMware command and Windows guest security procedure](docs/VMWARE_SECURITY_VALIDATION.md) · [PLAN-115 tasks](.agents/.plans.md#plan-115--relationship-matrix-vmware-and-data-hygiene) · [handoff](.agents/.handoffs/plan-115-relationship-vmware-handoff.md). Documentation-only, no actual VMware install/host operation, no new runtime adapter, no owner signoff or merge.
+
+## PLAN-116 — First product release: Markdown-first v1.0.0 (planned)
+
+v0.x remains internal documentation/prototype development; existing v0.7.0 code / v0.8.0 candidate are unchanged. The first stable product release is planned as GPT Web Markdown read/plan/review/handoff only, with optional real read connector or uploaded bounded snapshot, no local runtime/security claims, native CLI, automatic multi-agent, MCP or CI. This is not an installed/released v1.0.0; Python prerequisites and install commands above refer to the historical runtime prototype. Later v1.x versions progressively add GitHub, Spec Kit, sandboxed local runtime, Gemini, QA, MCP and CI/CD subject to independent acceptance. See [PLAN-116 design and migrations](.agents/.documents/markdownFirstReleasePlan.md), [canonical tasks](.agents/.plans.md#plan-116--web-v100-delivery-task-ledger) and [profile tests](.agents/.workflow/testingAndDelivery.md#plan-116--web-profile-acceptance-design). Global A.1/B/B.1 and RM-001 remain unresolved; separately approved Web scope is required before any release.
+
+## PLAN-116 amendment — AGENTS.md Integration Matrix for V1 (design only)
+
+The requester asked that **V1.0** support AI-agent-executed creation, non-destructive adoption and versioned updates of the host's existing root/nested `AGENTS.md`. Spec2Code supplies **only a declarative matrix and proposed text**, not an automatic installer or OS sandbox; the host AI agent performs scoped changes if actual permissions/tools exist, otherwise returns a diff/handoff. Read [AGM-01..17 and execution contract](.agents/.documents/webV1AgentsIntegrationMatrix.md), [owner decision DEC-WEB-06](.agents/.documents/webV1OwnerDecisionRegister.md), [21 designed/not-run Web tests](.agents/.workflow/testingAndDelivery.md) and [existing 30 WEB tasks](.agents/.plans.md). This supersedes PLAN-116's manual-only assumption *for this proposed AGENTS path only*; owner approval, independent A.1, separate B authorization, B.1 and release remain outstanding. No actual V1 installer or host AGENTS change has occurred.
+
+## Web V1 A-Closure — source-grounded reviewer package (planned release only)
+
+The [A-Closure source/REV-090 evidence](.agents/.documents/webV1AClosureEvidence20261123.md) and [64-F/27-BR reverse trace](.agents/.documents/webV1AClosureFeatureReverseMatrix20261123.md) document the author-owned WEB-001..003 preflight and PR #8–#11/main/Google draft distinctions. The [21-case test oracle worksheet](.agents/.documents/webV1AClosureWebTestOracleDesign20261123.md) and [U-01..06 approval packet](.agents/.documents/webV1AClosureApprovalPacket20261123.md) prepare independent A.1. No actual Web profile has been distributed, no tests run, and all human scope/risk/source/independent approval gates remain open. Work stays on `docs/plan-089-a1-readiness`; no automatic merge or release.
+
+## Web V1 requester-reviewed scope (2026-11-23)
+
+The [U-01..06 conditional design decision record](.agents/.documents/webV1RequesterConditionalDecisions20261123.md) now confirms the requested V1 modes: ChatGPT Web ZIP/Markdown reading and permissioned **remote GitHub AGENTS integration only**; no local OS writing via Codex/agent in this V1. It proposes explicit concurrent Git/ZIP source conflict reporting and a mandatory upgrade no-write/no-repeat guard on customized AGENTS. Current giant docs PR #10 merits one distinct Phase B branch only **after** A.1 approval and separate permission. The technical Git/Google BRD authority, BR-007/008, identity of real Independent Reviewer, metric and all risk owner signatures remain pending; no v1 bundle has been built, tested or released.
+
+
+## Phase A — PR #11 collision and static audit follow-up (2026-11-23)
+
+[PR #11 semantic collision report](.agents/.documents/webV1Pr11CollisionReconciliation20261123.md) records eight F43..50 and seven RM-034..40 ID collisions plus PLAN-091 reuse, so no wholesale PR #11 merge should occur without source/architecture review. [Complete 136-file tracked Markdown file-target audit](.agents/.documents/webV1FullMarkdownLinkAudit20261123.md) observed 1,446 link occurrences, with 11 legacy archived exceptions and no active missing file target in the recognized pattern. No V1 profile implementation, real host security testing, A.1/B/B.1 approval or release has occurred.

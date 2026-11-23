@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from platform_support import requires_anchored_io
 
 SCRIPTS = Path(__file__).resolve().parents[1] / 'scripts'
 sys.path.insert(0, str(SCRIPTS))
@@ -31,6 +32,7 @@ class InventorySafetyTests(unittest.TestCase):
             self.assertFalse((root / '.agents/state/infrastructure.json').exists())
             self.assertFalse((root / 'visualChange.md').exists())
 
+    @requires_anchored_io
     def test_dependency_indicators_are_not_runtime_claims(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

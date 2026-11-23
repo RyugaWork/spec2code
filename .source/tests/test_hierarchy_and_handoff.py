@@ -6,9 +6,12 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from platform_support import requires_anchored_io
+from unittest.mock import patch
 
 GUARD = Path(__file__).resolve().parents[1] / 'scripts' / 'session_guard.py'
 
+@requires_anchored_io
 class HandoffTreeTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory(prefix='spec2code-v04-')
@@ -37,6 +40,92 @@ class HandoffTreeTests(unittest.TestCase):
         return p
     def sid(self): return json.loads((self.root/'.agents/state/session.json').read_text())['id']
     def pending(self,kind,sid=None): return self.root/'.agents/.handoffs/.details'/f'.{kind}.{sid or self.sid()}.md'
+
+    def test_architecture_publish_retries_at_each_write_boundary(self):
+        sys.path.insert(0, str(GUARD.parent))
+        import architecture_tree as arch
+        import session_guard as session
+
+        head = self.run_git('rev-parse', 'HEAD')
+        manifest, _ = session.collect(self.root, None, head, verify=True)
+        graph = session.graph_for(self.root, manifest)
+        with arch.scope_io.exclusive_output(self.root):
+            with self.assertRaisesRegex(RuntimeError, 'ARCH_OUTPUT_BUSY'):
+                arch.publish(self.root, manifest, graph, set())
+        self.assertFalse((self.root / arch.OUTPUT_ROOT).exists())
+        with patch.object(arch.scope_io, 'supports_anchoring', return_value=True), \
+             patch.object(arch.scope_io.os, 'rename', side_effect=OSError('interrupted rename')), \
+             patch.object(arch.scope_io.os, 'unlink', side_effect=OSError('interrupted cleanup')):
+            with self.assertRaisesRegex(OSError, 'interrupted cleanup'):
+                arch.publish(self.root, manifest, graph, set())
+        self.assertFalse(any((self.root / arch.OUTPUT_ROOT).iterdir()))
+        self.assertEqual(len(list((self.root / arch.STATE_FILE.parent).glob('.s2c-*.tmp'))), 1)
+
+        with patch.object(arch.scope_io, 'atomic_text', wraps=arch.scope_io.atomic_text) as write:
+            expected = arch.publish(self.root, manifest, graph, set())
+        self.assertGreater(write.call_count, 2)
+        outputs = {args.args[1].relative_to(self.root): args.args[1].read_bytes()
+                   for args in write.call_args_list}
+
+        original_write = arch.scope_io.atomic_text
+        for index in range(len(outputs)):
+            with self.subTest(interrupted_write=index), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                subprocess.run(['git', 'clone', '-q', str(self.root), str(root)],
+                               check=True, timeout=15, capture_output=True)
+                calls = 0
+
+                def interrupt(root, path, content, *, fail_at=index + 1, **kwargs):
+                    nonlocal calls
+                    calls += 1
+                    if calls == fail_at:
+                        raise OSError('injected publish failure')
+                    original_write(root, path, content, **kwargs)
+
+                with patch.object(arch.scope_io, 'atomic_text', side_effect=interrupt):
+                    with self.assertRaisesRegex(OSError, 'injected publish failure'):
+                        arch.publish(root, manifest, graph, set())
+                self.assertEqual(arch.publish(root, manifest, graph, set()), expected)
+                for path, content in outputs.items():
+                    self.assertEqual((root / path).read_bytes(), content)
+
+    def test_architecture_update_recovers_after_documents_are_written(self):
+        sys.path.insert(0, str(GUARD.parent))
+        import architecture_tree as arch
+        import session_guard as session
+
+        head = self.run_git('rev-parse', 'HEAD')
+        manifest, _ = session.collect(self.root, None, head, verify=True)
+        arch.publish(self.root, manifest, session.graph_for(self.root, manifest), set())
+        state_path = self.root / arch.STATE_FILE
+        before = state_path.read_bytes()
+        self.write('.source/web/src/MemberPage.tsx',
+                   'export function MemberPage() { return "changed"; }\n')
+        manifest, _ = session.collect(self.root, None, head, verify=True)
+        graph = session.graph_for(self.root, manifest)
+        original_write = arch.scope_io.atomic_text
+
+        def interrupt(root, path, content, **kwargs):
+            if path == state_path:
+                raise OSError('interrupted state commit')
+            if path.is_relative_to(root / arch.OUTPUT_ROOT):
+                self.assertEqual(kwargs.get('staging_dir'), arch.STATE_FILE.parent)
+            original_write(root, path, content, **kwargs)
+
+        with patch.object(arch.scope_io, 'atomic_text', side_effect=interrupt):
+            with self.assertRaisesRegex(OSError, 'interrupted state commit'):
+                arch.publish(self.root, manifest, graph, set())
+        self.assertEqual(state_path.read_bytes(), before)
+        arch.publish(self.root, manifest, graph, set())
+        after = json.loads(state_path.read_bytes())
+        previous = json.loads(before)
+        changed = [entry for key, entry in after['functions'].items()
+                   if entry['version'] != previous['functions'][key]['version']]
+        self.assertEqual(len(changed), 1)
+        self.assertEqual(changed[0]['version'], 2)
+        self.assertFalse(list((self.root / arch.OUTPUT_ROOT).rglob('.s2c-*.tmp')))
+        arch.publish(self.root, manifest, graph, set())
+        self.assertEqual(json.loads(state_path.read_bytes()), after)
 
     def test_layer_controller_function_tree_and_matrix(self):
         self.call('start')

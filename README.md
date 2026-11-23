@@ -173,3 +173,8 @@ The [U-01..06 conditional design decision record](.agents/.documents/webV1Reques
 ## Phase A integration audit and unified traceability (2026-11-23)
 
 [Immutable-input source/CI/coherence audit](.agents/.documents/phaseAIntegrationCoherenceAudit20261123.md) and [full 64-F/27-BR/30-task/21-AC/21-TC/52-RM/17-AGM unified matrix](.agents/.documents/phaseAUnifiedIntegrationMatrix20261123.md) were prepared against merge input `4f3f22928673a9c80a2fa0bf9988f2daa1a9cfb4`. These are **derived static evidence**, not A.1 approval or a new normative source. The input CI run #494 had five completed PASS jobs; Web acceptance cases remain NOT_RUN, RM-001 global P0 OPEN, and Phase B NOT_AUTHORIZED. Native Spec Kit pilot trigger/version drift remains a Git/Host Owner decision; the historical PR #11 source is preserved without assigning it conflicting canonical IDs.
+
+
+## Phase A: exact native Google BRD crosswalk (2026-11-23)
+
+[BRD v1.5 ↔ Git SRS 27-BR semantic matrix](.agents/.documents/phaseABrdSemanticReconciliation20261123.md) now records the actual Google revision, Git source and owner decision for each BR. The primary SRS clarifies 7 business/9 task/5 runtime layers, n=1 reviewer is not independent A.1, proposed 100%/>95% protected-core thresholds are NOT approved and V1 supports narrowly authorized remote GitHub AGENTS-only writes in addition to ChatGPT Web read/upload. No native host writes, actual Web execution, independent A.1 or release approval occurred.

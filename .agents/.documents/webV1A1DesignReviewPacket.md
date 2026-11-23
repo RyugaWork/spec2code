@@ -77,3 +77,8 @@ Independent A1-VAL-01/03/06/09 must verify the [PR #11 historical semantic colli
 ## Post-integration historical source handling
 
 Before A.1, inspect the [full history merge resolution](webV1FullBranchHistoryIntegration20261123.md) and [archived PR #11 additions](webV1Pr11AddedLinesArchive20261123.md). A historical PR commit as merge parent cannot make its colliding feature/risk definitions current. The canonical Phase A documents retain their IDs; all original PR #11 text remains recoverable. Require an actual separate Architecture/Git Reviewer disposition and fresh A.1 SHA freeze after this merge and business/QA/security decisions. Independent A1-VAL-01..09 are **NOT_RUN**.
+
+
+## Connected Google BRD semantic source check (2026-11-23)
+
+[27-row BR-by-BR exact source-locator reconciliation](phaseABrdSemanticReconciliation20261123.md) compares native `BRD_Spec2Code` Draft v1.5, revision `AHj4eMTQo-4II6DrQF5kSGoY8OxDNISChHco-PFSx_OgzuUuEWu4R2qAsiNmlioUDwDF-cYLmUq__B8TxyeB5iOzSa8tL5uDM_9Rqh0Npw`, against Git SRS at `79a45e0486ea8792a49fd9e7fa4a85c89ec4ca82`. Author editorial clarifications address BR-003 7/9/5 layers, BR-017 n=1 review independence and BR-027 **draft** threshold language. The current V1 scope explicitly includes read/upload plus authorized **remote GitHub AGENTS-only write**; general Git/OS/CI writing remains excluded. **Semantic parity and AC remain OWNER_PENDING**. Product must accept/revise the specific 27-row matrix, select BR-007/008 reference-only versus existing-test assertions, and approve/reject the inherited R>99.99% Web applicability/measurement with QA. Reading the exact live revision is not a signature. A.1 NOT_RUN, B NOT_AUTHORIZED.

@@ -303,3 +303,211 @@ The [full Phase A coherence audit](phaseAIntegrationCoherenceAudit20261123.md) r
 **Requester design decisions now recorded:** D01 = **Git alone normative**. Previous Google `BRD_Spec2Code` v1.5 is a *historical Gemini-era source*, imported in its entirety into Git as [source archive](legacyGoogleBrdSourceArchive20261123.md); **do not require future Google revision matching or treat Google as a second current business authority**. Source conflict checks still apply to other differing Git/ZIP/snapshot inputs. D02 = **all BR-001..016 receive individual dedicated Web AC and TC**: [16 pairs](phaseAD02BrDedicatedWebCoverage20261123.md); BR-007 and BR-008 are **not** REFERENCE_ONLY for Web acceptance. D03 = BR-017..021 accepted as architecture/requirements **design scope**, automated reviewer fleet deferred. D04 = BR-022..027 retained in roadmap, **not mandatory V1 implementation**. D05 = **100% PASS of applicable mandatory Web AC/test P/N variants** required for V1 release; inherited `R>99.99%` and BR-027 `>95%` scoped coverage await approved measurement/denominator rather than an invented waiver. D06 = read/upload in ChatGPT Web plus only **individually authorized remote GitHub API host AGENTS.md-only writes**; local OS/native agent writes excluded. Full dispositions: [decision register](phaseAD01D06RequesterDecisionRegister20261123.md).
 
 **Current suite: 37 AC + 37 planned TC (21 baseline + 16 BR-dedicated), 37/37 NOT_RUN.** No actual host permission, A.1/B/B.1 gate, risk acceptance or release is implied. Historic notes above remain dated source evidence and are **superseded where they contradict D01–D06**.
+
+## Ma trận thống nhất toàn bộ tài liệu tại `28d40a3`
+
+Ngày 2026-11-23 · Nhánh `s2c/PhaseA` · SHA `28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5` · Rà soát tĩnh Phase A.
+
+### Phạm vi và cách đọc
+
+Đọc 147/147 file Markdown và 1/1 con trỏ Spec Kit từ GitHub ở cùng SHA. Tree đệ quy đầy đủ trả về 210 mục, gồm thư mục và tệp. Phạm vi tài liệu gồm 110 mục trong .agents, 15 trong .source, 3 trong .specify (gồm con trỏ), 9 trong docs, 9 trong specs, AGENTS.md và README.md. Toàn bộ tập nguồn được đọc cho kiểm kê và quét cấu trúc. Đối chiếu ngữ nghĩa tập trung vào các nguồn và giao điểm liệt kê dưới đây. Không coi những ghi chép lịch sử là quy tắc hiện hành.
+
+- **LỆCH** — nội dung vận hành hiện hành có chỉ dẫn mâu thuẫn hoặc thiếu điều kiện.
+- **KHỚP TĨNH** — cấu trúc hoặc tuyên bố được đối chiếu tại SHA này.
+- **CHỜ OWNER** — quyết định hoặc bằng chứng còn thiếu.
+- **LỊCH SỬ** — giữ nội dung và SHA gốc. Chỉ sửa đường dẫn hoặc thêm ghi chú dẫn quy tắc hiện hành khi cần.
+
+Các vị trí bên dưới là số dòng trên Git ở SHA gốc. Bản vá cục bộ 9 file `phaseA-review-remediation.patch` được đối chiếu riêng. HEAD GitHub chưa chứa bản vá tại thời điểm rà soát.
+
+### Ma trận thống nhất
+
+| ID | Chủ đề / nguồn chuẩn | Quan sát tại HEAD | Kết quả / xử lý | Owner / tiêu chí đóng |
+| --- | --- | --- | --- | --- |
+| M01 | D01; .agents/.spec.md §2; sổ D01–D06 | .agents/.workflow/validationReportTemplate.md:64,70 và validationSpecification.md:129,162,168,194 vẫn yêu cầu cặp Git/Google. | LỆCH. Có bản vá cục bộ cho mẫu và quy tắc hiện hành. Dùng một SHA Git và dẫn archive khi cần provenance. | Workflow / Reviewer hoàn tất mẫu mà không cần revision Google. |
+| M02 | D01; quyền theo chủ đề | .agents/.spec.md:111 vẫn yêu cầu Git+Google để duyệt AC. .agents/.documents/.documentGovernance.md:25–42 còn mô tả nguồn Google và bắt buộc revision pair cho lần A.1 mới. | LỆCH. Ngoài bản vá 9 file. Sửa ngay các chỉ dẫn đang dùng. Giữ lịch sử PLAN-087/101 và đánh dấu phạm vi lịch sử tại đầu mục nếu cần. | Product / Doc owner. D01 có cùng cách áp dụng ở master, governance và mẫu ký. |
+| M03 | D02/D05; catalogue AC/TC và RTM | 37 AC, 37 TC và 16 cặp BR-001–016 hiện diện. Nhóm G1–G7 chỉ chứa 21 case tại webV1AcceptanceAndTraceability.md:51–59. | LỆCH nhóm QA. Bản vá cục bộ có đủ 37 case, mỗi case một nhóm. Xác định mẫu số, fixture và quy tắc kết quả cha khi còn variant thiếu. | Product / QA. Mọi TC-01..37 có nhóm duy nhất và đủ variant áp dụng. |
+| M04 | D02/D05; hướng dẫn A.1 và release | webV1A1DesignReviewPacket.md:12–21,65 còn tiêu chí Git/Google và 21 ca; markdownFirstReleasePlan.md:148 vẫn chỉ sang TC-01..21. webV1OwnerDecisionRegister.md:35,67 lưu điều kiện U-04 ban đầu và có D01–D06 ở cuối. | LỆCH hướng dẫn A.1/release. Ngoài bản vá 9 file. Cập nhật dòng dùng cho review. Gắn liên kết thay thế cho U-04 cũ thay vì xóa lịch sử. | Release / Workflow. Người đọc đi theo mỗi entrypoint đều gặp cùng bộ 37 ca và quy tắc D01. |
+| M05 | D03/D04; BR catalog và reverse trace | 27 BR duy nhất trong master; sáu dòng BR bổ sung xuất hiện lại trong phần thiết kế chi tiết. Reverse matrix giữ BR-007/008 cùng TC-28/29; BR-017–021 giữ thiết kế và BR-022–027 ở roadmap. AGENTS.md:111 và :119 mô tả phạm vi BR của master khác nhau. | KHỚP TĨNH với phạm vi D03/D04. Làm rõ đoạn PLAN-088 ở AGENTS chỉ mô tả nhóm BR lịch sử của plan; nguồn hiện hành có đủ 27 mã. | Product / Documentation. Duy trì 27 mã và không đưa feature hoãn vào tiêu chí bắt buộc V1. |
+| M06 | D06; hợp đồng AGM | AGM §1 cho phép Codex hoặc agent khác làm executor; §6 yêu cầu finalize manifest nhưng chưa chỉ rõ đích trong phạm vi AGENTS-only. | LỆCH. Bản vá cục bộ giới hạn GitHub API từ xa, đưa metadata phiên bản vào khối quản lý và mô tả bằng chứng handoff. | Architecture / Host. Đường ghi và mọi hiệu ứng đều nằm trong grant đã xác minh. |
+| M07 | D06; gián đoạn và đối chiếu | TC-20 hiện có lặp và SHA cũ; chưa có oracle riêng cho mất phản hồi sau ghi. RM-040/050 chưa nối tới readback theo path và cập nhật đồng thời. | LỆCH. Bản vá cục bộ bổ sung variant theo TC-20, kèm NOT_APPLIED/PARTIAL/UNVERIFIED, không thêm ID ca. | Architecture / QA / Security. Thực thi đúng các variant được duyệt trong giai đoạn cho phép; lưu ref/blob trước và sau. |
+| M08 | D05; release gate và KPI | Master decision yêu cầu 100% tiêu chí bắt buộc và variant áp dụng. Reliability >99.99% và coverage >95% còn thiếu quyết định đo. Các văn bản có nhắc ngưỡng nhưng không thể suy ra KPI từ kết quả của 37 ca thiết kế. | CHỜ OWNER. Tách mẫu số nghiệm thu xác định khỏi cách đo reliability và coverage. | Product / QA. Phê duyệt phương pháp, dữ liệu, ngưỡng và bằng chứng trên SHA cụ thể. |
+| M09 | Risk overlay và risk matrix | 52 ID duy nhất: 35 WEB_APPLIES, 12 SPLIT, 5 RUNTIME_EXCLUDED. Cả 52 PENDING_OWNER. RM-001 toàn cục P0 OPEN. | CHỜ OWNER. Xác nhận mode riêng cho upload/read và remote GitHub; giữ trạng thái toàn cục tới khi có bằng chứng. | Security / Host. Mỗi rủi ro áp dụng có owner, control, TC/variant, bằng chứng và disposition. |
+| M10 | Spec Kit pointer và feature contract | .specify/feature.json trỏ đến specs/001-s2c-speckit-integration và thư mục có trong Git. Tài liệu Web đề cập v1.4.3 ở mức ứng viên tương thích. specKitWebWorkflow.md:27 còn yêu cầu ghi Google revision khi STOP/RESUME dù nguồn Web V1 đã chuyển sang Git. | KHỚP TĨNH về con trỏ. LỆCH cách ghi provenance trong luồng Web. Sửa mẫu handoff để ghi Git SHA bắt buộc và revision ngoài Git chỉ khi thực sự là input. | Workflow / Architecture. Phân biệt tương thích đọc cấu trúc và bằng chứng chạy native. |
+| M11 | Backlog, feature và gate | 30 WEB task duy nhất; 64 feature trong reverse matrix; 17 AGM ID duy nhất. A.1 không có chữ ký độc lập. 37 Web TC mới ở thiết kế. | KHỚP TĨNH về danh mục. CHỜ OWNER về A.1, QA và Security. Giữ B NOT_AUTHORIZED. | Reviewer / Product. Chốt SHA sau sửa, bàn giao tài liệu có đủ owner và chạy A1-VAL-01..09. |
+| M12 | Liên kết tài liệu và hồ sơ cũ | Quét đơn giản 1.447 kết quả khớp cú pháp link tương đối trong dòng ngoài khối code. Có 3 ví dụ cú pháp trong inline code và 11 lần tham chiếu không tìm thấy đích, tập trung ở ba handoff legacy v0.6.4. | LỊCH SỬ. Sau khi loại ví dụ, 1.444 link tương đối được kiểm, 1.433 trỏ tới mục trong tree, 11 thiếu đích. Giữ lịch sử; dùng ghi chú hoặc tương thích đường dẫn nếu cần đọc lại. | Documentation. Khi chỉnh, xác nhận các bản lưu đích rồi chạy lại kiểm tra đường dẫn. |
+
+### Thứ tự thống nhất
+
+1. Gộp các sửa đổi đã soạn ở M01, M03, M06, M07 vào một revision tài liệu được phép. Giữ nguyên trạng thái test, rủi ro và các cổng phê duyệt.
+2. Trên cùng revision, sửa các điểm còn ngoài bản vá ở M02, M04, M05 và M10. Ưu tiên nguồn quy tắc, gói ký duyệt và release plan. Gắn ghi chú supersession ở tài liệu lịch sử có thể bị dùng lại.
+3. Tái kiểm tra 27 BR, 64 feature, 30 task, 37 AC/TC, 16 cặp dành riêng, 52 risk và 17 AGM. Kiểm lại chế độ source/AGENTS và danh sách file đổi. Ghi SHA sau sửa để reviewer có thể tái lập.
+4. Giao Product/QA chốt M08, Security/Host chốt M09 và reviewer độc lập đánh giá M11. Phần review kỹ thuật hiện tại là bằng chứng đầu vào, không phải chữ ký A.1.
+
+### Giới hạn bằng chứng
+
+Quét link chỉ kiểm sự tồn tại của đường dẫn trong Git tree cho cú pháp inline đơn giản. Không xác minh heading fragment, URL ngoài Git, link dạng reference, nội dung ẩn sau provider hoặc render. Kiểm kê đầy đủ 148 mục không đồng nghĩa đã ký duyệt ngữ nghĩa từng đoạn. Không chạy Web TC, native Spec Kit, bộ test Python, CI, hành động ghi host hay Phases B/B.1. Hồ sơ Git vẫn A.1 NOT_RUN, 37/37 TC NOT_RUN, RM-001 P0 OPEN và B NOT_AUTHORIZED.
+
+### Nguồn đối chiếu tại commit đã kiểm tra
+
+- [.agents/.spec.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.spec.md)
+- [.agents/.documents/.documentGovernance.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/.documentGovernance.md)
+- [.agents/.documents/webV1A1DesignReviewPacket.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1A1DesignReviewPacket.md)
+- [.agents/.documents/webV1AcceptanceAndTraceability.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1AcceptanceAndTraceability.md)
+- [.agents/.workflow/validationSpecification.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/validationSpecification.md)
+- [.agents/.workflow/validationReportTemplate.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/validationReportTemplate.md)
+- [.agents/.documents/webV1RiskApplicability.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1RiskApplicability.md)
+- [.agents/.documents/webV1AgentsIntegrationMatrix.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1AgentsIntegrationMatrix.md)
+- [.agents/.workflow/testingAndDelivery.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/testingAndDelivery.md)
+
+### Kiểm kê nguồn đã đọc
+
+| Tài liệu | Blob Git (12 ký tự đầu) |
+| --- | --- |
+| [.agents/.changelog.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.changelog.md) | `23b1365e4024` |
+| [.agents/.checklist.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.checklist.md) | `12b584ced8aa` |
+| [.agents/.config/README.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.config/README.md) | `3755cd347ef8` |
+| [.agents/.documents/.documentGovernance.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/.documentGovernance.md) | `3e51e2ef25f3` |
+| [.agents/.documents/.policyRouting.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/.policyRouting.md) | `85592cd67d07` |
+| [.agents/.documents/featureDesign.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/featureDesign.md) | `cb8f884eb265` |
+| [.agents/.documents/legacyGoogleBrdSourceArchive20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/legacyGoogleBrdSourceArchive20261123.md) | `3990e82515fc` |
+| [.agents/.documents/markdownFirstReleasePlan.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/markdownFirstReleasePlan.md) | `1c221fb59cc4` |
+| [.agents/.documents/phaseABrdSemanticReconciliation20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/phaseABrdSemanticReconciliation20261123.md) | `414a0e918236` |
+| [.agents/.documents/phaseAD01D06RequesterDecisionRegister20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/phaseAD01D06RequesterDecisionRegister20261123.md) | `52b9a9dfbb95` |
+| [.agents/.documents/phaseAD02BrDedicatedWebCoverage20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/phaseAD02BrDedicatedWebCoverage20261123.md) | `0f16e53a4df5` |
+| [.agents/.documents/phaseAIntegrationCoherenceAudit20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/phaseAIntegrationCoherenceAudit20261123.md) | `aea0e1a6e0a9` |
+| [.agents/.documents/phaseAUnifiedIntegrationMatrix20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/phaseAUnifiedIntegrationMatrix20261123.md) | `77270732b016` |
+| [.agents/.documents/researchRegister.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/researchRegister.md) | `1f378c66af43` |
+| [.agents/.documents/specKitBridgeSourceAudit096.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/specKitBridgeSourceAudit096.md) | `ed925b81afe8` |
+| [.agents/.documents/specKitNativePilot.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/specKitNativePilot.md) | `79a50da69e81` |
+| [.agents/.documents/specKitUpstreamEnvAudit097.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/specKitUpstreamEnvAudit097.md) | `ea5be5ed430f` |
+| [.agents/.documents/specKitWebModeEvidence095.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/specKitWebModeEvidence095.md) | `6afa690367e0` |
+| [.agents/.documents/systemSpecificationPlan.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/systemSpecificationPlan.md) | `d465d14f44e8` |
+| [.agents/.documents/technologyAssessmentTemplate.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/technologyAssessmentTemplate.md) | `36a7bebab03d` |
+| [.agents/.documents/technologyOverrideTemplate.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/technologyOverrideTemplate.md) | `890f2b66a173` |
+| [.agents/.documents/technologyVersionPolicy.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/technologyVersionPolicy.md) | `b88175af494b` |
+| [.agents/.documents/webV1A1DesignReviewPacket.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1A1DesignReviewPacket.md) | `b9ab76530085` |
+| [.agents/.documents/webV1AClosureApprovalPacket20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1AClosureApprovalPacket20261123.md) | `e8655ae3f8a9` |
+| [.agents/.documents/webV1AClosureEvidence20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1AClosureEvidence20261123.md) | `e6415fc32250` |
+| [.agents/.documents/webV1AClosureFeatureReverseMatrix20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1AClosureFeatureReverseMatrix20261123.md) | `d4fa0e733d53` |
+| [.agents/.documents/webV1AClosureWebTestOracleDesign20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1AClosureWebTestOracleDesign20261123.md) | `b08a864ec605` |
+| [.agents/.documents/webV1AcceptanceAndTraceability.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1AcceptanceAndTraceability.md) | `91e1d7d93c8a` |
+| [.agents/.documents/webV1AgentsIntegrationMatrix.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1AgentsIntegrationMatrix.md) | `9f18659268a2` |
+| [.agents/.documents/webV1FullBranchHistoryIntegration20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1FullBranchHistoryIntegration20261123.md) | `70e2646415f0` |
+| [.agents/.documents/webV1FullMarkdownLinkAudit20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1FullMarkdownLinkAudit20261123.md) | `e9fed3f9c7ec` |
+| [.agents/.documents/webV1GeminiReviewDisposition20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1GeminiReviewDisposition20261123.md) | `049faba3a923` |
+| [.agents/.documents/webV1OwnerDecisionRegister.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1OwnerDecisionRegister.md) | `95b7998abe7e` |
+| [.agents/.documents/webV1Pr11AddedLinesArchive20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1Pr11AddedLinesArchive20261123.md) | `c549374ada36` |
+| [.agents/.documents/webV1Pr11CollisionReconciliation20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1Pr11CollisionReconciliation20261123.md) | `cfd0dc7d8ce1` |
+| [.agents/.documents/webV1PreflightAndCapabilityMatrix.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1PreflightAndCapabilityMatrix.md) | `d18a0a9940eb` |
+| [.agents/.documents/webV1RequesterConditionalDecisions20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1RequesterConditionalDecisions20261123.md) | `4ece2a3284b0` |
+| [.agents/.documents/webV1RiskApplicability.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1RiskApplicability.md) | `094cb863d609` |
+| [.agents/.documents/webV1StaticMarkdownAudit20261123.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.documents/webV1StaticMarkdownAudit20261123.md) | `51bb9ff4a1bc` |
+| [.agents/.features.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.features.md) | `f98781e13a97` |
+| [.agents/.git.workflow.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.git.workflow.md) | `f124285e3f92` |
+| [.agents/.handoffs/a1-author-preflight-20261114.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/a1-author-preflight-20261114.md) | `2586aaa8025c` |
+| [.agents/.handoffs/a1-reconciliation-readiness-20261114.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/a1-reconciliation-readiness-20261114.md) | `fe607505301a` |
+| [.agents/.handoffs/audit-20261114-agents-compatibility.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/audit-20261114-agents-compatibility.md) | `daea2b3e29d2` |
+| [.agents/.handoffs/legacy-v0.6.4-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/legacy-v0.6.4-handoff.md) | `f7a173b9af71` |
+| [.agents/.handoffs/legacy-v0.6.4-plan.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/legacy-v0.6.4-plan.md) | `e75a45e56f55` |
+| [.agents/.handoffs/legacy-v0.6.4-riskdetail.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/legacy-v0.6.4-riskdetail.md) | `9de6f09ae84a` |
+| [.agents/.handoffs/owner-design-approvals-app-01-06-20261114.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/owner-design-approvals-app-01-06-20261114.md) | `587059298d14` |
+| [.agents/.handoffs/plan-080-v0.8-governance-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-080-v0.8-governance-handoff.md) | `2e88f09744b0` |
+| [.agents/.handoffs/plan-081-agent-governance-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-081-agent-governance-handoff.md) | `065f9146563b` |
+| [.agents/.handoffs/plan-082-083-rtm-stop-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-082-083-rtm-stop-handoff.md) | `5af3882640fa` |
+| [.agents/.handoffs/plan-084-design-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-084-design-handoff.md) | `62461604fcb0` |
+| [.agents/.handoffs/plan-085-validation-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-085-validation-handoff.md) | `8997a983d590` |
+| [.agents/.handoffs/plan-086-technology-override-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-086-technology-override-handoff.md) | `a74c71625a2c` |
+| [.agents/.handoffs/plan-089-a1-readiness-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-089-a1-readiness-handoff.md) | `6c63febb10d1` |
+| [.agents/.handoffs/plan-090-a1-preflight-review.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-090-a1-preflight-review.md) | `685b14477e94` |
+| [.agents/.handoffs/plan-091-remediation-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-091-remediation-handoff.md) | `f021d4c16794` |
+| [.agents/.handoffs/plan-092-speckit-adoption-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-092-speckit-adoption-handoff.md) | `f36041dd8a39` |
+| [.agents/.handoffs/plan-093-sk03-native-pilot-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-093-sk03-native-pilot-handoff.md) | `54b521285e27` |
+| [.agents/.handoffs/plan-094-speckit-feature-completeness-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-094-speckit-feature-completeness-handoff.md) | `57266f161b4b` |
+| [.agents/.handoffs/plan-095-webmode-evidence-native-gate-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-095-webmode-evidence-native-gate-handoff.md) | `abc33a9d8735` |
+| [.agents/.handoffs/plan-096-bridge-source-audit-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-096-bridge-source-audit-handoff.md) | `485e2022113c` |
+| [.agents/.handoffs/plan-097-native-env-boundary-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-097-native-env-boundary-handoff.md) | `5d5a3a2e19f0` |
+| [.agents/.handoffs/plan-100-documentation-checkpoint-1.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-100-documentation-checkpoint-1.md) | `e7906c5e4c5d` |
+| [.agents/.handoffs/plan-100-documentation-checkpoint-2.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-100-documentation-checkpoint-2.md) | `c5d5292a4d98` |
+| [.agents/.handoffs/plan-100-l0-readiness-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-100-l0-readiness-handoff.md) | `9fc67e4e1c5c` |
+| [.agents/.handoffs/plan-101-documentation-checkpoint-3.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-101-documentation-checkpoint-3.md) | `2fcb43b84e85` |
+| [.agents/.handoffs/plan-101-documentation-checkpoint-4.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-101-documentation-checkpoint-4.md) | `2f6bf895fa1e` |
+| [.agents/.handoffs/plan-102-documentation-checkpoint-5.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-102-documentation-checkpoint-5.md) | `84a74f91570b` |
+| [.agents/.handoffs/plan-102-documentation-checkpoint-6.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-102-documentation-checkpoint-6.md) | `5fd2cd26ee40` |
+| [.agents/.handoffs/plan-103-documentation-final-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-103-documentation-final-handoff.md) | `59b894241a84` |
+| [.agents/.handoffs/plan-103-documentation-navigation-checkpoint.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-103-documentation-navigation-checkpoint.md) | `6d9d67c452a8` |
+| [.agents/.handoffs/plan-103-documentation-review-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-103-documentation-review-handoff.md) | `6c8b6073a81b` |
+| [.agents/.handoffs/plan-103-owner-review-packet.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-103-owner-review-packet.md) | `36a3634724aa` |
+| [.agents/.handoffs/plan-103-traceability-review-checkpoint.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-103-traceability-review-checkpoint.md) | `de372028de38` |
+| [.agents/.handoffs/plan-104-batch-a-documentation-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-104-batch-a-documentation-handoff.md) | `d73707db8673` |
+| [.agents/.handoffs/plan-105-batch-b-documentation-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-105-batch-b-documentation-handoff.md) | `91f62d664b2b` |
+| [.agents/.handoffs/plan-106-10task-batch-1.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-106-10task-batch-1.md) | `200fef4e1303` |
+| [.agents/.handoffs/plan-107-10task-batch-2.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-107-10task-batch-2.md) | `c10ccfd2f9f4` |
+| [.agents/.handoffs/plan-108-10task-batch-3.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-108-10task-batch-3.md) | `144d5ffd0396` |
+| [.agents/.handoffs/plan-109-10task-batch-4.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-109-10task-batch-4.md) | `a84c45a313e5` |
+| [.agents/.handoffs/plan-110-10task-batch-5.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-110-10task-batch-5.md) | `e1eec0525d6c` |
+| [.agents/.handoffs/plan-111-a1-p0-return-to-a.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-111-a1-p0-return-to-a.md) | `584f6cee36f7` |
+| [.agents/.handoffs/plan-112-a1-security-continuation.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-112-a1-security-continuation.md) | `68e979e45033` |
+| [.agents/.handoffs/plan-112-a1-security-owner-packet.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-112-a1-security-owner-packet.md) | `c33dd821164d` |
+| [.agents/.handoffs/plan-112-windows-p0-codex.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-112-windows-p0-codex.md) | `9838940a5fb9` |
+| [.agents/.handoffs/plan-113-antigravity-gemini-reviewer-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-113-antigravity-gemini-reviewer-handoff.md) | `c7958515401c` |
+| [.agents/.handoffs/plan-114-codex-gemini-agent-integration-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-114-codex-gemini-agent-integration-handoff.md) | `b6d3dcb62bc1` |
+| [.agents/.handoffs/plan-115-relationship-vmware-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-115-relationship-vmware-handoff.md) | `d0dee784a46c` |
+| [.agents/.handoffs/plan-116-markdown-first-release-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/plan-116-markdown-first-release-handoff.md) | `891553e534de` |
+| [.agents/.handoffs/v0.7.0-layout-handoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/v0.7.0-layout-handoff.md) | `40efcaa3839a` |
+| [.agents/.handoffs/v0.7.0-windows-ci-fix.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.handoffs/v0.7.0-windows-ci-fix.md) | `6a1959f08d39` |
+| [.agents/.plans.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.plans.md) | `7c3431c8d797` |
+| [.agents/.risk.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.risk.md) | `3bc4455fe859` |
+| [.agents/.riskMatrix.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.riskMatrix.md) | `4dc1a6e500fc` |
+| [.agents/.spec.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.spec.md) | `ef61bd10bfa8` |
+| [.agents/.structure.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.structure.md) | `ef951f82e087` |
+| [.agents/.traceMatrix.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.traceMatrix.md) | `206713924a4f` |
+| [.agents/.workflow/README.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/README.md) | `1d8c68d1f015` |
+| [.agents/.workflow/agentRoles.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/agentRoles.md) | `27bc0b1a9c3f` |
+| [.agents/.workflow/agentRunbook.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/agentRunbook.md) | `150e97f46960` |
+| [.agents/.workflow/designHandoffTemplate.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/designHandoffTemplate.md) | `ebb04faa1863` |
+| [.agents/.workflow/planningSpecificationWorkflow.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/planningSpecificationWorkflow.md) | `6a6752adcb48` |
+| [.agents/.workflow/specKitNativeExecutionGate.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/specKitNativeExecutionGate.md) | `457b31785a94` |
+| [.agents/.workflow/specKitWebWorkflow.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/specKitWebWorkflow.md) | `0e5eac473ce3` |
+| [.agents/.workflow/stopAndHandoff.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/stopAndHandoff.md) | `8acfdd4da443` |
+| [.agents/.workflow/testingAndDelivery.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/testingAndDelivery.md) | `dbd1487f19af` |
+| [.agents/.workflow/validationReportTemplate.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/validationReportTemplate.md) | `948e8cb67f7d` |
+| [.agents/.workflow/validationSpecification.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/validationSpecification.md) | `b25c25d1c665` |
+| [.agents/.workflow/workflowSpecification.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.agents/.workflow/workflowSpecification.md) | `5a5774a95790` |
+| [.source/SKILL.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/SKILL.md) | `2c2b64eead0c` |
+| [.source/integrations/speckit/README.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/integrations/speckit/README.md) | `dd5d6258c723` |
+| [.source/references/adaptive-modes.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/adaptive-modes.md) | `182ba006ec82` |
+| [.source/references/architecture-graph.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/architecture-graph.md) | `368804015613` |
+| [.source/references/feature-spec-template.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/feature-spec-template.md) | `538ed4564adb` |
+| [.source/references/handoff-template.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/handoff-template.md) | `51c69baab782` |
+| [.source/references/hierarchy-layout.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/hierarchy-layout.md) | `a015dd2184d2` |
+| [.source/references/implementation-plan-template.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/implementation-plan-template.md) | `0fe111e9f712` |
+| [.source/references/infrastructure-scanning.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/infrastructure-scanning.md) | `29aa305bf0c8` |
+| [.source/references/quality-gates.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/quality-gates.md) | `5ba1180ada2e` |
+| [.source/references/session-lifecycle.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/session-lifecycle.md) | `cf35788bbe5a` |
+| [.source/references/spec-to-code-workflow.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/spec-to-code-workflow.md) | `b544cdc182ee` |
+| [.source/references/stop-handoff-template.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/stop-handoff-template.md) | `3aeb18ec4aa1` |
+| [.source/references/tasks-template.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/tasks-template.md) | `a8cd3a471011` |
+| [.source/references/traceability-template.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.source/references/traceability-template.md) | `de3e1b99903c` |
+| [.specify/README.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.specify/README.md) | `dc693febc74c` |
+| [.specify/feature.json](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.specify/feature.json) | `8172bcc56b44` |
+| [.specify/memory/constitution.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/.specify/memory/constitution.md) | `c91e240bbae2` |
+| [AGENTS.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/AGENTS.md) | `4acbe1d463b7` |
+| [README.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/README.md) | `8c083d7c81dc` |
+| [docs/AGENTS_PATCH.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/docs/AGENTS_PATCH.md) | `05e454495f59` |
+| [docs/ANTIGRAVITY_GEMINI_REVIEWER.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/docs/ANTIGRAVITY_GEMINI_REVIEWER.md) | `9ea0e4557bbd` |
+| [docs/CONFIGURATION.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/docs/CONFIGURATION.md) | `f63650d5f0aa` |
+| [docs/CONTINUOUS_SCOPE_ENFORCEMENT.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/docs/CONTINUOUS_SCOPE_ENFORCEMENT.md) | `341c02481657` |
+| [docs/INSTALL.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/docs/INSTALL.md) | `a65a9c51e3b7` |
+| [docs/INTEGRATION_LAYOUT.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/docs/INTEGRATION_LAYOUT.md) | `4b0bbf44fc1b` |
+| [docs/PATH_GUARD.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/docs/PATH_GUARD.md) | `3b1ed2da76ab` |
+| [docs/STRUCTURE.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/docs/STRUCTURE.md) | `812fa36818d4` |
+| [docs/VMWARE_SECURITY_VALIDATION.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/docs/VMWARE_SECURITY_VALIDATION.md) | `ea66b838a9ab` |
+| [specs/001-s2c-speckit-integration/checklists/integrationAcceptance.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/checklists/integrationAcceptance.md) | `36ac1e6af41f` |
+| [specs/001-s2c-speckit-integration/checklists/requirements.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/checklists/requirements.md) | `0445118e2e85` |
+| [specs/001-s2c-speckit-integration/contracts/web-native-interface.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/contracts/web-native-interface.md) | `94ece1fc86e7` |
+| [specs/001-s2c-speckit-integration/data-model.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/data-model.md) | `86afb05cb7ed` |
+| [specs/001-s2c-speckit-integration/plan.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/plan.md) | `923a7caf4312` |
+| [specs/001-s2c-speckit-integration/quickstart.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/quickstart.md) | `953fdfc6912d` |
+| [specs/001-s2c-speckit-integration/research.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/research.md) | `37d654d186f4` |
+| [specs/001-s2c-speckit-integration/spec.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/spec.md) | `4de86c531969` |
+| [specs/001-s2c-speckit-integration/tasks.md](https://github.com/RyugaWork/spec2code/blob/28d40a3d7cf1741d7b0abb8490d1e538eb1e3cd5/specs/001-s2c-speckit-integration/tasks.md) | `24051a052519` |

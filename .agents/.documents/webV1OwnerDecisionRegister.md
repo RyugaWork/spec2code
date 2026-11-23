@@ -39,3 +39,12 @@ All decisions require identity/role, date, exact review SHA, scope, alternatives
 ## Next execution order
 
 First obtain owner review on this packet and WEB-001..003 crosswalk; author remaining A-phase scope/risk/AC/ADR/checklist corrections; independent scoped A.1; separately authorized B; WEB-006..020 product files; WEB-021..025 actual QA; WEB-026..029 risk/release verification; WEB-030 release owner decision and one immutable reviewed release. Existing canonical [30-task ledger](../.plans.md) remains the sole task-status authority.
+
+## Subsequent A-phase drafts (2026-11-23; no owner decision implied)
+
+- [Full Markdown source/path preflight](webV1StaticMarkdownAudit20261123.md): 125 tracked Markdown source blobs and limited relative file link coverage; archive exceptions and limitations recorded.
+- [52-risk applicability overlay](webV1RiskApplicability.md): every RM-001..052 has a proposed Web applicability, reason and owner; all PENDING_OWNER.
+- [15-case AC and group crosswalk](webV1AcceptanceAndTraceability.md): proposed oracles only, no actual Web test execution.
+- [Independent A.1 preparation packet](webV1A1DesignReviewPacket.md): nine-gate source/checklist and ADR recommendations, no reviewer signoff or Phase B permission.
+
+These materials are supplemental design evidence, not signed decisions. The original DEC-WEB-01..05 status above remains OWNER_PENDING.

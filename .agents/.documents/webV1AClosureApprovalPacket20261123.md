@@ -1,6 +1,6 @@
 # Web v1.0 — A-Closure owner review and independent A.1 decision packet
 
-Date: 2026-11-23. **OWNER_ACTION_REQUIRED — DESIGN ONLY; NOTHING SIGNED.** Evidence input Git `c0201acaf0639b271cdaba3110894298556d86d6` on `docs/plan-089-a1-readiness`; [A-Closure source/findings](webV1AClosureEvidence20261123.md), [64-F + 27-BR reverse trace](webV1AClosureFeatureReverseMatrix20261123.md), [21-case oracle worksheet](webV1AClosureWebTestOracleDesign20261123.md), [52-risk overlay](webV1RiskApplicability.md) and [AGM-01..17](webV1AgentsIntegrationMatrix.md). Source revisions will change after this document commit; the displayed SHA identifies the *observed author input*, **not** a frozen A.1 baseline.
+Date: 2026-11-23. **OWNER_ACTION_REQUIRED — DESIGN ONLY; NOTHING SIGNED.** Evidence input Git `c0201acaf0639b271cdaba3110894298556d86d6` on `docs/plan-089-a1-readiness`; [A-Closure source/findings](webV1AClosureEvidence20261123.md), [64-F + 27-BR reverse trace](webV1AClosureFeatureReverseMatrix20261123.md), [37-case oracle worksheet](webV1AClosureWebTestOracleDesign20261123.md), [52-risk overlay](webV1RiskApplicability.md) and [AGM-01..17](webV1AgentsIntegrationMatrix.md). Source revisions will change after this document commit; the displayed SHA identifies the *observed author input*, **not** a frozen A.1 baseline.
 
 ## 1. Proposed design decisions to approve or revise
 
@@ -9,7 +9,7 @@ Date: 2026-11-23. **OWNER_ACTION_REQUIRED — DESIGN ONLY; NOTHING SIGNED.** Evi
 | U-01 / DEC-WEB-01 | V1 Web human-directed read/spec/plan/risk/trace/test design, conditional permissioned GitHub read or offline bounded ZIP/Markdown/paste fallback; read-only Spec Kit v1.4.3 mapping; narrow real-authorization agent-executed AGENTS write path | No default repo write, native CLI, CI, MCP, OS sandbox claim; unsupported source/provider must BLOCK | OWNER_PENDING |
 | U-02 / DEC-WEB-02/03 | Keep developer Markdown source `.source/profiles/web/`; release visible `spec2code-web-v1.0.0/` ZIP. Reuse `docs/plan-089-a1-readiness` for **proposed** later B commits after A.1 plus distinct B authorization; Git integrator reviews PR #8–#11/main before exact A.1 freeze/integration | Main has an unintegrated `.gitignore` two-line commit; PR #11 is draft/dirty and must not be auto-merged. A.1 freeze SHA not yet selected | OWNER_PENDING |
 | U-03 | Name real Product, Architecture, QA, Security/Host and Git/Release authorities. One solo maintainer may cover multiple accountable owner roles. Independent A.1/B.1 reviewer must be a **different real reviewer**, not the document author or sequential AI personas | No reviewer => A.1/B.1 remain NOT_RUN/BLOCKED; no AI signature | OWNER_PENDING |
-| U-04 / DEC-WEB-04 | Approve applicability of 21 designed Web cases (including 6 AGENTS cases) and 7 proposed groups, 100% applicable mandatory deterministic cases+security-negative variants PASS with actual evidence. Approve source pair Git + Google BRD Draft v1.5 revision and material semantic resolutions | Existing `R>99.99%` remains governing until Product+QA explicitly defines scoped metric method/exception and updates canonical rules. BR-007/008 need REFERENCE_ONLY or owner-approved additional Web assertions | OWNER_PENDING |
+| U-04 / DEC-WEB-04 | D02 and D05 require 37 planned Web cases, including dedicated mandatory BR-007/008 cases, and 100% PASS across applicable mandatory Web AC and required variants. | QA owns fixture applicability and measurement. Product and QA still need to resolve the inherited reliability and coverage criteria. | DESIGN RECORDED / QA PENDING |
 | U-05 | Approve mode-by-mode RM-001 classification: Web upload/read-only and truly remote connector AGENTS write may exclude S2C Windows local Path Guard when proven; local Windows agent writing host files **does not exclude RM-001** and remains blocked pending actual hostile OS containment tests | Never close/downgrade RM-001 global P0/20 via Web scope decision; other applicable P0 blockers still veto release | OWNER_PENDING |
 | U-06 / DEC-WEB-06 | Approve declarative AGM-01..17, new/adopt/upgrade with three-way merge, exact path-grant capability, one-writer ref lease, idempotence, rollback and readback; external AI agent performs authorized host changes, S2C only supplies matrix/content | Without provider authorization/tools, output proposed diff/hand-off only; no implicit Git commit/push/merge/deploy right | OWNER_PENDING |
 
@@ -39,18 +39,17 @@ The connected GitHub account/profile, previous commit author and a model persona
 
 The Security Owner must decide **which modes are supported**. Unsupported modes cannot be declared safe by naming a Markdown rule.
 
-### D-03 — Git + Google authoritative baseline and quality policy (BLOCKER)
+### D-03 — Git review baseline and quality evidence
 
-- Exact examined Git input: `c0201acaf0639b271cdaba3110894298556d86d6`; **not frozen**. PR #10 current HEAD after author commit must be re-read for A.1. Main's sole unique change adds `.gitignore`; InitialVersion_v0 has a unique merge commit but no unique file delta; PR #11 remains a separate findings branch with seven touched files and dirty mergeability. Approve target and whether to integrate only after independent review or before A.1 on a new signed source snapshot.
-- Google BRD is a connected **Draft v1.5** with 27 BR IDs. Read-observed revision: `AHj4eMTQo-4II6DrQF5kSGoY8OxDNISChHco-PFSx_OgzuUuEWu4R2qAsiNmlioUDwDF-cYLmUq__B8TxyeB5iOzSa8tL5uDM_9Rqh0Npw`. It has **not** been accepted or byte/semantically reconciled. Product Owner must review differences, especially seven-stage vs nine-stage vs five-machine phase terminology and future-engine wording for AST/RBAC/drift/multiagent, and authorize a versioned immutable Git-linked snapshot/reference. Do not automatically copy an entire external Google Doc into a public repository.
-- Upstream Spec Kit initial proposed reference: tag `v1.4.3`, resolved commit `980b3d027f4bd7958c35f97f618d854b41320e3f`. This author checked upstream files/feature pointer docs; formal supported-host/preset schema remains QA/Architecture pending.
-- Proposed quality gate: all applicable mandatory **21 canonical Web cases** plus approved subvariants PASS; strict negative cases PASS and zero applicable open P0. The inherited `R>99.99%` requires approved denominator, representative fixtures or an explicit **canonically recorded** Web-profile exception, not an author-level quiet waiver. BR-007/008 manual reference-only applicability needs Product+QA review.
+- D01 establishes a single Git SHA as the current requirements baseline. The [archived Google BRD](legacyGoogleBrdSourceArchive20261123.md) records historical provenance.
+- Upstream Spec Kit reference proposed for review: `v1.4.3` at `980b3d027f4bd7958c35f97f618d854b41320e3f`. Architecture and QA still own compatibility evidence.
+- D05 requires PASS for all applicable mandatory Web AC and required positive and negative variants. All 37 cases remain `NOT_RUN`. Product and QA own the inherited reliability and coverage measurement decisions. Applicable open P0 risks continue to block release.
 
 ## 3. Independent A.1 source-freeze protocol (preparation, NOT_RUN)
 
 1. Resolve decisions U-01..06, assign reviewers and supported provider/host modes; approve exact BR/AC and per-risk applicability. Record `ACCEPT/REVISE/REJECT` evidence with identity and date.
-2. Re-run PR/main/source-drift inventory and ensure all **material** REV-090 owner/finding decisions are resolved or disclosed; reconcile the Google revision/source snapshot without rewriting the draft automatically.
-3. Freeze **one exact** Git SHA as `A1_REVIEW_BASELINE_SHA` **only after** final author changes and source alignment. Bind approved Google revision+snapshot hash, upstream Spec Kit commit, test contract, 52-risk row dispositions and reviewer identity to that SHA. If file/source drifts, mark affected evidence STALE and select/review a new baseline.
+2. Recheck PR and main drift. Record each outstanding material REV-090 finding with owner and disposition.
+3. Freeze one exact Git SHA as `A1_REVIEW_BASELINE_SHA` after the final design changes. Bind the upstream Spec Kit commit, test contract, 52 risk dispositions and reviewer identity to that SHA. Mark affected evidence stale when inputs drift.
 4. Independent reviewer must evaluate `A1-VAL-01..09` with criterion-specific observations, real reviewer identity/dissent and no blocking applicable risk. Author's preflight/role-lens simulation is NOT independent validation.
 5. An actual A.1 PASS permits the owner to consider a **separate** Phase B implementation scope decision. A.1 alone is not B permission. B implementation, observed tests, independent B.1 and Release remain future separate gates.
 
@@ -61,7 +60,7 @@ Reviewed author report SHA: [exact commit as displayed on GitHub]
 U-01: ACCEPT / REVISE / REJECT — supported Web capability + provider/offline fallback:
 U-02: ACCEPT / REVISE / REJECT — branch/source strategy and visible package:
 U-03: Product=[handle], Architecture=[handle], QA=[handle], Security/Host=[handle], Git/Release=[handle], Independent A.1 reviewer=[different handle]
-U-04: ACCEPT / REVISE / REJECT — BR-007/008 disposition, Web metric and Google revision/snapshot:
+U-04: ACCEPT / REVISE / REJECT — fixture applicability, reliability and coverage measurement:
 U-05: ACCEPT / REVISE / REJECT — supported mode(s) A/B/C/D, RM-001 evidence/owner:
 U-06: ACCEPT / REVISE / REJECT — allowed AGENTS target path(s), responsible AI agent/provider and grant limits:
 Decision role / date:
@@ -82,4 +81,4 @@ If the user only answers some items, record only those specific decisions; other
 
 ## 6. Requester review receipt — narrowed outstanding approvals (2026-11-23)
 
-The [actual requester disposition](webV1RequesterConditionalDecisions20261123.md) has arrived after this packet's initial draft. Treat its U-01 and U-05 scope decisions as **requester-approved design direction**, U-02/U-04/U-06 as **conditional**, and U-03 as **model-accepted/roles unassigned**. This section supersedes the packet's earlier status of *no requester review*, not the independent owner/security/QA signatures. The five remaining decisions are: (a) multiple GitHub+ZIP source precedence; (b) PR #8–11/main target strategy and one eventual B branch (PR #10 presently 175 commits/135 files vs PR #9 base); (c) five named accountable roles + real independent reviewer; (d) versioned BRD authority, BR-007/008 treatment, R>99.99% Web metric; (e) remote AGENTS provider/path/security validation. `UPGRADE_MANAGED` conflict behavior is now explicitly specified BLOCKED/diff-only/no repeated unchanged retries, without host write permission. A.1 and Phase B remain blocked.
+The [D01–D06 decision register](phaseAD01D06RequesterDecisionRegister20261123.md) supersedes prior conditions for Git vs. Google authority, dedicated BR case coverage and V1 product modes. Outstanding decisions include Git/Release target selection, accountable role and independent reviewer assignments, QA fixtures and metrics, and Security/Host approval of provider permissions and risk applicability. Conflicting Git and upload inputs still require explicit source resolution. An overlapping AGENTS upgrade remains blocked and produces a diff for review. A.1 remains `NOT_RUN` and B remains `NOT_AUTHORIZED`.

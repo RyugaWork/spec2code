@@ -1,6 +1,6 @@
 # Web v1.0 — 37-case execution-oracle precision worksheet (DESIGN ONLY)
 
-Date: 2026-11-23. Source input `c0201acaf0639b271cdaba3110894298556d86d6`. **ALL 21 WEB-TC CASES NOT_RUN**. This is an *execution worksheet for the existing canonical cases*, not 21 new cases, an actual run log, or an approved threshold. [Canonical WEB-TC-01..21](../.workflow/testingAndDelivery.md#plan-116--web-profile-acceptance-design), [draft AC-01..21](webV1AcceptanceAndTraceability.md), [AGM matrix](webV1AgentsIntegrationMatrix.md), [owner decision](webV1AClosureApprovalPacket20261123.md).
+Date: 2026-11-23. Source input `c0201acaf0639b271cdaba3110894298556d86d6`. **ALL 37 WEB-TC CASES NOT_RUN**. This worksheet records the expected results and evidence for the [canonical WEB-TC-01..37](../.workflow/testingAndDelivery.md#plan-116--web-profile-acceptance-design), [draft AC-01..21](webV1AcceptanceAndTraceability.md), [AGM matrix](webV1AgentsIntegrationMatrix.md), [owner decision](webV1AClosureApprovalPacket20261123.md).
 
 ## Required evidence and assertion refinement
 
@@ -49,7 +49,7 @@ For each eventual real execution, include its `WEB-TC-xx` and matching `WEB-AC-x
 ## Result evaluation and owner metric decision
 
 - The original 15 cases remain unchanged in identity; six V1 AGENTS-related test cases are WEB-TC-16..21. `WEB-TC-03` has **two required offline subvariants** A/B; `WEB-TC-07` includes safe, unsafe and unverified source-path variants; `WEB-TC-20` includes repeat and stale-SHA variants. These subvariants are **fixtures**, not extra test IDs; mark the parent case PASS only if every **approved required** variant passes. QA must approve supported provider/host population and planned fixtures.
-- Use actual deterministic per-case PASS/FAIL/BLOCKED/NOT_RUN/INCONCLUSIVE with evidence, and document unsupported paths. Proposed V1 criterion is **all applicable mandatory cases and critical negative subvariants PASS**, with zero unaccepted applicable P0. This is a **proposal** until Product+QA approves and reconciles the inherited `R>99.99%` rule. A fixed set of 21 case IDs is not a statistically valid reliability estimate.
+- Use actual deterministic per-case PASS/FAIL/BLOCKED/NOT_RUN/INCONCLUSIVE with evidence, and document unsupported paths. D05 requires **100% PASS of applicable mandatory Web AC and required variants**, with no unresolved applicable P0. Product and QA still own measurement and denominator decisions for the inherited reliability and coverage criteria. The 37-case suite records deterministic acceptance outcomes.
 - A remote GitHub connector write scenario verifies API/provider path authorization and exact blob lease/readback, **not** local Windows Path Guard. An agent modifying local Windows files may only be used after real authorized OS containment and RM-001 security evidence; a model simulation does not PASS WEB-TC-16..21.
 - The 42 legacy `TC-S2C-BR001..021-P/N` test scenarios are a **different suite** for broader runtime/product behavior and remain NOT_RUN. No test status is upgraded by designing this worksheet.
 
